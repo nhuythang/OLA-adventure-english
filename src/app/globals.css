@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+/* Explicit content source — Turbopack dev auto-detection can miss newly-added
+   files (utilities / @theme tokens used only in new components silently don't
+   compile), even though `next build` finds them. Declaring src/ ensures dev
+   and build scan the same files. (See builder memory: Tailwind v4 content.) */
+@source "../**/*.{ts,tsx}";
+
+/* Design tokens (palette, fonts, spacing) and the global native-feel rules
+   land in task 02. This file intentionally minimal at scaffold stage. */
+@theme {
+  --font-sans: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-fredoka), var(--font-nunito), sans-serif;
+}
