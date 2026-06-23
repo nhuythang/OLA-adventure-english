@@ -18,8 +18,9 @@ Legend: ☐ not started · ◐ in progress · ☑ done
 > **Build order is deliberately vertical-slice-first:** stand up scaffold + tokens + types, then
 > build *one hut (Listen) end-to-end* through the engine before adding the other three huts.
 
-- ☐ **01 — Project scaffold.** Next 16 + TS strict + Tailwind v4 + vitest + playwright-bdd, mirroring
+- ☑ **01 — Project scaffold.** Next 16 + TS strict + Tailwind v4 + vitest + playwright-bdd, mirroring
   `lla`. `dev` + `dev:demo` scripts, `cn.ts`, path aliases, lint. App boots to a placeholder home.
+  *(Done — branch `task/01-project-scaffold`; tsc/lint/unit/build/e2e green.)*
 - ☐ **02 — Design tokens & global styles.** Palette + fonts (Fredoka/Nunito via `next/font`) + 8px
   spacing as CSS vars in `globals.css`; Tailwind v4 `@theme`. `TabletShell` + `ScreenHeader` chrome.
   Add the **global native-feel CSS** (`-webkit-tap-highlight-color: transparent`, `touch-callout`,
