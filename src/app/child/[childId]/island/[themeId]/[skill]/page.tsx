@@ -4,6 +4,7 @@ import { TabletShell } from "@/components/game/tablet-shell";
 import { ScreenHeader } from "@/components/game/screen-header";
 import { ListenHut } from "@/components/huts/listen-hut";
 import { ReadHut } from "@/components/huts/read-hut";
+import { WriteHut } from "@/components/huts/write-hut";
 import { themeById } from "@/data/themes";
 import { SKILLS, type Skill } from "@/lib/types";
 
@@ -29,6 +30,9 @@ export default async function HutPage({
   if (skill === "read") {
     return <ReadHut childId={childId} themeId={themeId} />;
   }
+  if (skill === "write") {
+    return <WriteHut childId={childId} themeId={themeId} />;
+  }
 
   const theme = themeById(themeId);
   const label = HUT_LABEL[skill as Skill];
@@ -40,7 +44,7 @@ export default async function HutPage({
           {label} hut — {theme?.title}
         </h1>
         <p className="text-sm font-semibold text-ink-muted">
-          This hut arrives in tasks 11–12.
+          This hut arrives in task 12.
         </p>
         <Link
           href={`/child/${childId}/island/${themeId}`}

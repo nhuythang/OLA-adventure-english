@@ -14,6 +14,9 @@ export default defineConfig({
   // Routes compile on first hit under the dev server; give assertions room to
   // wait out that one-time compilation instead of the 5s default.
   expect: { timeout: 15_000 },
+  // Interaction-heavy huts (e.g. tracing sweeps several rounds) need more than
+  // the 30s default per-test budget under the dev server.
+  timeout: 60_000,
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,

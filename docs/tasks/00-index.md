@@ -63,8 +63,11 @@ Legend: ☐ not started · ◐ in progress · ☑ done
   support + 2 choices; Mover = **no audio**, 3 choices; picture labels hidden so the word must be
   read. Reuses `hut-player` (new `promptMode="word"` + `speakPrompts`) and a shared
   `buildPictureQuestions`. e2e plays it through. *(Done — PR #11.)*
-- ☐ **11 — Write hut (L1+L2).** L1: trace letter/word along a guided finger path (SVG path +
-  pointer tracking); L2: drag letter tiles to spell (picture + first-letter hint).
+- ☑ **11 — Write hut (L1+L2).** L1 (Starter): **trace** a dashed letter guide — SVG path with
+  auto-sampled waypoints, drag to light them (forgiving radius), all hit → done (no-fail practice).
+  L2 (Mover): **tap letter tiles to spell** (picture + first-letter hint; wrong word shakes & clears,
+  pure spelling logic unit-tested). Shared `HutResult` extracted; `animate-shake` keyframe added.
+  e2e sweeps the trace pad through all rounds. *(Done — PR #13.)*
 - ☐ **12 — Speak hut (L1+L2).** L1: hear model → repeat → tap stars to self-rate (no mic). L2: ASR
   loose match **with always-present "I said it" override**; degrades to self-rate. Privacy: nothing
   stored/transmitted.

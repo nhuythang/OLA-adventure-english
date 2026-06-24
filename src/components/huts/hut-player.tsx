@@ -6,13 +6,17 @@ import { ScreenHeader } from "@/components/game/screen-header";
 import { ProgressDots } from "@/components/ui/progress-dots";
 import { AudioButton } from "@/components/ui/audio-button";
 import { ChoiceCard } from "@/components/ui/choice-card";
-import { Button } from "@/components/ui/button";
-import { StickerBadge } from "@/components/ui/sticker-badge";
+import { HutResult } from "@/components/huts/hut-result";
 import { useHutEngine } from "@/lib/engine/use-hut-engine";
 import { type EngineQuestion } from "@/lib/engine/hut-machine";
-import { childById } from "@/data/children";
-import { stickersForSet } from "@/data/stickers/sticker-bank";
 import type { Skill } from "@/lib/types";
+
+const HUT_LABEL: Record<Skill, string> = {
+  listen: "Listen",
+  speak: "Speak",
+  read: "Read",
+  write: "Write",
+};
 
 interface Props {
   childId: string;
@@ -40,37 +44,17 @@ export function HutPlayer({
 }: Props) {
   const router = useRouter();
   const engine = useHutEngine({ questions, choiceCount, skill, themeId, speakPrompts });
-  const child = childById(childId);
   const toIsland = () => router.push(`/child/${childId}/island/${themeId}`);
 
   if (engine.result) {
-    // Reward overlay + real sticker persistence are tasks 14/15. For now we
-    // celebrate with a placeholder sticker from the child's set.
-    const award = child ? stickersForSet(child.stickerSet)[0] : undefined;
-    const { mastered } = engine.result;
     return (
-      <TabletShell>
-        <ScreenHeader title="All done!" />
-        <div className="flex flex-1 flex-col items-center justify-center gap-5 text-center">
-          {award && <StickerBadge sticker={award} size={120} tilt={-5} />}
-          <h1 className="font-display text-2xl font-semibold text-ink">
-            {mastered ? "You earned a sticker!" : "Nice try — sticker earned!"}
-          </h1>
-          <p className="text-sm font-semibold text-ink-muted">
-            {mastered
-              ? "You mastered the Listen hut."
-              : "Play again to master this hut."}
-          </p>
-          <div className="flex gap-3">
-            <Button variant="secondary" onClick={engine.restart}>
-              Play again
-            </Button>
-            <Button variant="primary" onClick={toIsland}>
-              Back to island
-            </Button>
-          </div>
-        </div>
-      </TabletShell>
+      <HutResult
+        childId={childId}
+        themeId={themeId}
+        mastered={engine.result.mastered}
+        hutLabel={HUT_LABEL[skill]}
+        onPlayAgain={engine.restart}
+      />
     );
   }
 
