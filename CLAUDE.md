@@ -208,8 +208,14 @@ app respects the OS motion setting.
 - **Per theme mastered:** 1 special master sticker + next island unlocks.
 - **Streak stickers:** small bonus for consecutive days — habit nudge, no pressure (Phase 3).
 - **Stickers are the only currency.** No points, coins, lives, leaderboards.
-- The **sticker book is the home/landing screen**, persistent across sessions (localStorage in
-  Phase 1, Supabase keyed to child profile in Phase 2).
+- **Earned one at a time, in order, per kid.** A hut completion awards the **next un-earned sticker**
+  from the child's set — never two at once, never skipped — drawn from `sticker-bank.ts` (commons →
+  rare/epic for huts; a **legendary reserved as the theme-master** sticker). The collection fills
+  predictably so progress is legible to the child.
+- **Keep them motivated:** after each award, **tease the next sticker to collect** ("Next: ❓ — finish
+  the Read hut!"). The filling sticker book is the long-game motivation; streaks (Phase 3) add a daily nudge.
+- The **sticker book is the home/landing screen**, persistent across sessions, **saved per child**
+  (the ordered list of earned sticker ids; localStorage in Phase 1, Supabase keyed to child in Phase 2).
 
 Definitions: *achievement* = one hut mastered; *milestone* = all 4 huts of a theme mastered.
 
