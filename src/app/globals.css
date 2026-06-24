@@ -6,9 +6,74 @@
    and build scan the same files. (See builder memory: Tailwind v4 content.) */
 @source "../**/*.{ts,tsx}";
 
-/* Design tokens (palette, fonts, spacing) and the global native-feel rules
-   land in task 02. This file intentionally minimal at scaffold stage. */
 @theme {
-  --font-sans: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-fredoka), var(--font-nunito), sans-serif;
+  /* ---- Surfaces ---- */
+  --color-cream: #fff7ed; /* page background (child mode) */
+  --color-card: #ffffff; /* card / hut surface */
+
+  /* ---- Brand / actions ----
+     Bright tokens are for decorative fills and large elements; the *-dark
+     variants are used wherever white text/icons sit on the colour, so the
+     pair clears WCAG AA (≥4.5:1). e.g. white on coral-dark = 4.75:1. */
+  --color-coral: #ff6b5e; /* primary accent fill */
+  --color-coral-dark: #c9472f; /* primary action w/ white text */
+  --color-teal: #2bb3a3; /* secondary accent fill */
+  --color-teal-dark: #1e8c80; /* white text on teal */
+
+  /* ---- Reward ---- */
+  --color-gold: #ffc53d; /* star / sticker fill */
+  --color-gold-dark: #9a6b00; /* gold text on light */
+  --color-success: #3fa34d; /* correct fill */
+  --color-success-dark: #2e7d38; /* white text on success */
+
+  /* ---- Ink (text) ---- */
+  --color-ink: #2b2a33; /* titles / body */
+  --color-ink-muted: #5c5b66; /* subtitles / chrome */
+
+  /* ---- Lines ---- */
+  --color-border-soft: #e7dfd2;
+
+  /* ---- Typography ----
+     Nunito (body) + Fredoka (display), self-hosted via next/font in layout. */
+  --font-sans: var(--font-nunito), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: var(--font-fredoka), var(--font-nunito), system-ui, sans-serif;
+}
+
+html,
+body {
+  background: var(--color-cream);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+/* Kid app never goes dark — explicitly opt out of the OS hint. */
+@media (prefers-color-scheme: dark) {
+  html,
+  body {
+    background: var(--color-cream);
+    color: var(--color-ink);
+    color-scheme: light;
+  }
+}
+
+/* ---- Native-feel base rules (CLAUDE.md "Performance & native feel") ----
+   Strip the web artifacts that scream "web page" and lock the surface so a
+   frantic tap can't select text, summon a callout menu, flash a highlight,
+   or rubber-band the page. */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  overscroll-behavior: none; /* no pull-to-refresh / rubber-band */
+}
+
+button,
+a,
+[role="button"] {
+  touch-action: manipulation; /* kill the ~300ms tap delay + double-tap zoom */
+  -webkit-touch-callout: none; /* no long-press menu on images/buttons */
+  user-select: none;
+  -webkit-user-select: none;
 }
