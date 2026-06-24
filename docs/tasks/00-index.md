@@ -32,10 +32,11 @@ Legend: ☐ not started · ◐ in progress · ☑ done
   `CharacterSticker`/`StickerRarity`/`StickerSet`, `ChildProfile` (per-skill level map). Mock
   `children.ts` (Milo/Sunny). **`data/stickers/sticker-bank.ts` — 30 boy + 30 girl original mascot
   stickers** with rarity tiers (legendary = theme-master). Unit-tested (bank integrity).
-- ☐ **04 — Speech + ASR + sound wrappers.** `speech.ts` (SpeechSynthesis, SSR-guarded, **never
-  `.cancel()`**, `onEnd` callback); `asr.ts` (SpeechRecognition, loose match, **graceful degrade** to
-  self-rate); `sounds.ts` (**Web Audio API** — pre-decode chimes to `AudioBuffer`, **unlock the
-  `AudioContext` on first user tap**, no `<audio>` tags). Unit-tested with mocks.
+- ☑ **04 — Speech + ASR + sound wrappers.** `speech.ts` (SpeechSynthesis, SSR-guarded, **never
+  `.cancel()`**, `onEnd` even when unavailable so callers don't hang); `asr.ts` (SpeechRecognition,
+  `looseMatch` for accented speakers, **graceful degrade** to null/self-rate); `sounds.ts` (**Web
+  Audio API** — synthesized chimes, **unlock `AudioContext` on first gesture**, no `<audio>` tags).
+  Unit-tested (matching + SSR guards). *(Done — PR #4.)*
 - ☐ **05 — UI primitives.** `AudioButton` (purple, ≥88px, auto-play on mount), `ChoiceCard` (≥72px,
   **press feedback on `pointerdown` ≤100ms**, ≥8px gap), `ProgressDots`, `StickerBadge`, `Button`.
   Animate **`transform`/`opacity` only**; memoize cards; reduced-motion aware. See CLAUDE.md
@@ -97,6 +98,14 @@ Legend: ☐ not started · ◐ in progress · ☑ done
   preload of theme audio + images, install prompt. See CLAUDE.md "Performance & native feel".
   (Watch the stale-cache gotcha noted in the builder's memory.)
 - ☐ **27 — Deploy to Vercel.** Production deploy, real-iPad test pass, env wiring.
+
+## V2 candidates (tracked, not now)
+
+- ☐ **Original SVG mascot art for the sticker bank.** Replace the Phase-1 emoji placeholders in
+  `src/data/stickers/sticker-bank.ts` with original drawn SVG characters (boy + girl sets, 30 each),
+  keeping the existing `id`s stable so earned stickers don't reset. Verify rendering on the real iPad.
+- ☐ **Sticker-set picker in settings.** Let a child switch their default `stickerSet` (boy/girl) —
+  it's a soft default today, not exposed in UI yet.
 
 ---
 
