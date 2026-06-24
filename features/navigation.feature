@@ -18,7 +18,7 @@ Feature: Child navigation — chooser to island map
     And I should see "Read"
     And I should see "Write"
     When I tap "Listen"
-    Then I should see "The rounds for this hut arrive"
+    Then I should see the audio button
 
   Scenario: Locked islands are not enterable
     When I tap "Sunny"

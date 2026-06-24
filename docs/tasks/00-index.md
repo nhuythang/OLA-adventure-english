@@ -51,14 +51,14 @@ Legend: ☐ not started · ◐ in progress · ☑ done
   (Listen/Speak/Read/Write), each with skill icon, the child's per-skill **level chip**, and a done
   check; all huts tappable (mastery gates the milestone, not play). All-done → master-sticker banner.
   `[skill]` route is a task-08/09 stub. *(Done — PR #8.)*
-- ◐ **08 — Engine core (the heart).** `src/lib/engine/`: round sequencing, **scaffold-and-reveal**
-  (1st miss = replay + dim one; 2nd = highlight + narrate), **no-fail retry**, 3-miss auto-ease,
-  **80% mastery** decision, specific-feedback hooks, `reviewPool` param (empty until P2). Heavily
-  unit-tested. Port/generalize from `lla`'s lesson engine. **Verify the scaffold guardrail first.**
-  *(Started: `choices.ts` (rule 8 — random answer position, stable across retries) + `scoring.ts`
-  (rule 9 — first-try-only accuracy & 80% mastery) landed in PR #5. Round state machine pending.)*
-- ☐ **09 — Listen hut (L1+L2).** First hut end-to-end through the engine. L1: hear word → 2 picture
-  choices; L2: 3 choices, no hint. e2e: complete a hut, earn its sticker.
+- ☑ **08 — Engine core (the heart).** `src/lib/engine/`: pure `hut-machine.ts` reducer (round
+  sequencing, **scaffold-and-reveal** — 1st miss dims tapped + replays, 2nd reveals + narrates;
+  **no-fail retry**; 3-in-a-row **auto-ease** to 2 choices; client-shuffle via `prepare` to avoid
+  SSR mismatch) + `use-hut-engine.ts` hook (audio/chime/advance side effects). `choices.ts` (rule 8)
+  + `scoring.ts` (rule 9, 80% mastery) from PR #5. Reducer heavily unit-tested. *(Done — PR #10.)*
+- ☑ **09 — Listen hut (L1+L2).** End-to-end through the engine: hear word → tap picture (Starter = 2
+  choices, Mover = 3), labels hidden so reading can't shortcut it. `hut-player.tsx` (reusable round
+  UI + result) + `listen-hut.tsx` + Weather content. e2e plays a full hut to the sticker result.
 - ☐ **10 — Read hut (L1+L2).** L1: match printed word → picture; L2: read word (no audio) → tap
   picture.
 - ☐ **11 — Write hut (L1+L2).** L1: trace letter/word along a guided finger path (SVG path +

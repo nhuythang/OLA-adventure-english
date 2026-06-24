@@ -3,12 +3,9 @@
 import { memo, useState, type ReactNode } from "react";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/cn";
+import type { ChoiceState } from "@/lib/types";
 
-// idle     — tappable, neutral
-// correct  — chosen correctly: green + check (flashes within ~200ms)
-// dimmed   — a wrong choice dimmed by the 1st-miss scaffold (not tappable)
-// revealed — the correct choice highlighted by the 2nd-miss scaffold (tappable)
-export type ChoiceState = "idle" | "correct" | "dimmed" | "revealed";
+export type { ChoiceState };
 
 interface Props {
   id: string;
@@ -19,6 +16,8 @@ interface Props {
   state?: ChoiceState;
   /** Hidden on Level 1 (pre-reader) screens; pictures + audio carry meaning. */
   showLabel?: boolean;
+  /** Marks the correct option — emitted as data-correct for the e2e contract. */
+  correct?: boolean;
   onSelect?: (id: string) => void;
 }
 
@@ -28,6 +27,7 @@ function ChoiceCardBase({
   visual,
   state = "idle",
   showLabel = true,
+  correct,
   onSelect,
 }: Props) {
   const [pressed, setPressed] = useState(false);
@@ -45,6 +45,7 @@ function ChoiceCardBase({
       type="button"
       data-choice={id}
       data-state={state}
+      data-correct={correct ? "true" : undefined}
       aria-label={label}
       aria-disabled={!interactive}
       onPointerDown={() => interactive && setPressed(true)}

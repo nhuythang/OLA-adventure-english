@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { TabletShell } from "@/components/game/tablet-shell";
 import { ScreenHeader } from "@/components/game/screen-header";
+import { ListenHut } from "@/components/huts/listen-hut";
 import { themeById } from "@/data/themes";
 import { SKILLS, type Skill } from "@/lib/types";
 
@@ -12,8 +13,6 @@ const HUT_LABEL: Record<Skill, string> = {
   write: "Write",
 };
 
-// Placeholder — the hut's rounds (engine + the per-skill mechanics) arrive in
-// tasks 08–12. This keeps island navigation working in the meantime.
 export default async function HutPage({
   params,
 }: {
@@ -21,9 +20,14 @@ export default async function HutPage({
 }) {
   const { childId, themeId, skill } = await params;
   if (!SKILLS.includes(skill as Skill)) notFound();
+
+  // Listen is built (tasks 08–09). Speak/Read/Write arrive in tasks 10–12.
+  if (skill === "listen") {
+    return <ListenHut childId={childId} themeId={themeId} />;
+  }
+
   const theme = themeById(themeId);
   const label = HUT_LABEL[skill as Skill];
-
   return (
     <TabletShell>
       <ScreenHeader title={`${label} hut`} />
@@ -32,7 +36,7 @@ export default async function HutPage({
           {label} hut — {theme?.title}
         </h1>
         <p className="text-sm font-semibold text-ink-muted">
-          The rounds for this hut arrive in tasks 08–12.
+          This hut arrives in tasks 10–12.
         </p>
         <Link
           href={`/child/${childId}/island/${themeId}`}

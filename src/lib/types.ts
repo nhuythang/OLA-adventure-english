@@ -12,6 +12,11 @@ export type Level = "starter" | "mover" | "flyer";
 
 export const SKILLS: readonly Skill[] = ["listen", "speak", "read", "write"];
 
+// Visual state of a choice option during a round (engine + ChoiceCard share it).
+// idle — tappable · correct — chosen right · dimmed — 1st-miss scaffold ·
+// revealed — 2nd-miss highlight of the correct answer.
+export type ChoiceState = "idle" | "correct" | "dimmed" | "revealed";
+
 // ---- Stickers (the only reward currency, spec §6) ----
 
 export type StickerRarity = "common" | "rare" | "epic" | "legendary";
