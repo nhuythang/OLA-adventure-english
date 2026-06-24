@@ -5,6 +5,10 @@
 // item and keep the result stable across that question's retries (memoize it) —
 // options must not jump after a wrong tap, or the scaffold-and-reveal flow
 // becomes disorienting. Re-shuffle only when moving to the next question.
+//
+// SSR NOTE: never call these during a server render (Math.random would make
+// server and client HTML differ → hydration mismatch). Shuffle in client state
+// after mount (useEffect / an event), which is where the hut engine lives.
 
 // Optional RNG in [0,1) for deterministic tests; defaults to Math.random.
 export type Rng = () => number;

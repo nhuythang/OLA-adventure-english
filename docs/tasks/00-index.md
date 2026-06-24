@@ -37,10 +37,11 @@ Legend: ☐ not started · ◐ in progress · ☑ done
   `looseMatch` for accented speakers, **graceful degrade** to null/self-rate); `sounds.ts` (**Web
   Audio API** — synthesized chimes, **unlock `AudioContext` on first gesture**, no `<audio>` tags).
   Unit-tested (matching + SSR guards). *(Done — PR #4.)*
-- ☐ **05 — UI primitives.** `AudioButton` (purple, ≥88px, auto-play on mount), `ChoiceCard` (≥72px,
-  **press feedback on `pointerdown` ≤100ms**, ≥8px gap), `ProgressDots`, `StickerBadge`, `Button`.
-  Animate **`transform`/`opacity` only**; memoize cards; reduced-motion aware. See CLAUDE.md
-  "Performance & native feel".
+- ☑ **05 — UI primitives.** `AudioButton` (coral, ≥88px, auto-play on mount), `ChoiceCard` (≥128px,
+  **press feedback on `pointerdown`**, idle/correct/dimmed/revealed states), `ProgressDots`,
+  `StickerBadge` (puffy/locked, rarity ring), `Button` (primary/secondary, tactile). Animate
+  **`transform`/`opacity` only**; cards memoized; reduced-motion aware. *(Done — PR #6. Fixed a
+  hydration mismatch: shuffle on the client after mount, never during SSR.)*
 - ☐ **06 — Sticker book home + island map.** Sticker book is the landing screen (locked/unlocked
   slots). Map shows theme islands; only unlocked islands are enterable. Mock progress. Use the
   **View Transitions API** for screen-to-screen navigation (graceful degrade) — CLAUDE.md "native feel".
