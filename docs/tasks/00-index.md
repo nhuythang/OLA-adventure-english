@@ -47,8 +47,10 @@ Legend: ☐ not started · ◐ in progress · ☑ done
   dashed/locked). Mock progress (`data/mock-progress.ts`), `data/themes.ts`. Cross-screen
   `@view-transition: navigation auto` (graceful degrade; reduced-motion off). Island route is a
   task-07 stub. *(Done — PR #7.)*
-- ☐ **07 — Island screen (4 huts).** Enter an island → 4 hut cards (Listen/Speak/Read/Write) with
-  done/available state and the hut sticker each grants.
+- ☑ **07 — Island screen (4 huts).** `/child/[id]/island/[themeId]` → theme header + 2×2 hut grid
+  (Listen/Speak/Read/Write), each with skill icon, the child's per-skill **level chip**, and a done
+  check; all huts tappable (mastery gates the milestone, not play). All-done → master-sticker banner.
+  `[skill]` route is a task-08/09 stub. *(Done — PR #8.)*
 - ◐ **08 — Engine core (the heart).** `src/lib/engine/`: round sequencing, **scaffold-and-reveal**
   (1st miss = replay + dim one; 2nd = highlight + narrate), **no-fail retry**, 3-miss auto-ease,
   **80% mastery** decision, specific-feedback hooks, `reviewPool` param (empty until P2). Heavily
