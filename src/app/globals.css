@@ -77,3 +77,14 @@ a,
   user-select: none;
   -webkit-user-select: none;
 }
+
+/* Opportunistic cross-screen view transition; supported browsers animate the
+   morph, others cut instantly. Reduced motion disables it. */
+@view-transition {
+  navigation: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+}
