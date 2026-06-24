@@ -21,14 +21,17 @@ Legend: ☐ not started · ◐ in progress · ☑ done
 - ☑ **01 — Project scaffold.** Next 16 + TS strict + Tailwind v4 + vitest + playwright-bdd, mirroring
   `lla`. `dev` + `dev:demo` scripts, `cn.ts`, path aliases, lint. App boots to a placeholder home.
   *(Done — branch `task/01-project-scaffold`; tsc/lint/unit/build/e2e green.)*
-- ☐ **02 — Design tokens & global styles.** Palette + fonts (Fredoka/Nunito via `next/font`) + 8px
+- ☑ **02 — Design tokens & global styles.** Palette + fonts (Fredoka/Nunito via `next/font`) + 8px
   spacing as CSS vars in `globals.css`; Tailwind v4 `@theme`. `TabletShell` + `ScreenHeader` chrome.
   Add the **global native-feel CSS** (`-webkit-tap-highlight-color: transparent`, `touch-callout`,
   `user-select: none`, `overscroll-behavior: none`, `touch-action: manipulation` on interactives) —
   see CLAUDE.md "Performance & native feel". Verify contrast ≥ 4.5:1.
-- ☐ **03 — Shared types & mock children.** `src/lib/types.ts`: `Theme`, `Hut`, `Skill`
-  (`listen|speak|read|write`), `Level` (`starter|mover|flyer`), `RoundItem`, `Attempt`, `Sticker`,
-  `ChildProfile` (per-skill level map). Mock `children.ts` + dev level toggle scaffold.
+  *(Done — PR #2; contrast-safe `*-dark` tokens; no star counter, stickers-only.)*
+- ☑ **03 — Shared types, mock children & sticker bank.** `src/lib/types.ts`: `Theme`, `Skill`
+  (`listen|speak|read|write`), `Level` (`starter|mover|flyer`), `Attempt`, `ThemeProgress`,
+  `CharacterSticker`/`StickerRarity`/`StickerSet`, `ChildProfile` (per-skill level map). Mock
+  `children.ts` (Milo/Sunny). **`data/stickers/sticker-bank.ts` — 30 boy + 30 girl original mascot
+  stickers** with rarity tiers (legendary = theme-master). Unit-tested (bank integrity).
 - ☐ **04 — Speech + ASR + sound wrappers.** `speech.ts` (SpeechSynthesis, SSR-guarded, **never
   `.cancel()`**, `onEnd` callback); `asr.ts` (SpeechRecognition, loose match, **graceful degrade** to
   self-rate); `sounds.ts` (**Web Audio API** — pre-decode chimes to `AudioBuffer`, **unlock the
