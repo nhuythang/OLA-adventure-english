@@ -105,10 +105,20 @@ generalized from the builder's existing `lla` lesson engine.)
 7. **Mastery gates the milestone, not the play.** A mastered hut can be replayed for fun; earned
    stickers stay earned. A theme is "mastered" at the can-do threshold, then a clear summary — no
    endless grind.
+8. **Randomize the correct answer's position every question.** Shuffle the choices (Fisher–Yates) so
+   the answer is never learnable as a fixed position. Shuffle **once per round item and keep the
+   order stable across that question's retries** — options must not jump after a wrong tap, or the
+   scaffold becomes disorienting. Re-shuffle only for the next question.
+9. **Only a first-try-correct tap counts toward accuracy/mastery.** A correct tap on the 2nd choice
+   (or after the scaffold reveals the answer) completes the round but does **not** count as correct —
+   this stops a child from tapping randomly until they hit it and "earning" mastery. `Attempt.
+   firstTryCorrect` is the single source of truth for scoring; hut mastery (≈80%) is computed over
+   first-try-correct only. (Completing the round still earns the hut's sticker — no fail state.)
 
 > Anti-pattern to prevent: a "tap-fast-for-stars" quiz with no scaffold, or hiding the answer
 > inside the hint. The scaffold-and-reveal flow (rule 3) is the guardrail — verify it first in any
-> engine change.
+> engine change. Rules 8–9 are the other half: random position + first-try-only scoring stop
+> guess-spamming from masquerading as learning.
 
 ---
 
