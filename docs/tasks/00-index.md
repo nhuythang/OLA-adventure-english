@@ -59,8 +59,10 @@ Legend: ☐ not started · ◐ in progress · ☑ done
 - ☑ **09 — Listen hut (L1+L2).** End-to-end through the engine: hear word → tap picture (Starter = 2
   choices, Mover = 3), labels hidden so reading can't shortcut it. `hut-player.tsx` (reusable round
   UI + result) + `listen-hut.tsx` + Weather content. e2e plays a full hut to the sticker result.
-- ☐ **10 — Read hut (L1+L2).** L1: match printed word → picture; L2: read word (no audio) → tap
-  picture.
+- ☑ **10 — Read hut (L1+L2).** Read the printed word → tap the matching picture. Starter = audio
+  support + 2 choices; Mover = **no audio**, 3 choices; picture labels hidden so the word must be
+  read. Reuses `hut-player` (new `promptMode="word"` + `speakPrompts`) and a shared
+  `buildPictureQuestions`. e2e plays it through. *(Done — PR #11.)*
 - ☐ **11 — Write hut (L1+L2).** L1: trace letter/word along a guided finger path (SVG path +
   pointer tracking); L2: drag letter tiles to spell (picture + first-letter hint).
 - ☐ **12 — Speak hut (L1+L2).** L1: hear model → repeat → tap stars to self-rate (no mic). L2: ASR

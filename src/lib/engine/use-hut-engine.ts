@@ -17,13 +17,22 @@ interface Args {
   choiceCount: number;
   skill: Skill;
   themeId: string;
+  /** Speak the prompt/reveal aloud. False for Read L2 (read independently, no audio). */
+  speakPrompts?: boolean;
   onComplete?: (result: HutResult) => void;
 }
 
 // Delay after a correct tap so the green flash + chime register before advancing.
 const ADVANCE_MS = 950;
 
-export function useHutEngine({ questions, choiceCount, skill, themeId, onComplete }: Args) {
+export function useHutEngine({
+  questions,
+  choiceCount,
+  skill,
+  themeId,
+  speakPrompts = true,
+  onComplete,
+}: Args) {
   const [state, dispatch] = useReducer(hutReducer, { questions, choiceCount, skill, themeId }, initHutState);
 
   const onCompleteRef = useRef(onComplete);
@@ -43,7 +52,7 @@ export function useHutEngine({ questions, choiceCount, skill, themeId, onComplet
   // Auto-play the prompt when a new question is shown (behavior rule 2).
   useEffect(() => {
     lastMisses.current = 0;
-    if (state.ready && state.phase === "answering" && current) {
+    if (speakPrompts && state.ready && state.phase === "answering" && current) {
       speak(current.prompt);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -55,10 +64,10 @@ export function useHutEngine({ questions, choiceCount, skill, themeId, onComplet
     lastMisses.current = state.misses;
     if (!current) return;
     if (state.misses === 1) {
-      speak(current.prompt);
+      if (speakPrompts) speak(current.prompt);
     } else if (state.misses >= 2) {
       playTryAgain();
-      speak(current.reveal);
+      if (speakPrompts) speak(current.reveal);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.misses]);
@@ -92,7 +101,7 @@ export function useHutEngine({ questions, choiceCount, skill, themeId, onComplet
     },
     replay: () => {
       unlockAudio();
-      if (prompt) speak(prompt);
+      if (speakPrompts && prompt) speak(prompt);
     },
     restart: () => dispatch({ type: "restart", rng: Math.random }),
   };

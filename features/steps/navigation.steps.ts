@@ -11,7 +11,7 @@ Then("I should see the audio button", async ({ page }) => {
 
 // Tap the correct card each round (data-correct is the e2e contract) until the
 // result screen appears. Waits cover the dev compile + post-correct advance.
-When("I complete the listen hut", async ({ page }) => {
+When("I complete the hut", async ({ page }) => {
   for (let i = 0; i < 8; i++) {
     if (await page.getByText("Play again").count()) break;
     const correct = page.locator('[data-correct="true"]').first();

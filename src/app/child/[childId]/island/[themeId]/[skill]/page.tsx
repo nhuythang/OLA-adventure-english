@@ -3,6 +3,7 @@ import Link from "next/link";
 import { TabletShell } from "@/components/game/tablet-shell";
 import { ScreenHeader } from "@/components/game/screen-header";
 import { ListenHut } from "@/components/huts/listen-hut";
+import { ReadHut } from "@/components/huts/read-hut";
 import { themeById } from "@/data/themes";
 import { SKILLS, type Skill } from "@/lib/types";
 
@@ -21,9 +22,12 @@ export default async function HutPage({
   const { childId, themeId, skill } = await params;
   if (!SKILLS.includes(skill as Skill)) notFound();
 
-  // Listen is built (tasks 08–09). Speak/Read/Write arrive in tasks 10–12.
+  // Listen (08–09) and Read (10) are built. Speak/Write arrive in tasks 11–12.
   if (skill === "listen") {
     return <ListenHut childId={childId} themeId={themeId} />;
+  }
+  if (skill === "read") {
+    return <ReadHut childId={childId} themeId={themeId} />;
   }
 
   const theme = themeById(themeId);
@@ -36,7 +40,7 @@ export default async function HutPage({
           {label} hut — {theme?.title}
         </h1>
         <p className="text-sm font-semibold text-ink-muted">
-          This hut arrives in tasks 10–12.
+          This hut arrives in tasks 11–12.
         </p>
         <Link
           href={`/child/${childId}/island/${themeId}`}

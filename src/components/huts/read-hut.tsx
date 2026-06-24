@@ -8,24 +8,27 @@ import { buildPictureQuestions } from "@/lib/engine/picture-questions";
 
 const ROUNDS = 5;
 
-// Listen mechanic: hear a word → tap the matching picture. Labels are hidden
-// (a reader would otherwise just match text), so pictures + audio carry it.
-export function ListenHut({ childId, themeId }: { childId: string; themeId: string }) {
+// Read mechanic: read the printed word → tap the matching picture.
+// - Starter (L1): sight-word recognition, audio support on (hear the word).
+// - Mover  (L2): read independently, NO audio.
+// Labels on the picture choices stay hidden so the word must actually be read.
+export function ReadHut({ childId, themeId }: { childId: string; themeId: string }) {
   const child = childById(childId);
   const questions = useMemo(() => buildPictureQuestions(WEATHER_WORDS, ROUNDS), []);
   if (!child) return null;
 
-  // Starter = 2 choices, Mover/Flyer = 3 (Flyer sentence-listen is task 20).
-  const choiceCount = child.skillLevels.listen === "starter" ? 2 : 3;
+  const isStarter = child.skillLevels.read === "starter";
+  const choiceCount = isStarter ? 2 : 3;
 
   return (
     <HutPlayer
       childId={childId}
       themeId={themeId}
-      skill="listen"
+      skill="read"
       questions={questions}
       choiceCount={choiceCount}
-      promptMode="audio"
+      promptMode="word"
+      speakPrompts={isStarter}
       showLabels={false}
     />
   );
