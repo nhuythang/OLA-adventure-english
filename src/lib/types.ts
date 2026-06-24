@@ -42,6 +42,8 @@ export interface Theme {
   canDo: string;
   /** Display order on the map; lower unlocks first. */
   order: number;
+  /** Island visual — emoji content (placeholder art), rendered large on the map. */
+  emoji: string;
 }
 
 // ---- Child profile ----

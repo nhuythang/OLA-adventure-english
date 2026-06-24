@@ -42,9 +42,11 @@ Legend: ☐ not started · ◐ in progress · ☑ done
   `StickerBadge` (puffy/locked, rarity ring), `Button` (primary/secondary, tactile). Animate
   **`transform`/`opacity` only**; cards memoized; reduced-motion aware. *(Done — PR #6. Fixed a
   hydration mismatch: shuffle on the client after mount, never during SSR.)*
-- ☐ **06 — Sticker book home + island map.** Sticker book is the landing screen (locked/unlocked
-  slots). Map shows theme islands; only unlocked islands are enterable. Mock progress. Use the
-  **View Transitions API** for screen-to-screen navigation (graceful degrade) — CLAUDE.md "native feel".
+- ☑ **06 — Sticker book home + island map.** `/` chooser → `/child/[id]` sticker book (collection
+  grid, earned vs dashed-locked, Play CTA) → `/child/[id]/map` island map (Weather unlocked, rest
+  dashed/locked). Mock progress (`data/mock-progress.ts`), `data/themes.ts`. Cross-screen
+  `@view-transition: navigation auto` (graceful degrade; reduced-motion off). Island route is a
+  task-07 stub. *(Done — PR #7.)*
 - ☐ **07 — Island screen (4 huts).** Enter an island → 4 hut cards (Listen/Speak/Read/Write) with
   done/available state and the hut sticker each grants.
 - ◐ **08 — Engine core (the heart).** `src/lib/engine/`: round sequencing, **scaffold-and-reveal**

@@ -11,6 +11,9 @@ const testDir = defineBddConfig({
 
 export default defineConfig({
   testDir,
+  // Routes compile on first hit under the dev server; give assertions room to
+  // wait out that one-time compilation instead of the 5s default.
+  expect: { timeout: 15_000 },
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
