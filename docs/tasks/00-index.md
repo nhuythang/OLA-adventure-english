@@ -46,10 +46,12 @@ Legend: ☐ not started · ◐ in progress · ☑ done
   **View Transitions API** for screen-to-screen navigation (graceful degrade) — CLAUDE.md "native feel".
 - ☐ **07 — Island screen (4 huts).** Enter an island → 4 hut cards (Listen/Speak/Read/Write) with
   done/available state and the hut sticker each grants.
-- ☐ **08 — Engine core (the heart).** `src/lib/engine/`: round sequencing, **scaffold-and-reveal**
+- ◐ **08 — Engine core (the heart).** `src/lib/engine/`: round sequencing, **scaffold-and-reveal**
   (1st miss = replay + dim one; 2nd = highlight + narrate), **no-fail retry**, 3-miss auto-ease,
   **80% mastery** decision, specific-feedback hooks, `reviewPool` param (empty until P2). Heavily
   unit-tested. Port/generalize from `lla`'s lesson engine. **Verify the scaffold guardrail first.**
+  *(Started: `choices.ts` (rule 8 — random answer position, stable across retries) + `scoring.ts`
+  (rule 9 — first-try-only accuracy & 80% mastery) landed in PR #5. Round state machine pending.)*
 - ☐ **09 — Listen hut (L1+L2).** First hut end-to-end through the engine. L1: hear word → 2 picture
   choices; L2: 3 choices, no hint. e2e: complete a hut, earn its sticker.
 - ☐ **10 — Read hut (L1+L2).** L1: match printed word → picture; L2: read word (no audio) → tap
