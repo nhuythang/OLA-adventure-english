@@ -1,0 +1,181 @@
+// Pure builder for supabase/seed.sql. Kept free of any DB/IO so it is trivially
+// unit-testable (unit/seed.test.ts) and runs in CI without Postgres. The
+// generator (supabase/seed/generate-seed.ts) feeds it rows derived from the
+// Phase 1 mock data and writes the result to disk.
+//
+// Every statement is an idempotent INSERT … ON CONFLICT so the seed can be
+// re-applied on top of itself without error (re-running `supabase db reset` or
+// loading it twice).
+
+import type { Level, Skill, StickerRarity, StickerSet } from "@/lib/types";
+
+// ---- Row shapes (decoupled from the app types, matching the columns) ----
+
+export interface ThemeRow {
+  id: string;
+  title: string;
+  canDo: string;
+  sortOrder: number;
+  emoji: string;
+}
+
+export interface ItemRow {
+  id: string;
+  themeId: string;
+  word: string;
+  emoji: string;
+  vi: string;
+  minLevel: Level;
+  sortOrder: number;
+}
+
+export interface HutRow {
+  id: string;
+  themeId: string;
+  skill: Skill;
+}
+
+export interface StickerRow {
+  id: string;
+  name: string;
+  emoji: string;
+  set: StickerSet;
+  rarity: StickerRarity;
+  tags: string[];
+}
+
+export interface ChildRow {
+  id: string;
+  name: string;
+  avatar: string;
+  stickerSet: StickerSet;
+}
+
+export interface SkillLevelRow {
+  childId: string;
+  skill: Skill;
+  level: Level;
+}
+
+export interface SeedInput {
+  themes: ThemeRow[];
+  items: ItemRow[];
+  huts: HutRow[];
+  stickers: StickerRow[];
+  children: ChildRow[];
+  skillLevels: SkillLevelRow[];
+}
+
+// ---- SQL literal helpers ----
+
+/** A single-quoted SQL string literal with quotes escaped. */
+export function sqlString(value: string): string {
+  return `'${value.replace(/'/g, "''")}'`;
+}
+
+/** A Postgres text[] literal, e.g. ARRAY['a','b']::text[] (or empty default). */
+export function sqlTextArray(values: string[]): string {
+  if (values.length === 0) return "'{}'";
+  return `ARRAY[${values.map(sqlString).join(", ")}]::text[]`;
+}
+
+function valuesBlock(rows: string[]): string {
+  return rows.map((r) => `  (${r})`).join(",\n");
+}
+
+// ---- Per-table builders ----
+
+function themesSql(themes: ThemeRow[]): string {
+  const rows = themes.map((t) =>
+    [sqlString(t.id), sqlString(t.title), sqlString(t.canDo), t.sortOrder, sqlString(t.emoji)].join(", "),
+  );
+  return (
+    `insert into english_themes (id, title, can_do, sort_order, emoji) values\n${valuesBlock(rows)}\n` +
+    `on conflict (id) do update set title = excluded.title, can_do = excluded.can_do, ` +
+    `sort_order = excluded.sort_order, emoji = excluded.emoji;`
+  );
+}
+
+function itemsSql(items: ItemRow[]): string {
+  const rows = items.map((i) =>
+    [
+      sqlString(i.id),
+      sqlString(i.themeId),
+      sqlString(i.word),
+      sqlString(i.emoji),
+      sqlString(i.vi),
+      sqlString(i.minLevel),
+      i.sortOrder,
+    ].join(", "),
+  );
+  return (
+    `insert into english_items (id, theme_id, word, emoji, vi, min_level, sort_order) values\n${valuesBlock(rows)}\n` +
+    `on conflict (id) do update set theme_id = excluded.theme_id, word = excluded.word, ` +
+    `emoji = excluded.emoji, vi = excluded.vi, min_level = excluded.min_level, sort_order = excluded.sort_order;`
+  );
+}
+
+function hutsSql(huts: HutRow[]): string {
+  const rows = huts.map((h) => [sqlString(h.id), sqlString(h.themeId), sqlString(h.skill)].join(", "));
+  return (
+    `insert into huts (id, theme_id, skill) values\n${valuesBlock(rows)}\n` +
+    `on conflict (id) do update set theme_id = excluded.theme_id, skill = excluded.skill;`
+  );
+}
+
+function stickersSql(stickers: StickerRow[]): string {
+  const rows = stickers.map((s) =>
+    [sqlString(s.id), sqlString(s.name), sqlString(s.emoji), sqlString(s.set), sqlString(s.rarity), sqlTextArray(s.tags)].join(
+      ", ",
+    ),
+  );
+  return (
+    `insert into stickers (id, name, emoji, "set", rarity, tags) values\n${valuesBlock(rows)}\n` +
+    `on conflict (id) do update set name = excluded.name, emoji = excluded.emoji, ` +
+    `"set" = excluded."set", rarity = excluded.rarity, tags = excluded.tags;`
+  );
+}
+
+function childrenSql(children: ChildRow[]): string {
+  const rows = children.map((c) =>
+    [sqlString(c.id), sqlString(c.name), sqlString(c.avatar), sqlString(c.stickerSet)].join(", "),
+  );
+  return (
+    `insert into children (id, name, avatar, sticker_set) values\n${valuesBlock(rows)}\n` +
+    `on conflict (id) do update set name = excluded.name, avatar = excluded.avatar, ` +
+    `sticker_set = excluded.sticker_set;`
+  );
+}
+
+function skillLevelsSql(levels: SkillLevelRow[]): string {
+  const rows = levels.map((l) => [sqlString(l.childId), sqlString(l.skill), sqlString(l.level)].join(", "));
+  return (
+    `insert into child_skill_levels (child_id, skill, level) values\n${valuesBlock(rows)}\n` +
+    `on conflict (child_id, skill) do update set level = excluded.level;`
+  );
+}
+
+/** Build the full seed.sql contents from rows derived from the mock data. */
+export function buildSeedSql(input: SeedInput): string {
+  const header =
+    "-- GENERATED by supabase/seed/generate-seed.ts — do not edit by hand.\n" +
+    "-- Source of truth is the Phase 1 mock data in src/data/. Regenerate with:\n" +
+    "--   npx tsx supabase/seed/generate-seed.ts\n";
+
+  const sections = [
+    "-- Content: theme islands",
+    themesSql(input.themes),
+    "-- Content: vocabulary items",
+    itemsSql(input.items),
+    "-- Content: skill huts",
+    hutsSql(input.huts),
+    "-- Content: sticker catalog",
+    stickersSql(input.stickers),
+    "-- Children (parent_id backfilled when auth lands in task 18)",
+    childrenSql(input.children),
+    "-- Per-skill levels",
+    skillLevelsSql(input.skillLevels),
+  ];
+
+  return `${header}\n${sections.join("\n\n")}\n`;
+}

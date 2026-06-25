@@ -1,0 +1,13 @@
+# Supabase CLI config. `supabase start` / `supabase db reset` read this; the
+# project id is used by `supabase link` for the hosted (free-tier) project.
+project_id = "ola-english-adventure"
+
+[db]
+# Local dev Postgres major version (matches Supabase hosted default).
+major_version = 17
+
+[db.seed]
+# Loaded after migrations on `supabase db reset`. Generated from the mock data —
+# see supabase/seed/generate-seed.ts.
+enabled = true
+sql_paths = ["./seed.sql"]
