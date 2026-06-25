@@ -8,7 +8,7 @@ import { StickerBadge } from "@/components/ui/sticker-badge";
 import { ViewTransitionLink } from "@/components/game/view-transition-link";
 import { childById } from "@/data/children";
 import { stickersForSet } from "@/data/stickers/sticker-bank";
-import { earnedStickerIds } from "@/data/mock-progress";
+import { useChildProgress } from "@/lib/use-child-progress";
 
 // Tilts repeat so the grid feels hand-placed without per-item data.
 const TILTS = [-6, 4, -3, 5, -5, 3];
@@ -16,10 +16,11 @@ const TILTS = [-6, 4, -3, 5, -5, 3];
 export function StickerBookHome({ childId }: { childId: string }) {
   const router = useRouter();
   const child = childById(childId);
+  const progress = useChildProgress(childId);
   if (!child) return null;
 
   const stickers = stickersForSet(child.stickerSet);
-  const earned = new Set(earnedStickerIds(childId));
+  const earned = new Set(progress.earnedStickerIds);
 
   return (
     <TabletShell>

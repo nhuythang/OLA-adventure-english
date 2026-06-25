@@ -11,13 +11,6 @@ import { useHutEngine } from "@/lib/engine/use-hut-engine";
 import { type EngineQuestion } from "@/lib/engine/hut-machine";
 import type { Skill } from "@/lib/types";
 
-const HUT_LABEL: Record<Skill, string> = {
-  listen: "Listen",
-  speak: "Speak",
-  read: "Read",
-  write: "Write",
-};
-
 interface Props {
   childId: string;
   themeId: string;
@@ -51,8 +44,8 @@ export function HutPlayer({
       <HutResult
         childId={childId}
         themeId={themeId}
+        skill={skill}
         mastered={engine.result.mastered}
-        hutLabel={HUT_LABEL[skill]}
         onPlayAgain={engine.restart}
       />
     );

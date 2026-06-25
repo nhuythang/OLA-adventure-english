@@ -1,5 +1,6 @@
 import { TabletShell } from "@/components/game/tablet-shell";
 import { ViewTransitionLink } from "@/components/game/view-transition-link";
+import { ResetProgressButton } from "@/components/dev/reset-progress-button";
 import { CHILDREN } from "@/data/children";
 
 // Minimal "who's playing?" chooser. The full picker + dev level toggle is task 16.
@@ -23,6 +24,7 @@ export default function HomePage() {
             </ViewTransitionLink>
           ))}
         </div>
+        <ResetProgressButton />
       </div>
     </TabletShell>
   );

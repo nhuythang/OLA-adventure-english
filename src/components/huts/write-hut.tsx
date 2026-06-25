@@ -54,8 +54,8 @@ export function WriteHut({ childId, themeId }: { childId: string; themeId: strin
       <HutResult
         childId={childId}
         themeId={themeId}
+        skill="write"
         mastered={meetsMastery(attempts)}
-        hutLabel="Write"
         onPlayAgain={restart}
       />
     );
