@@ -1,20 +1,39 @@
-# Supabase — schema & seed (Phase 2, task 17)
+# Supabase — schema, seed & auth (Phase 2, tasks 17–18)
 
-This directory defines the database. **Task 17 is schema + seed only** — no app
-code talks to Supabase yet. Parent auth + RLS policies land in task 18, and the
-app's persistence moves off `localStorage` in task 19. Until then the game runs
-entirely on `localStorage` exactly as in Phase 1.
+This directory defines the database. **Child mode still runs entirely on
+`localStorage`** (Phase 1, unchanged) — only the `/parent` area uses Supabase.
+The app's per-child progress moves off `localStorage` in task 19.
 
 ## Layout
 
-- `migrations/0001_initial_schema.sql` — enums, tables, indexes, RLS. Content
-  tables (`english_themes`, `english_items`, `huts`, `stickers`) are world-readable;
-  per-child tables (`children`, `child_skill_levels`, `learning_attempts`) have RLS
-  enabled but **no policies yet** (locked until task 18 scopes them to `auth.uid()`).
+- `migrations/0001_initial_schema.sql` (task 17) — enums, tables, indexes, RLS.
+  Content tables (`english_themes`, `english_items`, `huts`, `stickers`) are
+  world-readable; per-child tables (`children`, `child_skill_levels`,
+  `learning_attempts`) have RLS enabled.
+- `migrations/0002_auth_policies.sql` (task 18) — `parents` profile (1:1 with
+  `auth.users`, holds the gate `pin_hash`), an `on_auth_user_created` trigger,
+  the `children.parent_id → parents` FK, and the **per-child RLS policies**
+  scoping access to `auth.uid()` via parent ownership.
 - `seed.sql` — **generated**, do not edit by hand. Loads the Phase 1 mock data
   (4 themes, 9 Weather words, 16 huts, the 60-sticker catalog, Milo + Sunny and
   their per-skill levels).
 - `seed/generate-seed.ts` — regenerates `seed.sql` from `src/data/`.
+
+## One-time parent setup (task 18)
+
+The parent area uses a **single shared account** that owns both children.
+
+1. Create the parent: Dashboard → **Authentication → Users → Add user** (email +
+   password, "auto-confirm"). The trigger auto-creates its `parents` row.
+2. Link the seeded children to that account (SQL Editor):
+   ```sql
+   update children
+   set parent_id = (select id from auth.users where email = '<parent-email>')
+   where id in ('milo', 'sunny');
+   ```
+3. Set `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` (see
+   `.env.example`) locally and in Vercel. The PIN is set on the parent's first
+   visit to `/parent`.
 
 ## Regenerate the seed
 

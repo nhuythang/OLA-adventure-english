@@ -7,7 +7,8 @@ plan is [`docs/tasks/00-index.md`](tasks/00-index.md); the *why* is
 ## Status (2026-06-25)
 
 **Phase 1 vertical slice is COMPLETE and deployed.** Tasks **01–16 all ☑**.
-**Phase 2 started: task 17 (Supabase schema + seed) ☑** — schema/seed only, no app wiring yet.
+**Phase 2 started: tasks 17 (schema + seed) ☑ and 18 (parent auth + PIN gate) ☑.**
+Child mode is still 100% localStorage; only `/parent` uses Supabase. Next: 19 (migrate persistence).
 
 - **Live (production):** https://ola-adventure-english.vercel.app
 - The full loop works end-to-end: **chooser → sticker book → map → Weather island →
@@ -84,9 +85,24 @@ Verify all of tsc/lint/unit/build/e2e before pushing. After a PR: watch CI with
   Phase 1 mock data. Regenerate with `npx tsx supabase/seed/generate-seed.ts`. See `supabase/README.md`.
 - The Supabase CLI is a dev-only tool (via `npx`/global) — **not** an app dependency, so CI/Vercel
   builds are unaffected and nothing touches `localStorage` persistence yet.
-- **Not applied to a live DB yet** (no local Docker/Postgres in the build env). Task 18 links the
-  hosted free-tier project (`supabase link` → `supabase db push`) and adds the RLS policies that
-  scope per-child tables to `auth.uid()` via `children.parent_id`.
+- Schema **was applied to the hosted free-tier project** by the owner (`supabase db push` of
+  migration 0001 succeeded — schema validated). Migration `0002_auth_policies.sql` (task 18) still
+  needs `supabase db push` to the hosted DB.
+
+## Parent auth + PIN (task 18)
+
+- `/parent` is the only Supabase-backed surface; **child mode stays 100% localStorage.** Entry is a
+  discreet lock icon on the chooser (`src/app/page.tsx`).
+- Clients in `src/lib/supabase/{client,server,middleware}.ts` (`@supabase/ssr`, cookie sessions), all
+  **env-guarded** — empty `NEXT_PUBLIC_SUPABASE_*` ⇒ "not configured" ⇒ signed-out passthrough, so
+  dev:demo + e2e never touch Supabase. Root `middleware.ts` refreshes the session, guards `/parent`,
+  and **drops the PIN cookie on `/child`** (re-prompt on return).
+- Server actions in `src/app/parent/actions.ts` (`parentSignIn`/`parentSignOut`/`submitPin`). PIN is
+  scrypt-hashed per parent (`src/lib/auth/pin.ts`, server-only), set on first `/parent` visit.
+  `PinGate` (`src/components/parent/`) does setup then entry. Parent strings are Vietnamese in `src/i18n/`.
+- **One-time setup before it works:** create the parent in the Supabase dashboard and backfill
+  `children.parent_id` — see `supabase/README.md`. Set the env vars locally + in Vercel.
+- Two new deps: `@supabase/supabase-js`, `@supabase/ssr` (pre-approved under "Supabase" in the stack).
 
 ## What's next
 
