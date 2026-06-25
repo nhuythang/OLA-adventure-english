@@ -5,6 +5,8 @@ import { HutPlayer } from "@/components/huts/hut-player";
 import { childById } from "@/data/children";
 import { weatherWordsForLevel } from "@/data/themes/weather";
 import { buildPictureQuestions } from "@/lib/engine/picture-questions";
+import { useChildProgress } from "@/lib/use-child-progress";
+import { effectiveLevel } from "@/lib/storage";
 
 const ROUNDS = 5;
 
@@ -14,7 +16,8 @@ const ROUNDS = 5;
 // Labels on the picture choices stay hidden so the word must actually be read.
 export function ReadHut({ childId, themeId }: { childId: string; themeId: string }) {
   const child = childById(childId);
-  const level = child?.skillLevels.read ?? "starter";
+  const progress = useChildProgress(childId);
+  const level = child ? effectiveLevel(child, progress, "read") : "starter";
   const questions = useMemo(() => buildPictureQuestions(weatherWordsForLevel(level), ROUNDS), [level]);
   if (!child) return null;
 

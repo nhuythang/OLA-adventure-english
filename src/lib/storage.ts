@@ -4,7 +4,7 @@
 import { childById, CHILDREN } from "@/data/children";
 import { stickersForSet } from "@/data/stickers/sticker-bank";
 import { pickNextSticker } from "@/lib/engine/award";
-import { SKILLS, type CharacterSticker, type Skill } from "@/lib/types";
+import { SKILLS, type CharacterSticker, type ChildProfile, type Level, type Skill } from "@/lib/types";
 
 export interface ChildProgress {
   /** Ordered list of earned sticker ids — drives the one-by-one progression. */
@@ -15,10 +15,12 @@ export interface ChildProgress {
   masteredHuts: Record<string, Skill[]>;
   /** Themes whose 4 huts are all mastered (master sticker granted, next unlocked). */
   masteredThemes: string[];
+  /** Per-skill level overrides (dev/parent toggle); falls back to the profile default. */
+  skillLevels: Partial<Record<Skill, Level>>;
 }
 
 function empty(): ChildProgress {
-  return { earnedStickerIds: [], completedHuts: {}, masteredHuts: {}, masteredThemes: [] };
+  return { earnedStickerIds: [], completedHuts: {}, masteredHuts: {}, masteredThemes: [], skillLevels: {} };
 }
 
 const keyFor = (childId: string) => `ola:progress:${childId}`;
@@ -34,6 +36,7 @@ function read(childId: string): ChildProgress {
       completedHuts: parsed.completedHuts ?? {},
       masteredHuts: parsed.masteredHuts ?? {},
       masteredThemes: parsed.masteredThemes ?? [],
+      skillLevels: parsed.skillLevels ?? {},
     };
   } catch {
     return empty();
@@ -166,4 +169,17 @@ export function masteredHuts(childId: string, themeId: string): Skill[] {
 }
 export function masteredThemeIds(childId: string): string[] {
   return read(childId).masteredThemes;
+}
+
+// ---- Per-skill level override (dev/parent toggle, task 16) ----
+export function setSkillLevel(childId: string, skill: Skill, level: Level): void {
+  const p = read(childId);
+  p.skillLevels = { ...p.skillLevels, [skill]: level };
+  write(childId, p);
+}
+
+// The level actually in effect for a skill: override if set, else the profile
+// default. Pure — given the child and their progress.
+export function effectiveLevel(child: ChildProfile, progress: ChildProgress, skill: Skill): Level {
+  return progress.skillLevels[skill] ?? child.skillLevels[skill];
 }

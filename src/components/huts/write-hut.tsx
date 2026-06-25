@@ -14,6 +14,8 @@ import { weatherWordsForLevel } from "@/data/themes/weather";
 import { letterPath } from "@/data/letters";
 import { playCorrect } from "@/lib/sounds";
 import { meetsMastery } from "@/lib/engine/scoring";
+import { useChildProgress } from "@/lib/use-child-progress";
+import { effectiveLevel } from "@/lib/storage";
 import type { Attempt } from "@/lib/types";
 
 const ROUNDS = 3; // writing is effortful — fewer rounds than the tap huts
@@ -22,13 +24,15 @@ const ADVANCE_MS = 800;
 export function WriteHut({ childId, themeId }: { childId: string; themeId: string }) {
   const router = useRouter();
   const child = childById(childId);
+  const progress = useChildProgress(childId);
   const [index, setIndex] = useState(0);
   const [attempts, setAttempts] = useState<Attempt[]>([]);
   const [done, setDone] = useState(false);
   if (!child) return null;
 
-  const isStarter = child.skillLevels.write === "starter";
-  const words = weatherWordsForLevel(child.skillLevels.write).slice(0, ROUNDS);
+  const level = effectiveLevel(child, progress, "write");
+  const isStarter = level === "starter";
+  const words = weatherWordsForLevel(level).slice(0, ROUNDS);
   const word = words[index]!;
 
   function finishRound(misses: number) {

@@ -5,6 +5,8 @@ import { HutPlayer } from "@/components/huts/hut-player";
 import { childById } from "@/data/children";
 import { weatherWordsForLevel } from "@/data/themes/weather";
 import { buildPictureQuestions } from "@/lib/engine/picture-questions";
+import { useChildProgress } from "@/lib/use-child-progress";
+import { effectiveLevel } from "@/lib/storage";
 
 const ROUNDS = 5;
 
@@ -12,7 +14,8 @@ const ROUNDS = 5;
 // (a reader would otherwise just match text), so pictures + audio carry it.
 export function ListenHut({ childId, themeId }: { childId: string; themeId: string }) {
   const child = childById(childId);
-  const level = child?.skillLevels.listen ?? "starter";
+  const progress = useChildProgress(childId);
+  const level = child ? effectiveLevel(child, progress, "listen") : "starter";
   const questions = useMemo(() => buildPictureQuestions(weatherWordsForLevel(level), ROUNDS), [level]);
   if (!child) return null;
 

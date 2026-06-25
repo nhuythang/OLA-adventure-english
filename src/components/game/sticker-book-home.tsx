@@ -6,6 +6,7 @@ import { TabletShell } from "@/components/game/tablet-shell";
 import { ScreenHeader } from "@/components/game/screen-header";
 import { StickerBadge } from "@/components/ui/sticker-badge";
 import { ViewTransitionLink } from "@/components/game/view-transition-link";
+import { LevelToggles } from "@/components/dev/level-toggles";
 import { childById } from "@/data/children";
 import { stickersForSet } from "@/data/stickers/sticker-bank";
 import { useChildProgress } from "@/lib/use-child-progress";
@@ -70,6 +71,8 @@ export function StickerBookHome({ childId }: { childId: string }) {
           />
         ))}
       </div>
+
+      <LevelToggles childId={childId} />
     </TabletShell>
   );
 }

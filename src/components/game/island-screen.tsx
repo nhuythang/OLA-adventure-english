@@ -8,6 +8,7 @@ import { ViewTransitionLink } from "@/components/game/view-transition-link";
 import { childById } from "@/data/children";
 import { themeById } from "@/data/themes";
 import { useChildProgress } from "@/lib/use-child-progress";
+import { effectiveLevel } from "@/lib/storage";
 import { SKILLS, type Level, type Skill } from "@/lib/types";
 
 const HUT: Record<Skill, { label: string; icon: LucideIcon; accent: string }> = {
@@ -59,7 +60,7 @@ export function IslandScreen({ childId, themeId }: { childId: string; themeId: s
           const meta = HUT[skill];
           const Icon = meta.icon;
           const isDone = done.has(skill);
-          const level = child.skillLevels[skill];
+          const level = effectiveLevel(child, progress, skill);
           return (
             <ViewTransitionLink
               key={skill}

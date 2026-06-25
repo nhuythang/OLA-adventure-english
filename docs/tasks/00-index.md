@@ -86,8 +86,10 @@ Legend: ☐ not started · ◐ in progress · ☑ done
   awards one-by-one + idempotent; `nextStickerToCollect`; `clearAllProgress` dev reset on the chooser.
   Read reactively via `useChildProgress` (useSyncExternalStore → no hydration mismatch); the three
   screens now read real progress. e2e: earn → reload → still saved. Supabase migration is task 19.
-- ☐ **16 — Child picker + dev level toggle.** Pick a mock child; per-skill level toggle for testing
-  (Starter/Mover) without auth. **Phase 1 done = hand the iPad to a kid and they finish a hut alone.**
+- ☑ **16 — Child picker + dev level toggle.** Chooser picks a child (task 06); added a per-skill
+  **Levels (dev)** toggle on the sticker book that flips Starter↔Mover, **saved per child** in the
+  progress store and read by all huts + the island chip via `effectiveLevel`. No auth needed.
+  *(Done — PR #18.)* **Phase 1 complete — hand the iPad to a kid and they finish a hut alone.**
 
 ## Phase 2 — Level 3 + second theme + Supabase
 
