@@ -13,6 +13,17 @@ Then("I should see the trace pad", async ({ page }) => {
   await expect(page.getByTestId("trace-pad")).toBeVisible();
 });
 
+// Tap a self-rate star each round until the result appears (Speak L1 / no-ASR).
+When("I self-rate through the hut", async ({ page }) => {
+  for (let round = 0; round < 8; round++) {
+    if (await page.getByText("Play again").count()) break;
+    const star = page.getByTestId("self-rate-star").first();
+    await star.waitFor({ state: "visible", timeout: 15_000 });
+    await star.click();
+    await page.waitForTimeout(1000);
+  }
+});
+
 // Sweep the pointer densely across the trace pad to light every waypoint, for
 // each round, until the result screen appears.
 When("I trace every letter", async ({ page }) => {
