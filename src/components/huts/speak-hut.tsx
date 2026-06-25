@@ -14,6 +14,8 @@ import { weatherWordsForLevel } from "@/data/themes/weather";
 import { playCorrect } from "@/lib/sounds";
 import { meetsMastery } from "@/lib/engine/scoring";
 import { isAsrAvailable, listenOnce, looseMatch } from "@/lib/asr";
+import { useChildProgress } from "@/lib/use-child-progress";
+import { effectiveLevel } from "@/lib/storage";
 import type { Attempt } from "@/lib/types";
 
 const ROUNDS = 4;
@@ -50,6 +52,7 @@ function SelfRate({ onRate }: { onRate: () => void }) {
 export function SpeakHut({ childId, themeId }: { childId: string; themeId: string }) {
   const router = useRouter();
   const child = childById(childId);
+  const progress = useChildProgress(childId);
   const [index, setIndex] = useState(0);
   const [attempts, setAttempts] = useState<Attempt[]>([]);
   const [done, setDone] = useState(false);
@@ -57,10 +60,11 @@ export function SpeakHut({ childId, themeId }: { childId: string; themeId: strin
   const [missed, setMissed] = useState(false);
   if (!child) return null;
 
-  const words = weatherWordsForLevel(child.skillLevels.speak).slice(0, ROUNDS);
+  const level = effectiveLevel(child, progress, "speak");
+  const words = weatherWordsForLevel(level).slice(0, ROUNDS);
   const word = words[index]!;
   // ASR only for Mover+ AND where the browser supports it (rarely on iPad).
-  const useAsr = child.skillLevels.speak !== "starter" && isAsrAvailable();
+  const useAsr = level !== "starter" && isAsrAvailable();
 
   function finish(firstTry: boolean) {
     playCorrect();

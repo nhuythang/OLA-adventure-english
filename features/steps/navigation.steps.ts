@@ -75,6 +75,14 @@ Given("I reload the page", async ({ page }) => {
   await page.reload();
 });
 
+When("I toggle the {string} level", async ({ page }, skill: string) => {
+  await page.getByTestId(`level-${skill}`).click();
+});
+
+Then("the {string} level shows {string}", async ({ page }, skill: string, level: string) => {
+  await expect(page.getByTestId(`level-${skill}`)).toContainText(level);
+});
+
 When("I tap {string}", async ({ page }, name: string) => {
   // Match a link (navigation) OR a button (e.g. "Keep going" in the reward
   // overlay). .or().first().click() auto-waits for either to render, absorbing
