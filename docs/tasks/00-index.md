@@ -99,8 +99,14 @@ Legend: ☐ not started · ◐ in progress · ☑ done
   deferred to task 18. `seed.sql` is **generated** from the Phase 1 mock data by
   `seed/generate-seed.ts` (pure `buildSeedSql` in `src/lib/seed/`, unit-tested so it can't drift).
   No app code touches Supabase yet (that's 18/19); the game still runs on `localStorage`.
-- ☐ **18 — Parent auth + PIN gate.** Supabase email+password login; PIN re-entry to enter parent
-  area from child mode.
+- ☑ **18 — Parent auth + PIN gate.** Supabase email+password login (`@supabase/ssr`, cookie
+  sessions), one shared parent account owning both children. `/parent` gated by `middleware.ts` +
+  server checks; a hashed (scrypt) per-parent PIN, set on first visit and **re-prompted when entering
+  from child mode** (middleware drops the unlock cookie on `/child`). `migrations/0002_auth_policies.sql`
+  adds the `parents` profile + trigger + per-child RLS policies. Discreet lock icon on the chooser is
+  the only entry. Vietnamese strings in `src/i18n/`. Child mode untouched (still localStorage).
+  Degrades to signed-out when Supabase env is unset (dev:demo / e2e). *(Schema + auth wiring; the
+  parent dashboard is task 24, persistence migration is task 19.)*
 - ☐ **19 — Migrate persistence to Supabase.** Move progress/stickers/attempts off localStorage;
   keep mock files as seeds. Per-child, multi-device.
 - ☐ **20 — Level 3 (Flyer) mechanics.** Listen: sentence → tap scene (4 choices). Read: sentence →

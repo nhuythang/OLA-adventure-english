@@ -1,3 +1,6 @@
+import Link from "next/link";
+import { Lock } from "lucide-react";
+
 import { TabletShell } from "@/components/game/tablet-shell";
 import { ViewTransitionLink } from "@/components/game/view-transition-link";
 import { ResetProgressButton } from "@/components/dev/reset-progress-button";
@@ -7,6 +10,17 @@ import { CHILDREN } from "@/data/children";
 export default function HomePage() {
   return (
     <TabletShell>
+      {/* Discreet parent entry — an icon (not text nav), out of a child's way,
+          gated by login + PIN. CLAUDE.md: no text-only navigation in child mode. */}
+      <div className="flex justify-end">
+        <Link
+          href="/parent"
+          aria-label="Khu vực phụ huynh"
+          className="flex h-11 w-11 items-center justify-center rounded-full bg-card text-ink-muted shadow-[0_3px_0_#E7DFD2] active:translate-y-[2px]"
+        >
+          <Lock className="h-5 w-5" aria-hidden />
+        </Link>
+      </div>
       <div className="flex flex-1 flex-col items-center justify-center gap-8 py-8">
         <h1 className="font-display text-3xl font-semibold text-ink">Who&apos;s playing?</h1>
         <div className="grid w-full max-w-md grid-cols-2 gap-5">
