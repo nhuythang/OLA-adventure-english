@@ -68,9 +68,10 @@ Legend: ☐ not started · ◐ in progress · ☑ done
   L2 (Mover): **tap letter tiles to spell** (picture + first-letter hint; wrong word shakes & clears,
   pure spelling logic unit-tested). Shared `HutResult` extracted; `animate-shake` keyframe added.
   e2e sweeps the trace pad through all rounds. *(Done — PR #13.)*
-- ☐ **12 — Speak hut (L1+L2).** L1: hear model → repeat → tap stars to self-rate (no mic). L2: ASR
-  loose match **with always-present "I said it" override**; degrades to self-rate. Privacy: nothing
-  stored/transmitted.
+- ☑ **12 — Speak hut (L1+L2).** Hear the model → repeat. Starter (+ any no-ASR device) = **self-rate
+  stars** (no mic). Mover w/ ASR = `listenOnce` + `looseMatch` with an **always-present "I said it"
+  override**, degrading to self-rate. Nothing recorded/transmitted. `[skill]` route now serves all
+  four huts (placeholder retired). e2e completes via self-rate. *(Done — PR #14.)*
 - ☐ **13 — Weather theme content.** `data/themes/weather.ts`: word lists per level (sunny, rainy,
   windy, cloudy, snowy, hot, cold…), pictures (Lucide/emoji content), distractors, can-do statement.
   Both L1 + L2.
