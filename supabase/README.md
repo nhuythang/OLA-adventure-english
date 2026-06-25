@@ -25,10 +25,12 @@ The parent area uses a **single shared account** that owns both children.
 
 1. Create the parent: Dashboard → **Authentication → Users → Add user** (email +
    password, "auto-confirm"). The trigger auto-creates its `parents` row.
-2. Link the seeded children to that account (SQL Editor):
+2. Link the seeded children to that account (SQL Editor). The trigger copies the
+   email into `parents`, so you can look the id up there without touching the
+   `auth` schema:
    ```sql
    update children
-   set parent_id = (select id from auth.users where email = '<parent-email>')
+   set parent_id = (select id from parents where email = '<parent-email>')
    where id in ('milo', 'sunny');
    ```
 3. Set `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` (see
