@@ -43,3 +43,8 @@ test-results/
 playwright-report/
 playwright/.cache/
 .features-gen/
+
+# Supabase CLI local state (config/migrations/seed are committed)
+supabase/.branches/
+supabase/.temp/
+

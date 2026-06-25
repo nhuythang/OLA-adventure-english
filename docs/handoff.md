@@ -7,6 +7,7 @@ plan is [`docs/tasks/00-index.md`](tasks/00-index.md); the *why* is
 ## Status (2026-06-25)
 
 **Phase 1 vertical slice is COMPLETE and deployed.** Tasks **01–16 all ☑**.
+**Phase 2 started: task 17 (Supabase schema + seed) ☑** — schema/seed only, no app wiring yet.
 
 - **Live (production):** https://ola-adventure-english.vercel.app
 - The full loop works end-to-end: **chooser → sticker book → map → Weather island →
@@ -76,6 +77,16 @@ Verify all of tsc/lint/unit/build/e2e before pushing. After a PR: watch CI with
   label collisions and post-nav races.
 - **Vercel native Git integration does NOT fire** (project made via CLI) — deploys run via the CI
   `deploy` job, not Vercel webhooks.
+
+## Supabase (task 17)
+
+- Schema in `supabase/migrations/0001_initial_schema.sql`; **generated** `supabase/seed.sql` from the
+  Phase 1 mock data. Regenerate with `npx tsx supabase/seed/generate-seed.ts`. See `supabase/README.md`.
+- The Supabase CLI is a dev-only tool (via `npx`/global) — **not** an app dependency, so CI/Vercel
+  builds are unaffected and nothing touches `localStorage` persistence yet.
+- **Not applied to a live DB yet** (no local Docker/Postgres in the build env). Task 18 links the
+  hosted free-tier project (`supabase link` → `supabase db push`) and adds the RLS policies that
+  scope per-child tables to `auth.uid()` via `children.parent_id`.
 
 ## What's next
 

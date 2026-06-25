@@ -93,8 +93,12 @@ Legend: ☐ not started · ◐ in progress · ☑ done
 
 ## Phase 2 — Level 3 + second theme + Supabase
 
-- ☐ **17 — Supabase schema + seed.** `english_themes`, `english_items`, `huts`, `learning_attempts`,
-  `stickers`, per-skill `child_skill_levels`. Seed scripts from the Phase 1 mock data.
+- ☑ **17 — Supabase schema + seed.** `migrations/0001_initial_schema.sql`: enums + content tables
+  (`english_themes`, `english_items` w/ `min_level`, `huts`, `stickers` catalog) world-readable;
+  per-child tables (`children`, `child_skill_levels`, `learning_attempts`) with RLS on, policies
+  deferred to task 18. `seed.sql` is **generated** from the Phase 1 mock data by
+  `seed/generate-seed.ts` (pure `buildSeedSql` in `src/lib/seed/`, unit-tested so it can't drift).
+  No app code touches Supabase yet (that's 18/19); the game still runs on `localStorage`.
 - ☐ **18 — Parent auth + PIN gate.** Supabase email+password login; PIN re-entry to enter parent
   area from child mode.
 - ☐ **19 — Migrate persistence to Supabase.** Move progress/stickers/attempts off localStorage;
