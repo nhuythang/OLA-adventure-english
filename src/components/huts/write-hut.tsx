@@ -10,7 +10,7 @@ import { LetterTiles } from "@/components/huts/letter-tiles";
 import { HutResult } from "@/components/huts/hut-result";
 import { useRouter } from "next/navigation";
 import { childById } from "@/data/children";
-import { WEATHER_WORDS } from "@/data/themes/weather";
+import { weatherWordsForLevel } from "@/data/themes/weather";
 import { letterPath } from "@/data/letters";
 import { playCorrect } from "@/lib/sounds";
 import { meetsMastery } from "@/lib/engine/scoring";
@@ -28,7 +28,7 @@ export function WriteHut({ childId, themeId }: { childId: string; themeId: strin
   if (!child) return null;
 
   const isStarter = child.skillLevels.write === "starter";
-  const words = WEATHER_WORDS.slice(0, ROUNDS);
+  const words = weatherWordsForLevel(child.skillLevels.write).slice(0, ROUNDS);
   const word = words[index]!;
 
   function finishRound(misses: number) {

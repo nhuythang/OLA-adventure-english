@@ -72,9 +72,10 @@ Legend: ☐ not started · ◐ in progress · ☑ done
   stars** (no mic). Mover w/ ASR = `listenOnce` + `looseMatch` with an **always-present "I said it"
   override**, degrading to self-rate. Nothing recorded/transmitted. `[skill]` route now serves all
   four huts (placeholder retired). e2e completes via self-rate. *(Done — PR #14.)*
-- ☐ **13 — Weather theme content.** `data/themes/weather.ts`: word lists per level (sunny, rainy,
-  windy, cloudy, snowy, hot, cold…), pictures (Lucide/emoji content), distractors, can-do statement.
-  Both L1 + L2.
+- ☑ **13 — Weather theme content.** `data/themes/weather.ts`: 9 words (sunny/rainy/cloudy/windy/hot/
+  cold/snowy/stormy/foggy) with emoji + `vi`. **Per-level pools** via `weatherWordsForLevel` — Starter
+  = 6-word concrete core, Mover/Flyer = full 9 — wired into all four huts (distractors drawn from the
+  level pool). can-do lives on the theme. Flyer sentence content is task 20. *(Done — PR #17.)*
 - ☑ **14 — Reward & sticker award flow (one-by-one + motivation).** `RewardOverlay` (Framer,
   reduced-motion aware) over the activity on hut completion: names the win ("You earned Finn!"),
   celebrates a theme-master legendary if earned, and **teases the next sticker**. `HutResult` records
