@@ -7,14 +7,15 @@ import { ScreenHeader } from "@/components/game/screen-header";
 import { ViewTransitionLink } from "@/components/game/view-transition-link";
 import { childById } from "@/data/children";
 import { THEMES, isThemeUnlocked } from "@/data/themes";
-import { masteredThemeIds } from "@/data/mock-progress";
+import { useChildProgress } from "@/lib/use-child-progress";
 
 export function IslandMap({ childId }: { childId: string }) {
   const router = useRouter();
   const child = childById(childId);
+  const progress = useChildProgress(childId);
   if (!child) return null;
 
-  const mastered = masteredThemeIds(childId);
+  const mastered = progress.masteredThemes;
 
   return (
     <TabletShell>

@@ -7,7 +7,7 @@ import { ScreenHeader } from "@/components/game/screen-header";
 import { ViewTransitionLink } from "@/components/game/view-transition-link";
 import { childById } from "@/data/children";
 import { themeById } from "@/data/themes";
-import { masteredHuts } from "@/data/mock-progress";
+import { useChildProgress } from "@/lib/use-child-progress";
 import { SKILLS, type Level, type Skill } from "@/lib/types";
 
 const HUT: Record<Skill, { label: string; icon: LucideIcon; accent: string }> = {
@@ -27,9 +27,10 @@ export function IslandScreen({ childId, themeId }: { childId: string; themeId: s
   const router = useRouter();
   const child = childById(childId);
   const theme = themeById(themeId);
+  const progress = useChildProgress(childId);
   if (!child || !theme) return null;
 
-  const done = new Set(masteredHuts(childId, themeId));
+  const done = new Set(progress.masteredHuts[themeId] ?? []);
   const allDone = SKILLS.every((s) => done.has(s));
 
   return (

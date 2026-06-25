@@ -75,19 +75,16 @@ Legend: ☐ not started · ◐ in progress · ☑ done
 - ☐ **13 — Weather theme content.** `data/themes/weather.ts`: word lists per level (sunny, rainy,
   windy, cloudy, snowy, hot, cold…), pictures (Lucide/emoji content), distractors, can-do statement.
   Both L1 + L2.
-- ☐ **14 — Reward & sticker award flow (one-by-one + motivation).** Hut-complete → award the **next
-  un-earned sticker from the child's set, one at a time, in a fixed order** (common → rare → epic for
-  hut completions; a **legendary reserved as the theme-master** sticker when all 4 huts are done).
-  Never award two at once and never skip ahead — the collection fills predictably so each hut yields
-  exactly one new character. Show it in a **sticker overlay** (not a screen) with specific feedback,
-  then **tease the next sticker to collect** ("Next: ❓ — finish the Read hut!") to keep motivation.
-  All 4 huts → master sticker + unlock-next-island celebration. Reduced-motion fallback. Pulls from
-  `sticker-bank.ts`; award order helper lives with the bank.
-- ☐ **15 — Per-child persistence (saved sticker state).** Persist **per kid, keyed by child id**:
-  the **ordered list of earned sticker ids** (so the one-by-one progression resumes exactly where it
-  left off), hut/theme mastery, per-skill level, and attempts. Survives refresh (localStorage in
-  Phase 1; replaced by `mock-progress.ts`). Expose read/award helpers (`earnedStickerIds`,
-  `awardNextSticker`) + a clear-progress dev affordance. Supabase migration is task 19.
+- ☑ **14 — Reward & sticker award flow (one-by-one + motivation).** `RewardOverlay` (Framer,
+  reduced-motion aware) over the activity on hut completion: names the win ("You earned Finn!"),
+  celebrates a theme-master legendary if earned, and **teases the next sticker**. `HutResult` records
+  the result once and shows it. Award ordering = pure `pickNextSticker` (common→rare→epic; legendary
+  for master). *(Done — PR #15.)*
+- ☑ **15 — Per-child persistence (saved sticker state).** `storage.ts` — localStorage keyed by child:
+  ordered `earnedStickerIds`, `completedHuts`, `masteredHuts`, `masteredThemes`. `recordHutResult`
+  awards one-by-one + idempotent; `nextStickerToCollect`; `clearAllProgress` dev reset on the chooser.
+  Read reactively via `useChildProgress` (useSyncExternalStore → no hydration mismatch); the three
+  screens now read real progress. e2e: earn → reload → still saved. Supabase migration is task 19.
 - ☐ **16 — Child picker + dev level toggle.** Pick a mock child; per-skill level toggle for testing
   (Starter/Mover) without auth. **Phase 1 done = hand the iPad to a kid and they finish a hut alone.**
 

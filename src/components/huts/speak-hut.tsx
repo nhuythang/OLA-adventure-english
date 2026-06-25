@@ -95,8 +95,8 @@ export function SpeakHut({ childId, themeId }: { childId: string; themeId: strin
       <HutResult
         childId={childId}
         themeId={themeId}
+        skill="speak"
         mastered={meetsMastery(attempts)}
-        hutLabel="Speak"
         onPlayAgain={restart}
       />
     );

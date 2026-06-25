@@ -16,7 +16,7 @@ Then("I should see the trace pad", async ({ page }) => {
 // Tap a self-rate star each round until the result appears (Speak L1 / no-ASR).
 When("I self-rate through the hut", async ({ page }) => {
   for (let round = 0; round < 8; round++) {
-    if (await page.getByText("Play again").count()) break;
+    if (await page.getByText("Keep going").count()) break;
     const star = page.getByTestId("self-rate-star").first();
     await star.waitFor({ state: "visible", timeout: 15_000 });
     await star.click();
@@ -63,7 +63,7 @@ When("I trace every letter", async ({ page }) => {
 // result screen appears. Waits cover the dev compile + post-correct advance.
 When("I complete the hut", async ({ page }) => {
   for (let i = 0; i < 8; i++) {
-    if (await page.getByText("Play again").count()) break;
+    if (await page.getByText("Keep going").count()) break;
     const correct = page.locator('[data-correct="true"]').first();
     await correct.waitFor({ state: "visible", timeout: 15_000 });
     await correct.click();
@@ -71,10 +71,19 @@ When("I complete the hut", async ({ page }) => {
   }
 });
 
+Given("I reload the page", async ({ page }) => {
+  await page.reload();
+});
+
 When("I tap {string}", async ({ page }, name: string) => {
-  // All tap targets are navigation links. getByRole(...).click() auto-waits for
-  // the link to render, which absorbs the inter-screen navigation/hydration race.
-  await page.getByRole("link", { name }).first().click();
+  // Match a link (navigation) OR a button (e.g. "Keep going" in the reward
+  // overlay). .or().first().click() auto-waits for either to render, absorbing
+  // the post-navigation render race (a bare .count() would not wait).
+  await page
+    .getByRole("link", { name })
+    .or(page.getByRole("button", { name }))
+    .first()
+    .click();
 });
 
 Then("the {string} control is not a link", async ({ page }, name: string) => {
