@@ -10,7 +10,7 @@ import { AudioButton } from "@/components/ui/audio-button";
 import { Button } from "@/components/ui/button";
 import { HutResult } from "@/components/huts/hut-result";
 import { childById } from "@/data/children";
-import { WEATHER_WORDS } from "@/data/themes/weather";
+import { weatherWordsForLevel } from "@/data/themes/weather";
 import { playCorrect } from "@/lib/sounds";
 import { meetsMastery } from "@/lib/engine/scoring";
 import { isAsrAvailable, listenOnce, looseMatch } from "@/lib/asr";
@@ -57,7 +57,7 @@ export function SpeakHut({ childId, themeId }: { childId: string; themeId: strin
   const [missed, setMissed] = useState(false);
   if (!child) return null;
 
-  const words = WEATHER_WORDS.slice(0, ROUNDS);
+  const words = weatherWordsForLevel(child.skillLevels.speak).slice(0, ROUNDS);
   const word = words[index]!;
   // ASR only for Mover+ AND where the browser supports it (rarely on iPad).
   const useAsr = child.skillLevels.speak !== "starter" && isAsrAvailable();
