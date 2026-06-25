@@ -43,3 +43,36 @@ jobs:
 
       - name: E2E tests
         run: npm run test:e2e
+
+  # Deploy to Vercel production on every merge to main (push), gated on the
+  # checks above. Skips gracefully until VERCEL_TOKEN is added as a repo secret.
+  deploy:
+    needs: check
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - name: Note when token is missing
+        if: env.VERCEL_TOKEN == ''
+        run: echo "VERCEL_TOKEN not set — skipping deploy. Add it in repo secrets to enable auto-deploy."
+      - uses: actions/checkout@v4
+        if: env.VERCEL_TOKEN != ''
+      - uses: actions/setup-node@v4
+        if: env.VERCEL_TOKEN != ''
+        with:
+          node-version: 22
+      - name: Install Vercel CLI
+        if: env.VERCEL_TOKEN != ''
+        run: npm i -g vercel@latest
+      - name: Pull Vercel environment
+        if: env.VERCEL_TOKEN != ''
+        run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+      - name: Build
+        if: env.VERCEL_TOKEN != ''
+        run: vercel build --prod --token="$VERCEL_TOKEN"
+      - name: Deploy to production
+        if: env.VERCEL_TOKEN != ''
+        run: vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN"
