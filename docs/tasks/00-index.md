@@ -116,9 +116,15 @@ Legend: ☐ not started · ◐ in progress · ☑ done
   Pure transition extracted to `lib/progress/apply.ts` (unit-tested). **Child mode now requires a parent
   session** when configured — gated in a Node-runtime `child/[childId]/layout.tsx` (NOT middleware: Edge
   `NEXT_PUBLIC_*` is unreliable). *(Needs `supabase db push` of 0003 to the hosted DB before it works live.)*
-- ☐ **20 — Level 3 (Flyer) mechanics.** Listen: sentence → tap scene (4 choices). Read: sentence →
-  true/false or matching picture. Write: build a sentence from word tiles. Speak: answer a spoken
-  question in a short phrase (ASR + override).
+- ☑ **20 — Level 3 (Flyer) mechanics.** Listen: hear a sentence → tap the scene (4 choices). Read: read
+  a sentence → tap the scene (4 choices, no audio). Write: build a sentence from word tiles
+  (`sentence-tiles.tsx` + pure `engine/sentence.ts`). Speak: answer a spoken question ("How is the
+  weather today?") in a phrase — ASR loose-matches the word, with the "I said it" override / self-rate
+  fallback. Flyer content derives from the weather words via a template (`weatherSentence` /
+  `weatherSentenceWords` / `WEATHER_SPEAK_QUESTION`); `buildPictureQuestions` gained sentence prompt/reveal
+  overrides; `HutPlayer` a `sentencePrompt` style. Dev toggle now cycles Starter→Mover→Flyer. e2e plays
+  the Flyer Listen hut through. *(Read uses matching-picture, the spec's permitted alternative to
+  true/false.)*
 - ☐ **21 — Second theme + interleaving.** Add a second island; engine mixes ~70% current + ~30%
   review items from mastered themes (active recall). Wire the `reviewPool`.
 

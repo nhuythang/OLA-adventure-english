@@ -7,9 +7,10 @@ plan is [`docs/tasks/00-index.md`](tasks/00-index.md); the *why* is
 ## Status (2026-06-25)
 
 **Phase 1 vertical slice is COMPLETE and deployed.** Tasks **01–16 all ☑**.
-**Phase 2: tasks 17 (schema + seed) ☑, 18 (parent auth + PIN) ☑, 19 (Supabase persistence) ☑.**
-Progress now lives in Supabase (per-child, multi-device) under the parent session; child mode requires a
-parent login when configured, and falls back to localStorage when not (dev:demo / e2e). Next: 20 (Flyer L3).
+**Phase 2: tasks 17 (schema + seed) ☑, 18 (parent auth + PIN) ☑, 19 (Supabase persistence) ☑,
+20 (Flyer L3 mechanics) ☑.** All three levels now ship across all four huts. Next: 21 (second theme +
+interleaving). Progress lives in Supabase (per-child, multi-device) under the parent session; child mode
+requires a parent login when configured, falls back to localStorage when not (dev:demo / e2e).
 
 - **Live (production):** https://ola-adventure-english.vercel.app
 - The full loop works end-to-end: **chooser → sticker book → map → Weather island →

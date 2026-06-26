@@ -12,8 +12,8 @@ const SKILL_LABEL: Record<Skill, string> = {
   write: "Write",
 };
 const LEVEL_LABEL: Record<Level, string> = { starter: "Starter", mover: "Mover", flyer: "Flyer" };
-// Phase 1 toggles Starter ↔ Mover (Flyer/L3 mechanics arrive in Phase 2).
-const NEXT: Record<Level, Level> = { starter: "mover", mover: "starter", flyer: "starter" };
+// Cycle Starter → Mover → Flyer → Starter (all three mechanics ship as of task 20).
+const NEXT: Record<Level, Level> = { starter: "mover", mover: "flyer", flyer: "starter" };
 
 // Dev/parent affordance to flip a child's per-skill level for testing, without
 // editing children.ts. Moves into the PIN-gated parent area in a later phase.

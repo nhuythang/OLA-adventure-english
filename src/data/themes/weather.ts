@@ -32,3 +32,22 @@ export function weatherWordsForLevel(level: Level): VocabWord[] {
   }
   return WEATHER_WORDS;
 }
+
+// ---- Flyer (L3) sentence content (task 20) ----
+// Derived from the words via a simple template so there's no second wordlist to
+// keep in sync. Flyer mechanics move from single words to short sentences:
+// listen/read a sentence → pick the scene; build the sentence from tiles; answer
+// a spoken question in a phrase.
+
+/** Spoken/printed sentence for the listen + read scene-matching rounds. */
+export function weatherSentence(word: string): string {
+  return `It is ${word} today.`;
+}
+
+/** Target word tiles for the Write hut ("It" pre-filled as the hint). */
+export function weatherSentenceWords(word: string): string[] {
+  return ["It", "is", word];
+}
+
+/** The spoken question the child answers in the Speak hut. */
+export const WEATHER_SPEAK_QUESTION = "How is the weather today?";
