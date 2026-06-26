@@ -4,26 +4,23 @@ import { createServerClient } from "@supabase/ssr";
 import { PIN_OK_COOKIE } from "@/lib/auth/constants";
 import { isSupabaseConfigured, SUPABASE_ANON_KEY, SUPABASE_URL } from "./config";
 
-// Runs on every matched request: refreshes the Supabase session cookie, guards
-// the /parent area, and drops the PIN unlock when the user enters child mode.
+// Runs on every matched request: refreshes the Supabase session, guards both the
+// parent area and (now that progress lives in Supabase) child mode, and drops the
+// PIN unlock when the user enters child mode.
 export async function updateSession(request: NextRequest): Promise<NextResponse> {
   const { pathname } = request.nextUrl;
+  const isChild = pathname.startsWith("/child");
+  const isParent = pathname.startsWith("/parent");
+  const isLogin = pathname === "/parent/login";
+  const toLogin = () => NextResponse.redirect(new URL("/parent/login", request.url));
 
-  // Entering child mode invalidates the parent PIN unlock, so coming back to
-  // /parent re-prompts ("PIN re-entry when entered from child mode").
-  if (pathname.startsWith("/child")) {
-    const response = NextResponse.next({ request });
-    if (request.cookies.has(PIN_OK_COOKIE)) response.cookies.delete(PIN_OK_COOKIE);
-    return response;
-  }
-
-  // Without Supabase configured (dev:demo / e2e) there is no session to refresh.
-  // Let /parent/login render; send any deeper /parent request there too.
+  // Without Supabase configured (dev:demo / e2e) child mode runs on localStorage
+  // and needs no session; the parent area still funnels to the login page.
   if (!isSupabaseConfigured) {
-    if (pathname.startsWith("/parent") && pathname !== "/parent/login") {
-      return NextResponse.redirect(new URL("/parent/login", request.url));
-    }
-    return NextResponse.next({ request });
+    if (isParent && !isLogin) return toLogin();
+    const response = NextResponse.next({ request });
+    if (isChild && request.cookies.has(PIN_OK_COOKIE)) response.cookies.delete(PIN_OK_COOKIE);
+    return response;
   }
 
   let response = NextResponse.next({ request });
@@ -47,14 +44,17 @@ export async function updateSession(request: NextRequest): Promise<NextResponse>
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Unauthenticated requests to the parent area go to the login page.
-  if (!user && pathname.startsWith("/parent") && pathname !== "/parent/login") {
-    return NextResponse.redirect(new URL("/parent/login", request.url));
+  // Child progress is read/written under the parent's session, so child mode now
+  // requires a signed-in parent. Entering child mode also drops the PIN unlock.
+  if (isChild) {
+    if (!user) return toLogin();
+    if (request.cookies.has(PIN_OK_COOKIE)) response.cookies.delete(PIN_OK_COOKIE);
+    return response;
   }
 
-  // A signed-in parent never needs to see the login page.
-  if (user && pathname === "/parent/login") {
-    return NextResponse.redirect(new URL("/parent", request.url));
+  if (isParent) {
+    if (!user && !isLogin) return toLogin();
+    if (user && isLogin) return NextResponse.redirect(new URL("/parent", request.url));
   }
 
   return response;

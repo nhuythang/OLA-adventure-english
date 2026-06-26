@@ -60,6 +60,7 @@ export function WriteHut({ childId, themeId }: { childId: string; themeId: strin
         themeId={themeId}
         skill="write"
         mastered={meetsMastery(attempts)}
+        attempts={attempts}
         onPlayAgain={restart}
       />
     );

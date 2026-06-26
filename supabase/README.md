@@ -14,6 +14,10 @@ The app's per-child progress moves off `localStorage` in task 19.
   `auth.users`, holds the gate `pin_hash`), an `on_auth_user_created` trigger,
   the `children.parent_id → parents` FK, and the **per-child RLS policies**
   scoping access to `auth.uid()` via parent ownership.
+- `migrations/0003_progress_tables.sql` (task 19) — per-child progress now lives
+  in Supabase: `earned_stickers` (ordered), `hut_progress`, `theme_mastery`, all
+  RLS-scoped via child ownership (`learning_attempts` from task 17 is now written
+  per round). **`supabase db push` this before the live site can save progress.**
 - `seed.sql` — **generated**, do not edit by hand. Loads the Phase 1 mock data
   (4 themes, 9 Weather words, 16 huts, the 60-sticker catalog, Milo + Sunny and
   their per-skill levels).

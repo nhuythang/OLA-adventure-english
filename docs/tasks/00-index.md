@@ -107,8 +107,15 @@ Legend: ☐ not started · ◐ in progress · ☑ done
   the only entry. Vietnamese strings in `src/i18n/`. Child mode untouched (still localStorage).
   Degrades to signed-out when Supabase env is unset (dev:demo / e2e). *(Schema + auth wiring; the
   parent dashboard is task 24, persistence migration is task 19.)*
-- ☐ **19 — Migrate persistence to Supabase.** Move progress/stickers/attempts off localStorage;
-  keep mock files as seeds. Per-child, multi-device.
+- ☑ **19 — Migrate persistence to Supabase.** Progress now lives in Supabase, per-child, multi-device.
+  `migrations/0003_progress_tables.sql` adds `earned_stickers` (ordered), `hut_progress`, `theme_mastery`
+  (RLS-scoped via child ownership); `learning_attempts` + `child_skill_levels` reused. The storage layer
+  keeps its **synchronous public API** (`useChildProgress`, `recordHutResult`, `effectiveLevel`,
+  `setSkillLevel`) but swaps the backend at runtime: Supabase when configured (read/written under the
+  parent session, optimistic cache + write-through, attempts logged), else localStorage (dev:demo / e2e).
+  Pure transition extracted to `lib/progress/apply.ts` (unit-tested). **Child mode now requires a parent
+  session** when configured — gated in a Node-runtime `child/[childId]/layout.tsx` (NOT middleware: Edge
+  `NEXT_PUBLIC_*` is unreliable). *(Needs `supabase db push` of 0003 to the hosted DB before it works live.)*
 - ☐ **20 — Level 3 (Flyer) mechanics.** Listen: sentence → tap scene (4 choices). Read: sentence →
   true/false or matching picture. Write: build a sentence from word tiles. Speak: answer a spoken
   question in a short phrase (ASR + override).
