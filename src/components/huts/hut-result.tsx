@@ -7,8 +7,8 @@ import { ScreenHeader } from "@/components/game/screen-header";
 import { StickerBadge } from "@/components/ui/sticker-badge";
 import { Button } from "@/components/ui/button";
 import { RewardOverlay } from "@/components/rewards/reward-overlay";
-import { recordHutResult, nextStickerToCollect } from "@/lib/storage";
-import type { CharacterSticker, Skill } from "@/lib/types";
+import { ensureProgressLoaded, recordHutResult, nextStickerToCollect } from "@/lib/storage";
+import type { Attempt, CharacterSticker, Skill } from "@/lib/types";
 
 const HUT_LABEL: Record<Skill, string> = {
   listen: "Listen",
@@ -22,6 +22,8 @@ interface Props {
   themeId: string;
   skill: Skill;
   mastered: boolean;
+  /** Per-round attempts for this play, logged to learning_attempts (Supabase). */
+  attempts: readonly Attempt[];
   onPlayAgain: () => void;
 }
 
@@ -34,7 +36,7 @@ interface Award {
 // Shown when any hut finishes. Records the result once (awards the next sticker,
 // persists progress), celebrates it in the reward overlay, then shows the
 // play-again / back screen with the sticker the child just earned.
-export function HutResult({ childId, themeId, skill, mastered, onPlayAgain }: Props) {
+export function HutResult({ childId, themeId, skill, mastered, attempts, onPlayAgain }: Props) {
   const router = useRouter();
   const recorded = useRef(false);
   const [award, setAward] = useState<Award | null>(null);
@@ -43,13 +45,18 @@ export function HutResult({ childId, themeId, skill, mastered, onPlayAgain }: Pr
   useEffect(() => {
     if (recorded.current) return; // guard against StrictMode double-invoke
     recorded.current = true;
-    const outcome = recordHutResult(childId, themeId, skill, mastered);
-    setAward({
-      sticker: outcome.newSticker,
-      master: outcome.masterSticker,
-      next: nextStickerToCollect(childId),
+    // Wait for the backend to load (so awarding sees the real earned set) before
+    // recording — instant on localStorage, a quick fetch under Supabase. No
+    // cleanup-cancel: recordHutResult is idempotent and must run exactly once.
+    void ensureProgressLoaded(childId).then(() => {
+      const outcome = recordHutResult(childId, themeId, skill, mastered, attempts);
+      setAward({
+        sticker: outcome.newSticker,
+        master: outcome.masterSticker,
+        next: nextStickerToCollect(childId),
+      });
     });
-  }, [childId, themeId, skill, mastered]);
+  }, [childId, themeId, skill, mastered, attempts]);
 
   if (award && (award.sticker || award.master) && !overlayDone) {
     return (

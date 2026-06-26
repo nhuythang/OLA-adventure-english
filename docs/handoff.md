@@ -7,8 +7,9 @@ plan is [`docs/tasks/00-index.md`](tasks/00-index.md); the *why* is
 ## Status (2026-06-25)
 
 **Phase 1 vertical slice is COMPLETE and deployed.** Tasks **01–16 all ☑**.
-**Phase 2 started: tasks 17 (schema + seed) ☑ and 18 (parent auth + PIN gate) ☑.**
-Child mode is still 100% localStorage; only `/parent` uses Supabase. Next: 19 (migrate persistence).
+**Phase 2: tasks 17 (schema + seed) ☑, 18 (parent auth + PIN) ☑, 19 (Supabase persistence) ☑.**
+Progress now lives in Supabase (per-child, multi-device) under the parent session; child mode requires a
+parent login when configured, and falls back to localStorage when not (dev:demo / e2e). Next: 20 (Flyer L3).
 
 - **Live (production):** https://ola-adventure-english.vercel.app
 - The full loop works end-to-end: **chooser → sticker book → map → Weather island →
@@ -103,6 +104,25 @@ Verify all of tsc/lint/unit/build/e2e before pushing. After a PR: watch CI with
 - **One-time setup before it works:** create the parent in the Supabase dashboard and backfill
   `children.parent_id` — see `supabase/README.md`. Set the env vars locally + in Vercel.
 - Two new deps: `@supabase/supabase-js`, `@supabase/ssr` (pre-approved under "Supabase" in the stack).
+
+## Persistence on Supabase (task 19)
+
+- `src/lib/storage.ts` keeps the **same synchronous API** (`useChildProgress`, `recordHutResult`,
+  `effectiveLevel`, `setSkillLevel`, `clearAllProgress`) but routes to one of two backends:
+  `src/lib/progress/remote.ts` (Supabase, when configured) or localStorage (when not). Reads stay sync
+  via an in-memory cache filled by `ensureProgressLoaded`; writes update the cache optimistically then
+  write through. Pure award/mastery transition lives in `src/lib/progress/apply.ts` (unit-tested).
+- New tables in `migrations/0003_progress_tables.sql`: `earned_stickers`, `hut_progress`, `theme_mastery`
+  (+ `learning_attempts` now populated per round). **Push it: `supabase db push`** before the live site
+  can save progress.
+- **Child mode requires a parent session when Supabase is configured.** The gate is a Node-runtime
+  `src/app/child/[childId]/layout.tsx` — NOT middleware. **Gotcha learned:** `process.env.NEXT_PUBLIC_*`
+  is unreliable inside Edge middleware (empty in dev), so auth gating that depends on "is Supabase
+  configured" must live in a Node server component, not middleware. Middleware still refreshes the
+  session + clears the PIN cookie on `/child`.
+- Known minor: per-skill level briefly shows the profile default for ~1 frame while the remote load
+  resolves, then corrects (huts rebuild their question set). Fine for now; SSR-loading the level is a
+  later polish.
 
 ## What's next
 

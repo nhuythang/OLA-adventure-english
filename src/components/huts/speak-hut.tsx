@@ -101,6 +101,7 @@ export function SpeakHut({ childId, themeId }: { childId: string; themeId: strin
         themeId={themeId}
         skill="speak"
         mastered={meetsMastery(attempts)}
+        attempts={attempts}
         onPlayAgain={restart}
       />
     );

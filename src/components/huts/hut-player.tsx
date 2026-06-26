@@ -46,6 +46,7 @@ export function HutPlayer({
         themeId={themeId}
         skill={skill}
         mastered={engine.result.mastered}
+        attempts={engine.result.attempts}
         onPlayAgain={engine.restart}
       />
     );
