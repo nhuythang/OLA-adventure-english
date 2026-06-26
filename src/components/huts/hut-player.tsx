@@ -23,6 +23,8 @@ interface Props {
   speakPrompts?: boolean;
   /** Hidden for picture-choice huts (Listen/Read); shown where reading the option is the point. */
   showLabels?: boolean;
+  /** Render a `word`-mode prompt as a sentence (Flyer L3 read) — smaller, normal case. */
+  sentencePrompt?: boolean;
 }
 
 export function HutPlayer({
@@ -34,6 +36,7 @@ export function HutPlayer({
   promptMode = "audio",
   speakPrompts = true,
   showLabels = false,
+  sentencePrompt = false,
 }: Props) {
   const router = useRouter();
   const engine = useHutEngine({ questions, choiceCount, skill, themeId, speakPrompts });
@@ -64,7 +67,13 @@ export function HutPlayer({
       <div className="flex flex-col items-center gap-3 py-6">
         {promptMode === "word" ? (
           <>
-            <span className="font-display text-5xl font-semibold lowercase text-ink">
+            <span
+              className={
+                sentencePrompt
+                  ? "max-w-[20ch] text-center font-display text-3xl font-semibold text-ink"
+                  : "font-display text-5xl font-semibold lowercase text-ink"
+              }
+            >
               {engine.prompt}
             </span>
             {speakPrompts && (

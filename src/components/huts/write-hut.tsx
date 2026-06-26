@@ -7,10 +7,11 @@ import { ProgressDots } from "@/components/ui/progress-dots";
 import { AudioButton } from "@/components/ui/audio-button";
 import { TracePad } from "@/components/huts/trace-pad";
 import { LetterTiles } from "@/components/huts/letter-tiles";
+import { SentenceTiles } from "@/components/huts/sentence-tiles";
 import { HutResult } from "@/components/huts/hut-result";
 import { useRouter } from "next/navigation";
 import { childById } from "@/data/children";
-import { weatherWordsForLevel } from "@/data/themes/weather";
+import { weatherSentenceWords, weatherWordsForLevel } from "@/data/themes/weather";
 import { letterPath } from "@/data/letters";
 import { playCorrect } from "@/lib/sounds";
 import { meetsMastery } from "@/lib/engine/scoring";
@@ -32,6 +33,7 @@ export function WriteHut({ childId, themeId }: { childId: string; themeId: strin
 
   const level = effectiveLevel(child, progress, "write");
   const isStarter = level === "starter";
+  const isFlyer = level === "flyer";
   const words = weatherWordsForLevel(level).slice(0, ROUNDS);
   const word = words[index]!;
 
@@ -67,7 +69,12 @@ export function WriteHut({ childId, themeId }: { childId: string; themeId: strin
   }
 
   const letter = (word.word[0] ?? "").toUpperCase();
-  const instruction = isStarter ? `Trace the letter ${letter}` : `Spell ${word.word}`;
+  const sentenceWords = weatherSentenceWords(word.word);
+  const instruction = isStarter
+    ? `Trace the letter ${letter}`
+    : isFlyer
+      ? `Build the sentence: ${sentenceWords.join(" ")}`
+      : `Spell ${word.word}`;
 
   return (
     <TabletShell>
@@ -87,6 +94,8 @@ export function WriteHut({ childId, themeId }: { childId: string; themeId: strin
 
       {isStarter ? (
         <TracePad key={index} pathD={letterPath(word.word)} onComplete={() => finishRound(0)} />
+      ) : isFlyer ? (
+        <SentenceTiles key={index} words={sentenceWords} emoji={word.emoji} onComplete={finishRound} />
       ) : (
         <LetterTiles key={index} word={word.word} emoji={word.emoji} onComplete={finishRound} />
       )}

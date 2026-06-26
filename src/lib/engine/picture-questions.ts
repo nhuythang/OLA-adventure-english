@@ -9,14 +9,23 @@ export interface PictureWord {
   emoji: string;
 }
 
+// Optional prompt/reveal overrides — Flyer (L3) listen/read pose a full sentence
+// ("It is sunny today.") instead of the bare word, while the choices stay the
+// same scene pictures.
+export interface QuestionText {
+  prompt?: (w: PictureWord) => string;
+  reveal?: (w: PictureWord) => string;
+}
+
 export function buildPictureQuestions(
   words: readonly PictureWord[],
   rounds: number,
+  text?: QuestionText,
 ): EngineQuestion[] {
   return words.slice(0, rounds).map((target) => ({
     id: target.word,
-    prompt: target.word,
-    reveal: `This one is ${target.word}.`,
+    prompt: text?.prompt ? text.prompt(target) : target.word,
+    reveal: text?.reveal ? text.reveal(target) : `This one is ${target.word}.`,
     correct: { id: target.word, label: target.word, emoji: target.emoji },
     distractors: words
       .filter((w) => w.word !== target.word)
