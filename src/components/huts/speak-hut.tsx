@@ -10,7 +10,7 @@ import { AudioButton } from "@/components/ui/audio-button";
 import { Button } from "@/components/ui/button";
 import { HutResult } from "@/components/huts/hut-result";
 import { childById } from "@/data/children";
-import { WEATHER_SPEAK_QUESTION, weatherWordsForLevel } from "@/data/themes/weather";
+import { themeContent } from "@/data/themes/content";
 import { playCorrect } from "@/lib/sounds";
 import { meetsMastery } from "@/lib/engine/scoring";
 import { isAsrAvailable, listenOnce, looseMatch } from "@/lib/asr";
@@ -58,15 +58,16 @@ export function SpeakHut({ childId, themeId }: { childId: string; themeId: strin
   const [done, setDone] = useState(false);
   const [listening, setListening] = useState(false);
   const [missed, setMissed] = useState(false);
-  if (!child) return null;
+  const content = themeContent(themeId);
+  if (!child || !content) return null;
 
   const level = effectiveLevel(child, progress, "speak");
   const isFlyer = level === "flyer";
-  const words = weatherWordsForLevel(level).slice(0, ROUNDS);
+  const words = content.wordsForLevel(level).slice(0, ROUNDS);
   const word = words[index]!;
   // Flyer answers a spoken QUESTION in a phrase ("It is sunny"); L1/L2 repeat the
-  // word. ASR loose-matches the weather word either way (the phrase contains it).
-  const promptText = isFlyer ? WEATHER_SPEAK_QUESTION : word.word;
+  // word. ASR loose-matches the target word either way (the phrase contains it).
+  const promptText = isFlyer ? content.speakQuestion : word.word;
   // ASR only for Mover+ AND where the browser supports it (rarely on iPad).
   const useAsr = level !== "starter" && isAsrAvailable();
 
@@ -126,7 +127,7 @@ export function SpeakHut({ childId, themeId }: { childId: string; themeId: strin
           // The scene is the only cue — the child names the weather in a phrase,
           // so the answer word is intentionally not shown.
           <span className="max-w-[20ch] text-center font-display text-2xl font-semibold text-ink">
-            {WEATHER_SPEAK_QUESTION}
+            {content.speakQuestion}
           </span>
         ) : (
           <span className="font-display text-4xl font-semibold lowercase text-ink">{word.word}</span>

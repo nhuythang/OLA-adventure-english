@@ -125,8 +125,13 @@ Legend: ☐ not started · ◐ in progress · ☑ done
   overrides; `HutPlayer` a `sentencePrompt` style. Dev toggle now cycles Starter→Mover→Flyer. e2e plays
   the Flyer Listen hut through. *(Read uses matching-picture, the spec's permitted alternative to
   true/false.)*
-- ☐ **21 — Second theme + interleaving.** Add a second island; engine mixes ~70% current + ~30%
-  review items from mastered themes (active recall). Wire the `reviewPool`.
+- ☑ **21 — Second theme + interleaving.** Added the **Animals** island (`data/themes/animals.ts`, 11
+  words). A `data/themes/content.ts` **registry** maps themeId → word pool + Flyer templates, so all four
+  huts are now theme-agnostic (no more hardcoded Weather). The recognition huts (Listen/Read) interleave
+  ~30% **review** rounds from mastered themes via a deterministic, SSR-safe `engine/interleave.ts` +
+  `lib/review.ts` (`buildPictureRounds`); each review round keeps its own theme's picture choices. Seed
+  generator now seeds items for every theme with content (Weather 9 + Animals 11 = 20). *(Speak/Write stay
+  current-theme for now — their mechanics don't drop in review cleanly.)* **Phase 2 complete.**
 
 ## Phase 3 — Placement, streaks, dashboard, PWA, deploy
 

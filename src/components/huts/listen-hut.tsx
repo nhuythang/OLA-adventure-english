@@ -3,8 +3,8 @@
 import { useMemo } from "react";
 import { HutPlayer } from "@/components/huts/hut-player";
 import { childById } from "@/data/children";
-import { weatherSentence, weatherWordsForLevel } from "@/data/themes/weather";
-import { buildPictureQuestions } from "@/lib/engine/picture-questions";
+import { themeContent } from "@/data/themes/content";
+import { buildPictureRounds } from "@/lib/review";
 import { useChildProgress } from "@/lib/use-child-progress";
 import { effectiveLevel } from "@/lib/storage";
 
@@ -14,22 +14,17 @@ const ROUNDS = 5;
 // (a reader would otherwise just match text), so pictures + audio carry it.
 // - Starter (L1): hear a word, 2 choices.   - Mover (L2): hear a word, 3 choices.
 // - Flyer  (L3): hear a SENTENCE, tap the scene, 4 choices.
+// Rounds interleave ~30% review items from mastered themes (active recall).
 export function ListenHut({ childId, themeId }: { childId: string; themeId: string }) {
   const child = childById(childId);
   const progress = useChildProgress(childId);
+  const content = themeContent(themeId);
   const level = child ? effectiveLevel(child, progress, "listen") : "starter";
   const questions = useMemo(
-    () =>
-      buildPictureQuestions(
-        weatherWordsForLevel(level),
-        ROUNDS,
-        level === "flyer"
-          ? { prompt: (w) => weatherSentence(w.word), reveal: (w) => `It is ${w.word}.` }
-          : undefined,
-      ),
-    [level],
+    () => buildPictureRounds(themeId, progress.masteredThemes, level, ROUNDS),
+    [themeId, progress.masteredThemes, level],
   );
-  if (!child) return null;
+  if (!child || !content) return null;
 
   const choiceCount = level === "starter" ? 2 : level === "mover" ? 3 : 4;
 
