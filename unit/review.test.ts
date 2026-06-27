@@ -1,0 +1,37 @@
+import { describe, expect, it } from "vitest";
+
+import { buildPictureRounds, reviewThemeIds } from "@/lib/review";
+
+describe("reviewThemeIds", () => {
+  it("excludes the current theme and themes without content", () => {
+    expect(reviewThemeIds("animals", ["weather", "animals", "food"])).toEqual(["weather"]);
+    expect(reviewThemeIds("weather", [])).toEqual([]);
+  });
+});
+
+describe("buildPictureRounds", () => {
+  it("is all current-theme when nothing else is mastered", () => {
+    const rounds = buildPictureRounds("weather", [], "starter", 5);
+    expect(rounds).toHaveLength(5);
+    // Weather starter words only (no animals leaked in).
+    const ids = rounds.map((q) => q.id);
+    expect(ids.every((id) => ["sunny", "rainy", "cloudy", "windy", "hot", "cold"].includes(id))).toBe(true);
+  });
+
+  it("interleaves review items from a mastered theme", () => {
+    const rounds = buildPictureRounds("animals", ["weather"], "starter", 5);
+    expect(rounds).toHaveLength(5);
+    const animalIds = ["cat", "dog", "bird", "fish", "frog", "duck"];
+    const reviews = rounds.filter((q) => !animalIds.includes(q.id));
+    // ~30% of 5 ≈ 2 review rounds drawn from Weather.
+    expect(reviews).toHaveLength(2);
+    expect(rounds.filter((q) => animalIds.includes(q.id))).toHaveLength(3);
+  });
+
+  it("keeps each review question's choices in its own theme (coherent options)", () => {
+    const rounds = buildPictureRounds("animals", ["weather"], "starter", 5);
+    const review = rounds.find((q) => !["cat", "dog", "bird", "fish", "frog", "duck"].includes(q.id));
+    // A weather review question's distractors are weather words, not animals.
+    expect(review?.distractors.every((d) => !["cat", "dog", "bird"].includes(d.id))).toBe(true);
+  });
+});

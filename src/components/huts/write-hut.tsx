@@ -11,7 +11,7 @@ import { SentenceTiles } from "@/components/huts/sentence-tiles";
 import { HutResult } from "@/components/huts/hut-result";
 import { useRouter } from "next/navigation";
 import { childById } from "@/data/children";
-import { weatherSentenceWords, weatherWordsForLevel } from "@/data/themes/weather";
+import { themeContent } from "@/data/themes/content";
 import { letterPath } from "@/data/letters";
 import { playCorrect } from "@/lib/sounds";
 import { meetsMastery } from "@/lib/engine/scoring";
@@ -29,12 +29,13 @@ export function WriteHut({ childId, themeId }: { childId: string; themeId: strin
   const [index, setIndex] = useState(0);
   const [attempts, setAttempts] = useState<Attempt[]>([]);
   const [done, setDone] = useState(false);
-  if (!child) return null;
+  const content = themeContent(themeId);
+  if (!child || !content) return null;
 
   const level = effectiveLevel(child, progress, "write");
   const isStarter = level === "starter";
   const isFlyer = level === "flyer";
-  const words = weatherWordsForLevel(level).slice(0, ROUNDS);
+  const words = content.wordsForLevel(level).slice(0, ROUNDS);
   const word = words[index]!;
 
   function finishRound(misses: number) {
@@ -69,7 +70,7 @@ export function WriteHut({ childId, themeId }: { childId: string; themeId: strin
   }
 
   const letter = (word.word[0] ?? "").toUpperCase();
-  const sentenceWords = weatherSentenceWords(word.word);
+  const sentenceWords = content.sentenceWords(word.word);
   const instruction = isStarter
     ? `Trace the letter ${letter}`
     : isFlyer

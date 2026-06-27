@@ -22,7 +22,18 @@ insert into english_items (id, theme_id, word, emoji, vi, min_level, sort_order)
   ('weather-cold', 'weather', 'cold', '🥶', 'lạnh', 'starter', 5),
   ('weather-snowy', 'weather', 'snowy', '❄️', 'tuyết', 'mover', 6),
   ('weather-stormy', 'weather', 'stormy', '⛈️', 'bão', 'mover', 7),
-  ('weather-foggy', 'weather', 'foggy', '🌫️', 'sương mù', 'mover', 8)
+  ('weather-foggy', 'weather', 'foggy', '🌫️', 'sương mù', 'mover', 8),
+  ('animals-cat', 'animals', 'cat', '🐱', 'mèo', 'starter', 0),
+  ('animals-dog', 'animals', 'dog', '🐶', 'chó', 'starter', 1),
+  ('animals-bird', 'animals', 'bird', '🐦', 'chim', 'starter', 2),
+  ('animals-fish', 'animals', 'fish', '🐟', 'cá', 'starter', 3),
+  ('animals-frog', 'animals', 'frog', '🐸', 'ếch', 'starter', 4),
+  ('animals-duck', 'animals', 'duck', '🦆', 'vịt', 'starter', 5),
+  ('animals-lion', 'animals', 'lion', '🦁', 'sư tử', 'mover', 6),
+  ('animals-tiger', 'animals', 'tiger', '🐯', 'hổ', 'mover', 7),
+  ('animals-monkey', 'animals', 'monkey', '🐵', 'khỉ', 'mover', 8),
+  ('animals-bear', 'animals', 'bear', '🐻', 'gấu', 'mover', 9),
+  ('animals-pig', 'animals', 'pig', '🐷', 'lợn', 'mover', 10)
 on conflict (id) do update set theme_id = excluded.theme_id, word = excluded.word, emoji = excluded.emoji, vi = excluded.vi, min_level = excluded.min_level, sort_order = excluded.sort_order;
 
 -- Content: skill huts

@@ -12,16 +12,28 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 
 import { CHILDREN } from "@/data/children";
+import { themeContent } from "@/data/themes/content";
 import { STICKER_BANK } from "@/data/stickers/sticker-bank";
 import { THEMES } from "@/data/themes";
-import { WEATHER_WORDS, weatherWordsForLevel } from "@/data/themes/weather";
 import { buildSeedSql, type SeedInput } from "@/lib/seed/build-seed";
 import { SKILLS, type Level } from "@/lib/types";
 
-// Only Weather has vocabulary in Phase 1; the other islands are visible but
-// unseeded. A word's min_level is the lowest level whose pool includes it.
-const starterWeather = new Set(weatherWordsForLevel("starter").map((w) => w.word));
-const weatherMinLevel = (word: string): Level => (starterWeather.has(word) ? "starter" : "mover");
+// Seed items for every theme that has content (Weather, Animals; food/colors are
+// still empty). A word's min_level is the lowest level whose pool includes it.
+const items = THEMES.flatMap((t) => {
+  const content = themeContent(t.id);
+  if (!content) return [];
+  const starter = new Set(content.wordsForLevel("starter").map((w) => w.word));
+  return content.wordsForLevel("flyer").map((w, i) => ({
+    id: `${t.id}-${w.word}`,
+    themeId: t.id,
+    word: w.word,
+    emoji: w.emoji,
+    vi: w.vi,
+    minLevel: (starter.has(w.word) ? "starter" : "mover") as Level,
+    sortOrder: i,
+  }));
+});
 
 const input: SeedInput = {
   themes: THEMES.map((t) => ({
@@ -32,15 +44,7 @@ const input: SeedInput = {
     emoji: t.emoji,
   })),
 
-  items: WEATHER_WORDS.map((w, i) => ({
-    id: `weather-${w.word}`,
-    themeId: "weather",
-    word: w.word,
-    emoji: w.emoji,
-    vi: w.vi,
-    minLevel: weatherMinLevel(w.word),
-    sortOrder: i,
-  })),
+  items,
 
   // Every theme has the same 4 skill huts.
   huts: THEMES.flatMap((t) => SKILLS.map((skill) => ({ id: `${t.id}-${skill}`, themeId: t.id, skill }))),

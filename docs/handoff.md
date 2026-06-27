@@ -7,10 +7,20 @@ plan is [`docs/tasks/00-index.md`](tasks/00-index.md); the *why* is
 ## Status (2026-06-25)
 
 **Phase 1 vertical slice is COMPLETE and deployed.** Tasks **01–16 all ☑**.
-**Phase 2: tasks 17 (schema + seed) ☑, 18 (parent auth + PIN) ☑, 19 (Supabase persistence) ☑,
-20 (Flyer L3 mechanics) ☑.** All three levels now ship across all four huts. Next: 21 (second theme +
-interleaving). Progress lives in Supabase (per-child, multi-device) under the parent session; child mode
-requires a parent login when configured, falls back to localStorage when not (dev:demo / e2e).
+**Phase 2 COMPLETE: tasks 17–21 all ☑** (schema+seed, parent auth+PIN, Supabase persistence, Flyer L3,
+second theme + interleaving). Two themes (Weather, Animals), all three levels across all four huts,
+progress in Supabase (per-child, multi-device) under the parent session; child mode requires a parent
+login when configured, falls back to localStorage when not (dev:demo / e2e). **Next: Phase 3** (22
+placement, 23 streaks, 24 dashboard, 25 wordlist import, 26 PWA, 27 deploy pass).
+
+### Theme content + interleaving (task 21)
+- `src/data/themes/content.ts` is the **registry** (themeId → word pool + Flyer templates). Add a theme
+  by writing `data/themes/<x>.ts` and registering it — huts + seed pick it up automatically.
+- Listen/Read interleave ~30% review from mastered themes (`src/lib/review.ts` + `engine/interleave.ts`,
+  deterministic/SSR-safe). Speak/Write are current-theme only for now.
+- Animals island unlocks after Weather is mastered (existing `isThemeUnlocked`); deep-linking a hut route
+  bypasses the map lock (used by the e2e). Run `supabase db push` is NOT needed (no new tables), but
+  **re-load `supabase/seed.sql`** to get the new Animals items (20 items now).
 
 - **Live (production):** https://ola-adventure-english.vercel.app
 - The full loop works end-to-end: **chooser → sticker book → map → Weather island →
