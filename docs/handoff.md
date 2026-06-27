@@ -10,8 +10,17 @@ plan is [`docs/tasks/00-index.md`](tasks/00-index.md); the *why* is
 **Phase 2 COMPLETE: tasks 17–21 all ☑** (schema+seed, parent auth+PIN, Supabase persistence, Flyer L3,
 second theme + interleaving). Two themes (Weather, Animals), all three levels across all four huts,
 progress in Supabase (per-child, multi-device) under the parent session; child mode requires a parent
-login when configured, falls back to localStorage when not (dev:demo / e2e). **Phase 3 in progress: 22 (placement) ☑, 24 (dashboard) ☑, 26 (PWA) ☑.** Remaining: 23 streaks,
+login when configured, falls back to localStorage when not (dev:demo / e2e). **Phase 3 in progress: 22 (placement) ☑, 23 (streaks) ☑, 24 (dashboard) ☑, 26 (PWA) ☑.** Remaining:
 25 wordlist import, 27 deploy/real-iPad pass.
+
+### Streaks (task 23)
+- Pure logic in `src/lib/progress/streak.ts` (unit-tested): `updateStreak` advances on a new calendar
+  day, resets to 1 after a gap, flags a milestone (3/7/14/30) once. Wired into `recordHutResult`
+  (storage.ts) — a milestone grants one bonus sticker (next un-earned). 🔥 count on the sticker-book home,
+  bonus celebration in the reward overlay.
+- Persistence: `child_streaks` table (`migrations/0004_streaks.sql`, RLS-scoped) via `persistStreakRemote`
+  / `loadRemote`; localStorage carries the fields in the progress blob. **`supabase db push` 0004** before
+  it works on the live site. Uses the device clock (`todayISO`) for "today".
 
 ### Placement (task 22)
 - Parent questionnaire (not a child quiz): `/parent/placement/[childId]` (PIN-gated; re-checks the

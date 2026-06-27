@@ -11,7 +11,16 @@ const child: ChildProfile = {
 };
 
 function progress(skillLevels: ChildProgress["skillLevels"]): ChildProgress {
-  return { earnedStickerIds: [], completedHuts: {}, masteredHuts: {}, masteredThemes: [], skillLevels };
+  return {
+    earnedStickerIds: [],
+    completedHuts: {},
+    masteredHuts: {},
+    masteredThemes: [],
+    skillLevels,
+    lastActiveDate: null,
+    streak: 0,
+    awardedStreakMilestones: [],
+  };
 }
 
 describe("effectiveLevel", () => {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Play, Sticker } from "lucide-react";
+import { Flame, Play, Sticker } from "lucide-react";
 import { TabletShell } from "@/components/game/tablet-shell";
 import { ScreenHeader } from "@/components/game/screen-header";
 import { StickerBadge } from "@/components/ui/sticker-badge";
@@ -44,6 +44,15 @@ export function StickerBookHome({ childId }: { childId: string }) {
           <h1 className="font-display text-2xl font-semibold text-ink">{child.name}</h1>
           <p className="text-sm font-semibold text-ink-muted">My sticker book</p>
         </div>
+        {progress.streak >= 1 && (
+          <span
+            className="ml-auto flex items-center gap-1.5 rounded-[20px] bg-[#FFE4D6] px-3 py-2 font-display text-base font-semibold text-coral-dark"
+            aria-label={`${progress.streak} day streak`}
+          >
+            <Flame size={18} aria-hidden />
+            {progress.streak}
+          </span>
+        )}
       </div>
 
       <ViewTransitionLink

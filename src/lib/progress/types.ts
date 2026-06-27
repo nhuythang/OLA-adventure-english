@@ -14,8 +14,23 @@ export interface ChildProgress {
   masteredThemes: string[];
   /** Per-skill level overrides; falls back to the profile default. */
   skillLevels: Partial<Record<Skill, Level>>;
+  /** Last calendar day played ("YYYY-MM-DD"), or null — drives the streak. */
+  lastActiveDate: string | null;
+  /** Consecutive-day streak count. */
+  streak: number;
+  /** Streak milestones already rewarded (so a bonus is granted once each). */
+  awardedStreakMilestones: number[];
 }
 
 export function emptyProgress(): ChildProgress {
-  return { earnedStickerIds: [], completedHuts: {}, masteredHuts: {}, masteredThemes: [], skillLevels: {} };
+  return {
+    earnedStickerIds: [],
+    completedHuts: {},
+    masteredHuts: {},
+    masteredThemes: [],
+    skillLevels: {},
+    lastActiveDate: null,
+    streak: 0,
+    awardedStreakMilestones: [],
+  };
 }

@@ -30,6 +30,8 @@ interface Props {
 interface Award {
   sticker: CharacterSticker | null;
   master: CharacterSticker | null;
+  streakSticker: CharacterSticker | null;
+  streak: number;
   next: CharacterSticker | null;
 }
 
@@ -53,16 +55,20 @@ export function HutResult({ childId, themeId, skill, mastered, attempts, onPlayA
       setAward({
         sticker: outcome.newSticker,
         master: outcome.masterSticker,
+        streakSticker: outcome.streakSticker,
+        streak: outcome.streak,
         next: nextStickerToCollect(childId),
       });
     });
   }, [childId, themeId, skill, mastered, attempts]);
 
-  if (award && (award.sticker || award.master) && !overlayDone) {
+  if (award && (award.sticker || award.master || award.streakSticker) && !overlayDone) {
     return (
       <RewardOverlay
         sticker={award.sticker}
         master={award.master}
+        streakSticker={award.streakSticker}
+        streak={award.streak}
         next={award.next}
         onDismiss={() => setOverlayDone(true)}
       />

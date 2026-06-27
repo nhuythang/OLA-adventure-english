@@ -18,6 +18,9 @@ The app's per-child progress moves off `localStorage` in task 19.
   in Supabase: `earned_stickers` (ordered), `hut_progress`, `theme_mastery`, all
   RLS-scoped via child ownership (`learning_attempts` from task 17 is now written
   per round). **`supabase db push` this before the live site can save progress.**
+- `migrations/0004_streaks.sql` (task 23) — `child_streaks` (consecutive-day
+  streak + awarded milestones), RLS-scoped. `supabase db push` before streaks
+  persist on the live site.
 - `seed.sql` — **generated**, do not edit by hand. Loads the mock data: 4 themes,
   20 vocabulary items (9 Weather + 11 Animals), 16 huts, the 60-sticker catalog,
   Milo + Sunny and their per-skill levels. Re-load it after adding a theme.

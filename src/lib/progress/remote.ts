@@ -34,17 +34,23 @@ interface LevelRow {
   skill: Skill;
   level: ChildProgress["skillLevels"][Skill];
 }
+interface StreakRow {
+  last_active_date: string | null;
+  current_streak: number;
+  awarded_milestones: number[] | null;
+}
 
 // Assemble ChildProgress from the four per-child tables.
 export async function loadRemote(childId: string): Promise<ChildProgress> {
   const supabase = client();
   if (!supabase) return emptyProgress();
 
-  const [stickers, huts, themes, levels] = await Promise.all([
+  const [stickers, huts, themes, levels, streak] = await Promise.all([
     supabase.from("earned_stickers").select("sticker_id").eq("child_id", childId).order("seq"),
     supabase.from("hut_progress").select("theme_id, skill, completed, mastered").eq("child_id", childId),
     supabase.from("theme_mastery").select("theme_id").eq("child_id", childId),
     supabase.from("child_skill_levels").select("skill, level").eq("child_id", childId),
+    supabase.from("child_streaks").select("last_active_date, current_streak, awarded_milestones").eq("child_id", childId).maybeSingle(),
   ]);
 
   const progress = emptyProgress();
@@ -58,6 +64,13 @@ export async function loadRemote(childId: string): Promise<ChildProgress> {
 
   for (const row of (levels.data ?? []) as LevelRow[]) {
     if (row.level) progress.skillLevels[row.skill] = row.level;
+  }
+
+  const s = streak.data as StreakRow | null;
+  if (s) {
+    progress.lastActiveDate = s.last_active_date;
+    progress.streak = s.current_streak;
+    progress.awardedStreakMilestones = s.awarded_milestones ?? [];
   }
   return progress;
 }
@@ -132,6 +145,46 @@ export async function persistSkillLevelRemote(
   reportError(r);
 }
 
+// Persist the daily streak state and, on a milestone, the bonus sticker. The
+// sticker's seq comes from its position in the full earned-stickers order so the
+// sticker book stays in sequence.
+export async function persistStreakRemote(
+  childId: string,
+  themeId: string,
+  state: { lastActiveDate: string | null; streak: number },
+  awardedMilestones: readonly number[],
+  streakSticker: { id: string } | null,
+  earnedStickerIds: readonly string[],
+): Promise<void> {
+  const supabase = client();
+  if (!supabase) return;
+
+  const writes: PromiseLike<unknown>[] = [
+    supabase.from("child_streaks").upsert(
+      {
+        child_id: childId,
+        last_active_date: state.lastActiveDate,
+        current_streak: state.streak,
+        awarded_milestones: [...awardedMilestones],
+      },
+      { onConflict: "child_id" },
+    ),
+  ];
+  if (streakSticker) {
+    writes.push(
+      supabase
+        .from("earned_stickers")
+        .upsert(
+          { child_id: childId, sticker_id: streakSticker.id, theme_id: themeId, seq: earnedStickerIds.indexOf(streakSticker.id) },
+          { onConflict: "child_id,sticker_id", ignoreDuplicates: true },
+        ),
+    );
+  }
+
+  const results = await Promise.all(writes);
+  for (const r of results) reportError(r);
+}
+
 // Dev reset — wipe earned progress (leaves skill levels, which are settings).
 export async function clearRemote(childId: string): Promise<void> {
   const supabase = client();
@@ -141,6 +194,7 @@ export async function clearRemote(childId: string): Promise<void> {
     supabase.from("hut_progress").delete().eq("child_id", childId),
     supabase.from("theme_mastery").delete().eq("child_id", childId),
     supabase.from("learning_attempts").delete().eq("child_id", childId),
+    supabase.from("child_streaks").delete().eq("child_id", childId),
   ]);
 }
 
