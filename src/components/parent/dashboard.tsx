@@ -1,4 +1,5 @@
-import { Trophy } from "lucide-react";
+import Link from "next/link";
+import { SlidersHorizontal, Trophy } from "lucide-react";
 
 import { StickerBadge } from "@/components/ui/sticker-badge";
 import { stickerById } from "@/data/stickers/sticker-bank";
@@ -35,6 +36,12 @@ function ChildCard({ child }: { child: ChildDashboard }) {
           {child.avatar}
         </span>
         <h2 className="font-display text-2xl font-semibold text-ink">{child.name}</h2>
+        <Link
+          href={`/parent/placement/${child.id}`}
+          className="ml-auto flex items-center gap-1.5 rounded-full border border-border-soft px-3 py-1.5 text-sm font-semibold text-ink-muted active:translate-y-[1px]"
+        >
+          <SlidersHorizontal size={15} aria-hidden /> {vi.parent.placement.editLink}
+        </Link>
       </header>
 
       {/* Per-skill: level + first-try accuracy */}

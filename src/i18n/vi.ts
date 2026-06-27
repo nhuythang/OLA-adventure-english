@@ -33,6 +33,50 @@ export const vi = {
     homeTitle: "Khu vực phụ huynh",
     homeBlurb: "Bảng tiến độ và cài đặt sẽ xuất hiện ở đây.",
 
+    // Placement (task 22) — parent picks the best-fit can-do per skill; it maps
+    // to starter/mover/flyer and is adjustable any time.
+    placement: {
+      title: "Xếp cấp độ",
+      intro: "Chọn mức phù hợp nhất với bé cho từng kỹ năng. Có thể chỉnh lại bất cứ lúc nào.",
+      save: "Lưu cấp độ",
+      back: "Quay lại bảng tiến độ",
+      editLink: "Chỉnh cấp độ",
+      skills: {
+        listen: {
+          question: "Khi NGHE tiếng Anh, bé có thể…",
+          options: [
+            { level: "starter", label: "Nghe một từ và chỉ đúng tranh" },
+            { level: "mover", label: "Nghe một từ, chọn trong nhiều tranh" },
+            { level: "flyer", label: "Nghe cả câu và chọn đúng cảnh" },
+          ],
+        },
+        speak: {
+          question: "Khi NÓI tiếng Anh, bé có thể…",
+          options: [
+            { level: "starter", label: "Nghe mẫu rồi nhắc lại một từ" },
+            { level: "mover", label: "Tự nói được từng từ" },
+            { level: "flyer", label: "Trả lời câu hỏi bằng một cụm từ" },
+          ],
+        },
+        read: {
+          question: "Khi ĐỌC tiếng Anh, bé có thể…",
+          options: [
+            { level: "starter", label: "Ghép từ đã in với tranh" },
+            { level: "mover", label: "Đọc một từ mà không cần nghe" },
+            { level: "flyer", label: "Đọc một câu và hiểu nghĩa" },
+          ],
+        },
+        write: {
+          question: "Khi VIẾT tiếng Anh, bé có thể…",
+          options: [
+            { level: "starter", label: "Tô theo nét chữ cái" },
+            { level: "mover", label: "Ghép chữ cái thành từ" },
+            { level: "flyer", label: "Xếp các từ thành câu" },
+          ],
+        },
+      },
+    },
+
     // Dashboard (task 24)
     dashboard: {
       title: "Tiến độ học",

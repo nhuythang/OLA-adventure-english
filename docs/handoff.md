@@ -10,8 +10,15 @@ plan is [`docs/tasks/00-index.md`](tasks/00-index.md); the *why* is
 **Phase 2 COMPLETE: tasks 17–21 all ☑** (schema+seed, parent auth+PIN, Supabase persistence, Flyer L3,
 second theme + interleaving). Two themes (Weather, Animals), all three levels across all four huts,
 progress in Supabase (per-child, multi-device) under the parent session; child mode requires a parent
-login when configured, falls back to localStorage when not (dev:demo / e2e). **Phase 3 in progress: 24 (dashboard) ☑, 26 (PWA) ☑.** Remaining: 22 placement, 23 streaks, 25 wordlist
-import, 27 deploy/real-iPad pass.
+login when configured, falls back to localStorage when not (dev:demo / e2e). **Phase 3 in progress: 22 (placement) ☑, 24 (dashboard) ☑, 26 (PWA) ☑.** Remaining: 23 streaks,
+25 wordlist import, 27 deploy/real-iPad pass.
+
+### Placement (task 22)
+- Parent questionnaire (not a child quiz): `/parent/placement/[childId]` (PIN-gated; re-checks the
+  `PIN_OK_COOKIE` since it's outside the `/parent` landing page), linked from each dashboard child card.
+  One Vietnamese question per skill, 3 leveled can-do options → `setSkillLevel` per changed skill. It's
+  also the parent-adjustable per-skill editor. Content + `PlacementForm` are pure-ish; e2e is unconfigured
+  so it only sees the redirect — verify level changes by logging in.
 
 ### Parent dashboard (task 24)
 - Lives on `/parent` after the PIN gate (`src/app/parent/page.tsx`). Read-only, Vietnamese. Per child:

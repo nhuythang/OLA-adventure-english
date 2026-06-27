@@ -135,8 +135,12 @@ Legend: ☐ not started · ◐ in progress · ☑ done
 
 ## Phase 3 — Placement, streaks, dashboard, PWA, deploy
 
-- ☐ **22 — Per-skill placement.** 3-question placement sets each skill's level; parent/teacher can
-  adjust. A child can be Flyer at Listen, Starter at Write.
+- ☑ **22 — Per-skill placement.** A **parent questionnaire** (chosen over a child quiz — a pre-reader
+  can't self-test, and Speak/Write can't be auto-scored): one Vietnamese question per skill with three
+  leveled can-do options (starter/mover/flyer), at `/parent/placement/[childId]` (PIN-gated), linked from
+  each dashboard child card. Saving persists each changed skill via `setSkillLevel` → Supabase
+  `child_skill_levels`. Doubles as the parent-adjustable per-skill editor (a child can be Flyer at Listen,
+  Starter at Write). `PlacementForm` + placement content in `i18n`.
 - ☐ **23 — Streak stickers.** Consecutive-day bonus sticker. Habit nudge, no pressure, no penalty
   for gaps.
 - ☑ **24 — Parent/teacher dashboard.** Read-only Vietnamese dashboard on `/parent` (after the PIN gate):
