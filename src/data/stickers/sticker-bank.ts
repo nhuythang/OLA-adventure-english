@@ -91,3 +91,7 @@ export const STICKER_BANK: CharacterSticker[] = [...BOY_STICKERS, ...GIRL_STICKE
 export function stickersForSet(set: StickerSet): CharacterSticker[] {
   return set === "boy" ? BOY_STICKERS : GIRL_STICKERS;
 }
+
+export function stickerById(id: string): CharacterSticker | undefined {
+  return STICKER_BANK.find((s) => s.id === id);
+}

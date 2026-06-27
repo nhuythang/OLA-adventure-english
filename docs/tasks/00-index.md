@@ -139,8 +139,11 @@ Legend: ☐ not started · ◐ in progress · ☑ done
   adjust. A child can be Flyer at Listen, Starter at Write.
 - ☐ **23 — Streak stickers.** Consecutive-day bonus sticker. Habit nudge, no pressure, no penalty
   for gaps.
-- ☐ **24 — Parent/teacher dashboard.** Per-skill progress, sticker-book view, "what did my child
-  learn." Vietnamese surface. PIN/auth-gated.
+- ☑ **24 — Parent/teacher dashboard.** Read-only Vietnamese dashboard on `/parent` (after the PIN gate):
+  per child, each skill's level + first-try accuracy, per-theme huts-mastered + theme-master badge, and
+  the collected sticker book. Pure aggregation in `src/lib/parent/dashboard-data.ts` (`summarize`,
+  unit-tested) over RLS-scoped Supabase rows; presentation in `src/components/parent/dashboard.tsx`.
+  Reads live data under the parent session (verify after login; e2e covers the unconfigured redirect).
 - ☐ **25 — Wordlist source-of-truth import.** Import the real Cambridge YLE Starters/Movers/Flyers
   lists (or OLA term lists) as the content source; reconcile Weather + future themes against it.
 - ☑ **26 — PWA.** `src/app/manifest.ts` (`display: standalone`, portrait, theme/bg colors, 192/512/

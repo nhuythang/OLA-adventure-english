@@ -10,8 +10,15 @@ plan is [`docs/tasks/00-index.md`](tasks/00-index.md); the *why* is
 **Phase 2 COMPLETE: tasks 17–21 all ☑** (schema+seed, parent auth+PIN, Supabase persistence, Flyer L3,
 second theme + interleaving). Two themes (Weather, Animals), all three levels across all four huts,
 progress in Supabase (per-child, multi-device) under the parent session; child mode requires a parent
-login when configured, falls back to localStorage when not (dev:demo / e2e). **Phase 3 in progress: 26 (PWA) ☑.** Remaining: 22 placement, 23 streaks, 24 dashboard, 25 wordlist
+login when configured, falls back to localStorage when not (dev:demo / e2e). **Phase 3 in progress: 24 (dashboard) ☑, 26 (PWA) ☑.** Remaining: 22 placement, 23 streaks, 25 wordlist
 import, 27 deploy/real-iPad pass.
+
+### Parent dashboard (task 24)
+- Lives on `/parent` after the PIN gate (`src/app/parent/page.tsx`). Read-only, Vietnamese. Per child:
+  per-skill level + first-try accuracy, per-theme huts-mastered + theme-master badge, the sticker book.
+- Pure aggregation `src/lib/parent/dashboard-data.ts` (`summarize`, unit-tested) over RLS-scoped Supabase
+  rows; view `src/components/parent/dashboard.tsx`. Queries are unfiltered selects — RLS already scopes
+  them to the signed-in parent's children. Not exercised by e2e (needs auth) — verify by logging in.
 
 ### PWA (task 26)
 - Installable + fullscreen on iPad: `src/app/manifest.ts` (`display: standalone`), `src/app/icon.svg`

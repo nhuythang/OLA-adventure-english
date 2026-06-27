@@ -4,9 +4,21 @@ import Link from "next/link";
 
 import { parentSignOut } from "./actions";
 import { PinGate } from "@/components/parent/pin-gate";
+import { Dashboard } from "@/components/parent/dashboard";
 import { Button } from "@/components/ui/button";
 import { PIN_OK_COOKIE } from "@/lib/auth/constants";
 import { createClient } from "@/lib/supabase/server";
+import { contentThemeIds } from "@/data/themes/content";
+import { THEMES } from "@/data/themes";
+import {
+  summarize,
+  type AttemptRow,
+  type ChildRow,
+  type EarnedStickerRow,
+  type HutProgressRow,
+  type SkillLevelRow,
+  type ThemeMasteryRow,
+} from "@/lib/parent/dashboard-data";
 import { vi } from "@/i18n";
 
 const t = vi.parent;
@@ -28,14 +40,37 @@ export default async function ParentHomePage() {
     return <PinGate mode={data?.pin_hash ? "enter" : "setup"} />;
   }
 
+  // RLS scopes every table to this parent's children, so unfiltered selects are
+  // already per-parent.
+  const [children, skillLevels, hutProgress, themeMastery, earnedStickers, attempts] = await Promise.all([
+    supabase.from("children").select("id, name, avatar, sticker_set"),
+    supabase.from("child_skill_levels").select("child_id, skill, level"),
+    supabase.from("hut_progress").select("child_id, theme_id, skill, completed, mastered"),
+    supabase.from("theme_mastery").select("child_id, theme_id"),
+    supabase.from("earned_stickers").select("child_id, sticker_id, seq").order("seq"),
+    supabase.from("learning_attempts").select("child_id, hut_id, first_try_correct"),
+  ]);
+
+  const themeIds = new Set(contentThemeIds());
+  const data = summarize({
+    children: (children.data ?? []) as ChildRow[],
+    skillLevels: (skillLevels.data ?? []) as SkillLevelRow[],
+    hutProgress: (hutProgress.data ?? []) as HutProgressRow[],
+    themeMastery: (themeMastery.data ?? []) as ThemeMasteryRow[],
+    earnedStickers: (earnedStickers.data ?? []) as EarnedStickerRow[],
+    attempts: (attempts.data ?? []) as AttemptRow[],
+    themes: THEMES.filter((th) => themeIds.has(th.id)).map((th) => ({ id: th.id, title: th.title })),
+  });
+
   return (
-    <div className="flex flex-col gap-6 text-center">
-      <header>
-        <h1 className="font-display text-3xl font-semibold text-ink">{t.homeTitle}</h1>
-        <p className="mt-2 text-ink-muted">{t.homeBlurb}</p>
+    <div className="flex flex-col gap-6">
+      <header className="text-center">
+        <h1 className="font-display text-3xl font-semibold text-ink">{t.dashboard.title}</h1>
       </header>
 
-      <div className="flex flex-col items-center gap-4">
+      <Dashboard data={data} />
+
+      <div className="flex flex-col items-center gap-4 border-t border-border-soft pt-5">
         <form action={parentSignOut}>
           <Button type="submit" variant="secondary">
             {t.signOut}
