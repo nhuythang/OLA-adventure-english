@@ -143,10 +143,14 @@ Legend: ☐ not started · ◐ in progress · ☑ done
   learn." Vietnamese surface. PIN/auth-gated.
 - ☐ **25 — Wordlist source-of-truth import.** Import the real Cambridge YLE Starters/Movers/Flyers
   lists (or OLA term lists) as the content source; reconcile Weather + future themes against it.
-- ☐ **26 — PWA.** **Serwist** service worker, manifest with **`display: "standalone"`**, locked
-  viewport (`viewport-fit=cover, maximum-scale=1, user-scalable=no`) + safe-area insets, offline
-  preload of theme audio + images, install prompt. See CLAUDE.md "Performance & native feel".
-  (Watch the stale-cache gotcha noted in the builder's memory.)
+- ☑ **26 — PWA.** `src/app/manifest.ts` (`display: standalone`, portrait, theme/bg colors, 192/512/
+  maskable icons) + apple-touch icon + `apple-mobile-web-app-capable` so it launches fullscreen from the
+  iPad home screen. Locked viewport + safe-area insets were already in place (layout + TabletShell). A
+  **hand-rolled `public/sw.js`** (network-first navigations w/ offline fallback, cache-first hashed
+  static) registered production-only via `ServiceWorkerRegister`. Icons generated from an inline SVG by
+  `scripts/generate-icons.mjs` (coral + gold star). *(Chose a hand-rolled SW over Serwist: this app has
+  no media files to precache — stickers are emoji, audio is synthesized — so Serwist's Turbopack
+  integration was pure risk for zero benefit. Bump `CACHE` in sw.js to bust the cache on changes.)*
 - ☐ **27 — Deploy to Vercel.** Production deploy, real-iPad test pass, env wiring.
 
 ## V2 candidates (tracked, not now)
