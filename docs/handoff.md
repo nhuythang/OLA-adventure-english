@@ -10,8 +10,20 @@ plan is [`docs/tasks/00-index.md`](tasks/00-index.md); the *why* is
 **Phase 2 COMPLETE: tasks 17–21 all ☑** (schema+seed, parent auth+PIN, Supabase persistence, Flyer L3,
 second theme + interleaving). Two themes (Weather, Animals), all three levels across all four huts,
 progress in Supabase (per-child, multi-device) under the parent session; child mode requires a parent
-login when configured, falls back to localStorage when not (dev:demo / e2e). **Next: Phase 3** (22
-placement, 23 streaks, 24 dashboard, 25 wordlist import, 26 PWA, 27 deploy pass).
+login when configured, falls back to localStorage when not (dev:demo / e2e). **Phase 3 in progress: 26 (PWA) ☑.** Remaining: 22 placement, 23 streaks, 24 dashboard, 25 wordlist
+import, 27 deploy/real-iPad pass.
+
+### PWA (task 26)
+- Installable + fullscreen on iPad: `src/app/manifest.ts` (`display: standalone`), `src/app/icon.svg`
+  (favicon) + `src/app/apple-icon.png` (180, apple-touch), `apple-mobile-web-app-capable`. Icons are
+  generated from an inline SVG by `node scripts/generate-icons.mjs` → `public/icons/*.png` (re-run after
+  changing the art).
+- **Hand-rolled** `public/sw.js` (no Serwist — this app has no media files to precache; see the task-26
+  decision note in the index). Network-first for navigations (auth redirects + fresh deploys win), cache-
+  first for hashed `/_next` + icons, `/offline.html` fallback. Registered **production-only** via
+  `src/components/pwa/service-worker-register.tsx`, so dev/e2e never cache. **Bump `CACHE` in sw.js** to
+  retire the old cache after changing it.
+- Not yet validated on a real iPad — that's task 27 (Add to Home Screen → confirm fullscreen + icon).
 
 ### Theme content + interleaving (task 21)
 - `src/data/themes/content.ts` is the **registry** (themeId → word pool + Flyer templates). Add a theme
