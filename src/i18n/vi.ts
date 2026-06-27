@@ -29,9 +29,22 @@ export const vi = {
     pinSave: "Lưu mã PIN",
     pinSubmit: "Xác nhận",
 
-    // Landing (placeholder until the dashboard, task 24)
+    // Landing
     homeTitle: "Khu vực phụ huynh",
     homeBlurb: "Bảng tiến độ và cài đặt sẽ xuất hiện ở đây.",
+
+    // Dashboard (task 24)
+    dashboard: {
+      title: "Tiến độ học",
+      empty: "Chưa có hồ sơ bé nào được liên kết với tài khoản này.",
+      skills: { listen: "Nghe", speak: "Nói", read: "Đọc", write: "Viết" },
+      accuracyLabel: "đúng ngay lần đầu",
+      noPlay: "Chưa chơi",
+      themesHeading: "Hòn đảo",
+      hutsSuffix: "chòi hoàn thành", // "2/4 chòi hoàn thành"
+      themeMastered: "Đã chinh phục",
+      stickersHeading: "Nhãn dán đã sưu tầm",
+    },
   },
 } as const;
 
