@@ -141,8 +141,12 @@ Legend: ☐ not started · ◐ in progress · ☑ done
   each dashboard child card. Saving persists each changed skill via `setSkillLevel` → Supabase
   `child_skill_levels`. Doubles as the parent-adjustable per-skill editor (a child can be Flyer at Listen,
   Starter at Write). `PlacementForm` + placement content in `i18n`.
-- ☐ **23 — Streak stickers.** Consecutive-day bonus sticker. Habit nudge, no pressure, no penalty
-  for gaps.
+- ☑ **23 — Streak stickers.** Consecutive-day streak tracked per child (pure `lib/progress/streak.ts`,
+  unit-tested): playing advances it, a gap quietly resets it to 1 (no penalty). Crossing a milestone
+  (3/7/14/30) grants one bonus sticker (next un-earned, awarded once each). Wired into `recordHutResult`;
+  surfaced as a 🔥 count on the sticker-book home and a bonus-sticker celebration in the reward overlay.
+  `migrations/0004_streaks.sql` adds the RLS-scoped `child_streaks` table (localStorage carries it in the
+  progress blob when unconfigured). **Needs `supabase db push` of 0004 to the hosted DB.**
 - ☑ **24 — Parent/teacher dashboard.** Read-only Vietnamese dashboard on `/parent` (after the PIN gate):
   per child, each skill's level + first-try accuracy, per-theme huts-mastered + theme-master badge, and
   the collected sticker book. Pure aggregation in `src/lib/parent/dashboard-data.ts` (`summarize`,

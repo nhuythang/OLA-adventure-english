@@ -29,6 +29,9 @@ export function applyHutResult(
     masteredHuts: { ...current.masteredHuts },
     masteredThemes: [...current.masteredThemes],
     skillLevels: { ...current.skillLevels },
+    lastActiveDate: current.lastActiveDate,
+    streak: current.streak,
+    awardedStreakMilestones: [...current.awardedStreakMilestones],
   };
 
   let newSticker: CharacterSticker | null = null;

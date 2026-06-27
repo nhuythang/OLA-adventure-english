@@ -10,16 +10,26 @@ import { pickNextSticker } from "@/lib/engine/award";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { applyHutResult, type HutOutcome } from "@/lib/progress/apply";
 import { emptyProgress, type ChildProgress } from "@/lib/progress/types";
+import { todayISO, updateStreak } from "@/lib/progress/streak";
 import {
   clearRemote,
   loadRemote,
   persistHutResultRemote,
   persistSkillLevelRemote,
+  persistStreakRemote,
 } from "@/lib/progress/remote";
-import { type Attempt, type ChildProfile, type Level, type Skill } from "@/lib/types";
+import { type Attempt, type CharacterSticker, type ChildProfile, type Level, type Skill } from "@/lib/types";
 
 export type { ChildProgress } from "@/lib/progress/types";
 export type { HutOutcome } from "@/lib/progress/apply";
+
+// What finishing a hut produced: the hut sticker(s) plus the streak outcome.
+export interface HutRecord extends HutOutcome {
+  /** Bonus sticker granted for hitting a streak milestone today, if any. */
+  streakSticker: CharacterSticker | null;
+  /** The child's consecutive-day streak after this play. */
+  streak: number;
+}
 
 // ---- Backend: localStorage (used only when Supabase is not configured) ----
 
@@ -37,6 +47,9 @@ function readLocal(childId: string): ChildProgress {
       masteredHuts: parsed.masteredHuts ?? {},
       masteredThemes: parsed.masteredThemes ?? [],
       skillLevels: parsed.skillLevels ?? {},
+      lastActiveDate: parsed.lastActiveDate ?? null,
+      streak: parsed.streak ?? 0,
+      awardedStreakMilestones: parsed.awardedStreakMilestones ?? [],
     };
   } catch {
     return emptyProgress();
@@ -129,31 +142,51 @@ export function clearAllProgress(): void {
   for (const child of CHILDREN) clearProgress(child.id);
 }
 
-// Record a finished hut: grant its next sticker (once), mark mastery, and — if all
-// 4 huts are now mastered — grant the theme-master legendary. Updates the cache
-// synchronously (so the reward overlay is instant) and persists to the backend.
-// Idempotent: replaying a finished hut grants nothing new.
+// Record a finished hut: grant its next sticker (once), mark mastery, advance the
+// daily streak (granting a bonus sticker on a milestone), and — if all 4 huts are
+// now mastered — grant the theme-master legendary. Updates the cache synchronously
+// (so the reward overlay is instant) and persists to the backend. Idempotent:
+// replaying a finished hut on the same day grants nothing new.
 export function recordHutResult(
   childId: string,
   themeId: string,
   skill: Skill,
   mastered: boolean,
   attempts: readonly Attempt[] = [],
-): HutOutcome {
+): HutRecord {
   const child = childById(childId);
-  if (!child) return { newSticker: null, masterSticker: null, themeMastered: false };
+  if (!child) return { newSticker: null, masterSticker: null, themeMastered: false, streakSticker: null, streak: 0 };
 
   const set = stickersForSet(child.stickerSet);
   const current = getProgressSnapshot(childId);
   const { progress, outcome } = applyHutResult(current, set, themeId, skill, mastered);
 
+  // Advance the daily streak off this play; a new milestone grants a bonus.
+  const { state, reachedMilestone } = updateStreak(
+    { lastActiveDate: progress.lastActiveDate, streak: progress.streak },
+    todayISO(),
+    progress.awardedStreakMilestones,
+  );
+  progress.lastActiveDate = state.lastActiveDate;
+  progress.streak = state.streak;
+
+  let streakSticker: CharacterSticker | null = null;
+  if (reachedMilestone !== null) {
+    streakSticker = pickNextSticker(set, progress.earnedStickerIds);
+    if (streakSticker) {
+      progress.earnedStickerIds = [...progress.earnedStickerIds, streakSticker.id];
+      progress.awardedStreakMilestones = [...progress.awardedStreakMilestones, reachedMilestone];
+    }
+  }
+
   setCache(childId, progress);
   if (isSupabaseConfigured) {
     void persistHutResultRemote(childId, themeId, skill, progress, outcome, attempts);
+    void persistStreakRemote(childId, themeId, state, progress.awardedStreakMilestones, streakSticker, progress.earnedStickerIds);
   } else {
     writeLocal(childId, progress);
   }
-  return outcome;
+  return { ...outcome, streakSticker, streak: state.streak };
 }
 
 // The next sticker the child will collect — for the motivation teaser.

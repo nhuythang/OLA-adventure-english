@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { Lock } from "lucide-react";
+import { Flame, Lock } from "lucide-react";
 import { StickerBadge } from "@/components/ui/sticker-badge";
 import { Button } from "@/components/ui/button";
 import { playReward } from "@/lib/sounds";
@@ -11,15 +11,18 @@ import type { CharacterSticker } from "@/lib/types";
 interface Props {
   sticker: CharacterSticker | null;
   master: CharacterSticker | null;
+  /** Bonus sticker for hitting a streak milestone, with the day count. */
+  streakSticker: CharacterSticker | null;
+  streak: number;
   /** The next sticker still to collect — shown as a teaser. */
   next: CharacterSticker | null;
   onDismiss: () => void;
 }
 
 // Modal celebration over the activity (behavior rule 8: overlay, not a screen).
-// Names the win specifically, celebrates a theme-master legendary if earned, and
-// teases the next sticker to keep motivation. Reduced motion → fade, no pop.
-export function RewardOverlay({ sticker, master, next, onDismiss }: Props) {
+// Names the win specifically, celebrates a theme-master legendary if earned, a
+// streak bonus if hit, and teases the next sticker. Reduced motion → fade, no pop.
+export function RewardOverlay({ sticker, master, streakSticker, streak, next, onDismiss }: Props) {
   const reduce = useReducedMotion();
   useEffect(() => {
     playReward();
@@ -46,6 +49,15 @@ export function RewardOverlay({ sticker, master, next, onDismiss }: Props) {
             <StickerBadge sticker={master} size={84} />
             <p className="font-display text-sm font-semibold text-gold-dark">
               Island mastered — new island unlocked!
+            </p>
+          </div>
+        )}
+
+        {streakSticker && (
+          <div className="mt-1 flex flex-col items-center gap-2 rounded-[20px] bg-[#FFE4D6] px-4 py-3">
+            <StickerBadge sticker={streakSticker} size={84} />
+            <p className="flex items-center gap-1.5 font-display text-sm font-semibold text-coral-dark">
+              <Flame size={16} aria-hidden /> {streak} day streak — bonus sticker!
             </p>
           </div>
         )}
