@@ -33,7 +33,7 @@ insert into english_items (id, theme_id, word, emoji, vi, min_level, sort_order)
   ('animals-tiger', 'animals', 'tiger', '🐯', 'hổ', 'mover', 7),
   ('animals-monkey', 'animals', 'monkey', '🐵', 'khỉ', 'mover', 8),
   ('animals-bear', 'animals', 'bear', '🐻', 'gấu', 'mover', 9),
-  ('animals-pig', 'animals', 'pig', '🐷', 'lợn', 'mover', 10)
+  ('animals-horse', 'animals', 'horse', '🐴', 'ngựa', 'mover', 10)
 on conflict (id) do update set theme_id = excluded.theme_id, word = excluded.word, emoji = excluded.emoji, vi = excluded.vi, min_level = excluded.min_level, sort_order = excluded.sort_order;
 
 -- Content: skill huts

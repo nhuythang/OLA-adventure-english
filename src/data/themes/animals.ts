@@ -17,7 +17,8 @@ export const ANIMALS_WORDS: VocabWord[] = [
   { word: "tiger", emoji: "🐯", vi: "hổ" },
   { word: "monkey", emoji: "🐵", vi: "khỉ" },
   { word: "bear", emoji: "🐻", vi: "gấu" },
-  { word: "pig", emoji: "🐷", vi: "lợn" },
+  // "horse" not "pig": pig isn't a Cambridge YLE headword; horse is (Starters).
+  { word: "horse", emoji: "🐴", vi: "ngựa" },
 ];
 
 // Starter core — 6 everyday pets/farm animals (kept first in the list).
