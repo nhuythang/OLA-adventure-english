@@ -8,7 +8,8 @@ insert into english_themes (id, title, can_do, sort_order, emoji) values
   ('weather', 'Weather', 'I can name the weather.', 0, '⛅'),
   ('animals', 'Animals', 'I can name farm and wild animals.', 1, '🦁'),
   ('food', 'Food', 'I can name food I like.', 2, '🍎'),
-  ('colors', 'Colors', 'I can name the colors.', 3, '🌈')
+  ('colors', 'Colors', 'I can name the colors.', 3, '🌈'),
+  ('grammar', 'Grammar', 'I can show one and many, and what''s happening.', 4, '🪄')
 on conflict (id) do update set title = excluded.title, can_do = excluded.can_do, sort_order = excluded.sort_order, emoji = excluded.emoji;
 
 -- Content: vocabulary items
@@ -72,7 +73,11 @@ insert into huts (id, theme_id, skill) values
   ('colors-listen', 'colors', 'listen'),
   ('colors-speak', 'colors', 'speak'),
   ('colors-read', 'colors', 'read'),
-  ('colors-write', 'colors', 'write')
+  ('colors-write', 'colors', 'write'),
+  ('grammar-listen', 'grammar', 'listen'),
+  ('grammar-speak', 'grammar', 'speak'),
+  ('grammar-read', 'grammar', 'read'),
+  ('grammar-write', 'grammar', 'write')
 on conflict (id) do update set theme_id = excluded.theme_id, skill = excluded.skill;
 
 -- Content: sticker catalog
