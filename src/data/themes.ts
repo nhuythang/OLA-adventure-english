@@ -8,6 +8,10 @@ export const THEMES: Theme[] = [
   { id: "animals", title: "Animals", canDo: "I can name farm and wild animals.", order: 1, emoji: "🦁" },
   { id: "food", title: "Food", canDo: "I can name food I like.", order: 2, emoji: "🍎" },
   { id: "colors", title: "Colors", canDo: "I can name the colors.", order: 3, emoji: "🌈" },
+  // Grammar island (G1 MVP): plurals + present continuous. Always unlocked (see
+  // isThemeUnlocked) so it can be handed straight to the kids, independent of the
+  // vocab islands' sequential progression.
+  { id: "grammar", title: "Grammar", canDo: "I can show one and many, and what's happening.", order: 4, emoji: "🪄" },
 ];
 
 export function themeById(id: string): Theme | undefined {
@@ -18,6 +22,8 @@ export function themeById(id: string): Theme | undefined {
 // mastered. Phase 1 has no mastery yet, so only Weather is open. Real progress
 // arrives with persistence (task 15).
 export function isThemeUnlocked(theme: Theme, masteredThemeIds: readonly string[]): boolean {
+  // The Grammar island is always open (G1 MVP) — not gated behind vocab mastery.
+  if (theme.id === "grammar") return true;
   if (theme.order === 0) return true;
   const prev = THEMES.find((t) => t.order === theme.order - 1);
   return prev ? masteredThemeIds.includes(prev.id) : false;
