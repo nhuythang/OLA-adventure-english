@@ -170,6 +170,57 @@ Legend: ☐ not started · ◐ in progress · ☑ done
   integration was pure risk for zero benefit. Bump `CACHE` in sw.js to bust the cache on changes.)*
 - ☐ **27 — Deploy to Vercel.** Production deploy, real-iPad test pass, env wiring.
 
+## Grammar journey (G-series) — post-Phase-3
+
+> A dedicated **Grammar island** that reuses the island→hut→sticker loop. Plan + rationale:
+> [`../research/grammar-build-roadmap.md`](../research/grammar-build-roadmap.md) (compares the in-app
+> YLE research with the cited learning-science framework). The science we already implement (no-fail
+> scaffold, 30% interleaving, mastery-tied stickers, streaks, audio-first) means grammar is **mostly
+> content + a small engine extension**, not a rebuild. Constraints from CLAUDE.md prune the AI-heavy
+> suggestions: no paid APIs (simple mastery/spacing heuristics, no Bayesian knowledge tracing), no
+> leaderboards, DOM + emoji/SVG art, free-tier, solo-maintainable.
+
+- ☑ **G1 — Grammar island MVP (Plurals + Present continuous).** New `buildGrammarQuestions` (sibling of
+  `buildPictureQuestions`) where a round's choices are **grammatical contrasts of the same referent**
+  (one cat 🐱 vs many cats 🐱🐱🐱; an action under a fixed sentence frame), not different vocabulary.
+  Plurals is a binary singular/plural -s contrast (the clearest no-reading lesson, a VN-interference
+  target); present continuous is "She is running." Both emoji-only (zero new art), interleaved
+  deterministically. All four huts reuse the existing engine — Listen/Read via `HutPlayer`, Write via
+  `SentenceTiles`, Speak via self-rate/ASR; per-skill levels drive choice count (2→3→4). Island is
+  always unlocked. Seed regenerated (theme + huts rows for the `learning_attempts` FK; no items).
+  *(Done — PR #33; tsc/lint/build green, 121 unit, 17 e2e, all huts played in-browser.)*
+- ☐ **G2 — Prepositions of place (in/on/under) + SVG scene support.** The deferred third Starter
+  structure and the one real new-art need — emoji can't show "under," so introduce tiny inline-SVG
+  scenes (ball + box in three spatial relations) where the choices are the **same referent** in
+  different positions ("The ball is under the box." → tap the scene). `Choice.emoji` is a `string`, so
+  add a **scene registry** (`scene-key → SVG component`) rendered by a grammar-aware visual in
+  `HutPlayer` — keeps the engine string-serializable and unit-testable rather than widening `Choice` to
+  carry a node. `src/data/grammar/prepositions.ts`; register into the island pool; tests + e2e.
+- ☐ **G3 — "Observe" intro beat (the OLA cycle).** A short (~20–30s) Observe screen before a grammar
+  hut: spoken audio + 2–3 patterned picture frames, **no rules** ("one cat… two cats… cats!"). Maps the
+  cycle to what we have — Observe = new intro, Learn = existing scaffold-and-reveal, Apply = the rounds.
+  New `ObserveIntro` component (skippable, auto-advances into the hut, shown once per hut entry,
+  reduced-motion aware) + per-structure observe sequences in the grammar data. Tests + e2e.
+- ☐ **G4 — Per-item attempt logging (foundation).** Today `learning_attempts` logs at the hut level
+  (no `item_id`). Thread the round item id through `Attempt` → `recordHutResult` →
+  `learning_attempts.item_id` for both vocab and grammar (grammar needs lightweight item keys or a
+  null-tolerant scheme). Mostly mechanical, unit-tested. **Enables G5 + G6.** Needs a Supabase
+  migration + seed re-load (owner).
+- ☐ **G5 — Forgetting-aware spaced review + Vietnamese-L1 weighting.** Replace random 30% interleaving
+  with a **1/3/7/14-day** schedule (due + weak items first) plus over-weighting the VN pain points
+  (plural -s, 3rd-person -s, copula *be*, articles, tense). New pure
+  `src/lib/progress/review-schedule.ts` (last-seen + accuracy heuristic, no AI), unit-tested; wired into
+  `buildPictureRounds`/`interleave`. **Depends on G4.**
+- ☐ **G6 — Parent dashboard: grammar mastery + common errors.** Extend the Vietnamese dashboard with a
+  grammar section — per-structure mastery + most-missed items. Extend `dashboard-data.ts` `summarize`;
+  add the view. **Depends on G4.**
+- ☐ **G7 — Scale up: Movers/Flyers grammar.** Past simple, comparatives, *going to* (sentence-build +
+  scenes); plus *this/that*, *can* for ability, *there is/are*. Same mechanics, more choices / sentence
+  prompts by level. The spatial/visual ones reuse G2's scene support. **Likely split into G7a/G7b** to
+  stay session-sized.
+- ☐ **G8 — (optional) streak-freeze + richer SVG scenes.** Loss-aversion mitigation (streak-freeze) and
+  drawn SVG teaching pictures where they beat emoji. Lower priority.
+
 ## V2 candidates (tracked, not now)
 
 - ☐ **Original SVG mascot art for the sticker bank.** Replace the Phase-1 emoji placeholders in

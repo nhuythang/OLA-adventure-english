@@ -14,12 +14,16 @@ in Supabase (per-child, multi-device) under the parent session; localStorage fal
 (dev:demo / e2e). **114 unit + 15 e2e green.**
 
 ### What's NEXT (start here)
-1. **Grammar journey — build the G1 MVP.** Research is done; the plan is
-   [`docs/research/grammar-build-roadmap.md`](research/grammar-build-roadmap.md) (+ `grammar-yle.md`).
-   First task = a **Grammar island** with **Plurals + Present continuous** (both emoji-only, zero new
-   art). The one new engine piece is `buildGrammarQuestions` — choices are *grammatical contrasts of the
-   same referent* (one cat vs many cats), reusing the four huts + levels + scaffold + interleaving +
-   stickers. Prepositions (needs small SVG scenes) follow. See the roadmap's §3 "first task".
+1. **Grammar journey — G1 MVP is DONE** (PR #33: Grammar island, Plurals + Present continuous, all four
+   huts, always unlocked; `buildGrammarQuestions` = choices are grammatical contrasts of the same
+   referent). The rest is planned as a **G-series in [`docs/tasks/00-index.md`](tasks/00-index.md)**
+   (rationale: [`docs/research/grammar-build-roadmap.md`](research/grammar-build-roadmap.md)).
+   **Next task = G2 — Prepositions of place (in/on/under) + SVG scene support** (the one real new-art
+   need; adds a `scene-key → SVG component` registry rendered in `HutPlayer`). Then G3 (Observe intro),
+   G4 (per-item attempt logging — unblocks G5/G6), G5 (spaced review + VN-L1 weighting), G6 (grammar
+   dashboard), G7 (Movers/Flyers structures).
+   - **After merging #33: re-load `supabase/seed.sql`** (adds the `grammar` theme + its 4 `huts` rows;
+     the `learning_attempts` FK needs them) so island progress persists on the live site.
 2. **Task 27 — real-iPad pass** (on-device, you): Add to Home Screen → confirm fullscreen + star icon;
    log in as parent (PIN) → dashboard/placement; play a hut; confirm progress + streak persist; verify
    emoji teaching pictures render on iPadOS.
