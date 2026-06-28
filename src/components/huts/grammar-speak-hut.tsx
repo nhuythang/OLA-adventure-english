@@ -9,6 +9,7 @@ import { ProgressDots } from "@/components/ui/progress-dots";
 import { AudioButton } from "@/components/ui/audio-button";
 import { Button } from "@/components/ui/button";
 import { HutResult } from "@/components/huts/hut-result";
+import { PromptVisual } from "@/components/huts/grammar-scene";
 import { childById } from "@/data/children";
 import { grammarRoundItems } from "@/data/grammar";
 import { playCorrect } from "@/lib/sounds";
@@ -113,9 +114,7 @@ export function GrammarSpeakHut({ childId, themeId }: { childId: string; themeId
       />
 
       <div className="flex flex-1 flex-col items-center justify-center gap-5">
-        <span className="text-7xl" aria-hidden>
-          {item.correct.emoji}
-        </span>
+        <PromptVisual visual={item.correct.emoji} />
         <span className="max-w-[20ch] text-center font-display text-2xl font-semibold text-ink">
           {item.prompt}
         </span>

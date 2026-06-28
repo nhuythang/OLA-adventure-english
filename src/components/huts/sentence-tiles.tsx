@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { cn } from "@/lib/cn";
 import { assembled, buildWordTiles, isSentenceComplete, isSentenceCorrect, type WordTile } from "@/lib/engine/sentence";
 
@@ -11,7 +11,10 @@ const FIXED_RNG = () => 0.42;
 interface Props {
   /** Target sentence as words; the first is pre-filled as a hint. */
   words: string[];
-  emoji: string;
+  /** Emoji teaching picture (vocab Flyer). Ignored when `visual` is given. */
+  emoji?: string;
+  /** Override the picture with any node (e.g. an SVG preposition scene). */
+  visual?: ReactNode;
   /** Called when the sentence is built correctly; `misses` = wrong full attempts. */
   onComplete: (misses: number) => void;
 }
@@ -19,7 +22,7 @@ interface Props {
 // Build a sentence (Write hut L3): tap a word tile to drop it in the next slot;
 // tap a filled slot to take it back. The first word is pre-filled as a hint. No
 // hard fail — a wrong full sentence gently shakes and clears for another try.
-export function SentenceTiles({ words, emoji, onComplete }: Props) {
+export function SentenceTiles({ words, emoji, visual, onComplete }: Props) {
   const [pool, setPool] = useState<WordTile[]>(() => buildWordTiles(words, FIXED_RNG));
   const [slots, setSlots] = useState<(WordTile | null)[]>(() =>
     words.map((w, i) => (i === 0 ? { id: "hint", word: w } : null)),
@@ -61,9 +64,11 @@ export function SentenceTiles({ words, emoji, onComplete }: Props) {
 
   return (
     <div className="flex flex-col items-center gap-6">
-      <span className="text-7xl" aria-hidden>
-        {emoji}
-      </span>
+      {visual ?? (
+        <span className="text-7xl" aria-hidden>
+          {emoji}
+        </span>
+      )}
 
       <div className={cn("flex flex-wrap justify-center gap-2", shake && "animate-shake")} aria-label={assembled(slots.map((s) => s?.word ?? "_"))}>
         {slots.map((s, i) => (

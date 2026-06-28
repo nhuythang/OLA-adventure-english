@@ -7,6 +7,7 @@ import { ScreenHeader } from "@/components/game/screen-header";
 import { ProgressDots } from "@/components/ui/progress-dots";
 import { AudioButton } from "@/components/ui/audio-button";
 import { SentenceTiles } from "@/components/huts/sentence-tiles";
+import { PromptVisual } from "@/components/huts/grammar-scene";
 import { HutResult } from "@/components/huts/hut-result";
 import { childById } from "@/data/children";
 import { grammarRoundItems } from "@/data/grammar";
@@ -75,7 +76,12 @@ export function GrammarWriteHut({ childId, themeId }: { childId: string; themeId
         <AudioButton key={index} text={`Build the sentence: ${sentence}`} label="Hear it again" />
       </div>
 
-      <SentenceTiles key={index} words={item.sentenceWords} emoji={item.correct.emoji} onComplete={finishRound} />
+      <SentenceTiles
+        key={index}
+        words={item.sentenceWords}
+        visual={<PromptVisual visual={item.correct.emoji} />}
+        onComplete={finishRound}
+      />
     </TabletShell>
   );
 }
