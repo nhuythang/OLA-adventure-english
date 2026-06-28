@@ -93,6 +93,30 @@ export const YLE_WORDLIST: Record<string, YleLevel> = {
   storm: "flyers",
   fog: "flyers",
   foggy: "flyers",
+
+  // ---- Food & drink ----
+  apple: "starters",
+  banana: "starters",
+  bread: "starters",
+  cake: "starters",
+  egg: "starters",
+  milk: "starters",
+  rice: "starters",
+  juice: "starters",
+  water: "starters",
+  soup: "movers",
+
+  // ---- Colours ----
+  red: "starters",
+  blue: "starters",
+  green: "starters",
+  yellow: "starters",
+  black: "starters",
+  white: "starters",
+  orange: "starters",
+  pink: "starters",
+  purple: "starters",
+  brown: "starters",
 };
 
 /** The YLE level a word maps to in our Level scale, or null if not in the list. */

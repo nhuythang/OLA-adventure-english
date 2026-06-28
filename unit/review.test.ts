@@ -4,7 +4,8 @@ import { buildPictureRounds, reviewThemeIds } from "@/lib/review";
 
 describe("reviewThemeIds", () => {
   it("excludes the current theme and themes without content", () => {
-    expect(reviewThemeIds("animals", ["weather", "animals", "food"])).toEqual(["weather"]);
+    // animals = current (excluded); "bogus" has no content (excluded).
+    expect(reviewThemeIds("animals", ["weather", "animals", "food", "bogus"])).toEqual(["weather", "food"]);
     expect(reviewThemeIds("weather", [])).toEqual([]);
   });
 });

@@ -33,7 +33,25 @@ insert into english_items (id, theme_id, word, emoji, vi, min_level, sort_order)
   ('animals-tiger', 'animals', 'tiger', '🐯', 'hổ', 'mover', 7),
   ('animals-monkey', 'animals', 'monkey', '🐵', 'khỉ', 'mover', 8),
   ('animals-bear', 'animals', 'bear', '🐻', 'gấu', 'mover', 9),
-  ('animals-horse', 'animals', 'horse', '🐴', 'ngựa', 'mover', 10)
+  ('animals-horse', 'animals', 'horse', '🐴', 'ngựa', 'mover', 10),
+  ('food-apple', 'food', 'apple', '🍎', 'táo', 'starter', 0),
+  ('food-banana', 'food', 'banana', '🍌', 'chuối', 'starter', 1),
+  ('food-bread', 'food', 'bread', '🍞', 'bánh mì', 'starter', 2),
+  ('food-cake', 'food', 'cake', '🍰', 'bánh ngọt', 'starter', 3),
+  ('food-egg', 'food', 'egg', '🥚', 'trứng', 'starter', 4),
+  ('food-milk', 'food', 'milk', '🥛', 'sữa', 'starter', 5),
+  ('food-rice', 'food', 'rice', '🍚', 'cơm', 'mover', 6),
+  ('food-juice', 'food', 'juice', '🧃', 'nước ép', 'mover', 7),
+  ('food-soup', 'food', 'soup', '🍲', 'súp', 'mover', 8),
+  ('colors-red', 'colors', 'red', '🟥', 'đỏ', 'starter', 0),
+  ('colors-blue', 'colors', 'blue', '🟦', 'xanh dương', 'starter', 1),
+  ('colors-green', 'colors', 'green', '🟩', 'xanh lá', 'starter', 2),
+  ('colors-yellow', 'colors', 'yellow', '🟨', 'vàng', 'starter', 3),
+  ('colors-black', 'colors', 'black', '⬛', 'đen', 'starter', 4),
+  ('colors-white', 'colors', 'white', '⬜', 'trắng', 'starter', 5),
+  ('colors-orange', 'colors', 'orange', '🟧', 'cam', 'mover', 6),
+  ('colors-purple', 'colors', 'purple', '🟪', 'tím', 'mover', 7),
+  ('colors-brown', 'colors', 'brown', '🟫', 'nâu', 'mover', 8)
 on conflict (id) do update set theme_id = excluded.theme_id, word = excluded.word, emoji = excluded.emoji, vi = excluded.vi, min_level = excluded.min_level, sort_order = excluded.sort_order;
 
 -- Content: skill huts

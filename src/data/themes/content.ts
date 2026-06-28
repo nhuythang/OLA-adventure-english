@@ -6,6 +6,8 @@ import type { Level } from "@/lib/types";
 import type { VocabWord } from "./weather";
 import { WEATHER_SPEAK_QUESTION, weatherSentence, weatherSentenceWords, weatherWordsForLevel } from "./weather";
 import { ANIMALS_SPEAK_QUESTION, animalsSentence, animalsSentenceWords, animalsWordsForLevel } from "./animals";
+import { FOOD_SPEAK_QUESTION, foodSentence, foodSentenceWords, foodWordsForLevel } from "./food";
+import { COLORS_SPEAK_QUESTION, colorsSentence, colorsSentenceWords, colorsWordsForLevel } from "./colors";
 
 export interface ThemeContent {
   wordsForLevel: (level: Level) => VocabWord[];
@@ -33,6 +35,20 @@ const REGISTRY: Record<string, ThemeContent> = {
     sentenceWords: animalsSentenceWords,
     reveal: (w) => `It is a ${w}.`,
     speakQuestion: ANIMALS_SPEAK_QUESTION,
+  },
+  food: {
+    wordsForLevel: foodWordsForLevel,
+    sentence: foodSentence,
+    sentenceWords: foodSentenceWords,
+    reveal: (w) => `I like ${w}.`,
+    speakQuestion: FOOD_SPEAK_QUESTION,
+  },
+  colors: {
+    wordsForLevel: colorsWordsForLevel,
+    sentence: colorsSentence,
+    sentenceWords: colorsSentenceWords,
+    reveal: (w) => `It is ${w}.`,
+    speakQuestion: COLORS_SPEAK_QUESTION,
   },
 };
 

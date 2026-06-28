@@ -22,6 +22,15 @@ Remaining: **27 — deploy / real-iPad pass** (last task).
 - **Open product decision:** make **Animals** the Starter intro island (it's all-Starters in YLE) and
   treat **Weather** as Movers, rather than teaching Movers weather at Starter. Not done — needs your call.
 
+### All four islands now have content
+- **Food** (`data/themes/food.ts`, 9 words) and **Colours** (`data/themes/colors.ts`, 9 words — coloured-
+  square emoji as pictures) added and registered. Both reconcile **clean** against YLE; all 4 islands
+  (Weather, Animals, Food, Colours) are playable across all skills/levels. Seed now has 38 items —
+  **re-load `supabase/seed.sql`**.
+- Islands still **unlock in order** (master one → next opens), by design — so a fresh child sees only
+  Weather open. If you'd rather have all islands tappable from the start, it's a one-line change in
+  `isThemeUnlocked` (say the word).
+
 ### Streaks (task 23)
 - Pure logic in `src/lib/progress/streak.ts` (unit-tested): `updateStreak` advances on a new calendar
   day, resets to 1 after a gap, flags a milestone (3/7/14/30) once. Wired into `recordHutResult`
