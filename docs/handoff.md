@@ -10,8 +10,17 @@ plan is [`docs/tasks/00-index.md`](tasks/00-index.md); the *why* is
 **Phase 2 COMPLETE: tasks 17–21 all ☑** (schema+seed, parent auth+PIN, Supabase persistence, Flyer L3,
 second theme + interleaving). Two themes (Weather, Animals), all three levels across all four huts,
 progress in Supabase (per-child, multi-device) under the parent session; child mode requires a parent
-login when configured, falls back to localStorage when not (dev:demo / e2e). **Phase 3 in progress: 22 (placement) ☑, 23 (streaks) ☑, 24 (dashboard) ☑, 26 (PWA) ☑.** Remaining:
-25 wordlist import, 27 deploy/real-iPad pass.
+login when configured, falls back to localStorage when not (dev:demo / e2e). **Phase 3 in progress: 22 (placement) ☑, 23 (streaks) ☑, 24 (dashboard) ☑, 25 (wordlist) ☑, 26 (PWA) ☑.**
+Remaining: **27 — deploy / real-iPad pass** (last task).
+
+### Wordlist source of truth (task 25)
+- Resolved: **official Cambridge YLE** (2025). `src/data/wordlist/cambridge-yle.ts` (Animals + Weather
+  topic words → YLE level, parsed from the official PDF), `src/lib/wordlist.ts` `reconcileTheme`.
+- Findings: `pig` isn't a YLE headword → Animals' `pig`→`horse` (re-load `supabase/seed.sql`).
+  **Weather is a Movers topic** (all words Movers+; rainy/snowy/stormy aren't headwords) — pinned as
+  documented deviations in `unit/wordlist.test.ts` so the theme stays playable and new misalignments fail.
+- **Open product decision:** make **Animals** the Starter intro island (it's all-Starters in YLE) and
+  treat **Weather** as Movers, rather than teaching Movers weather at Starter. Not done — needs your call.
 
 ### Streaks (task 23)
 - Pure logic in `src/lib/progress/streak.ts` (unit-tested): `updateStreak` advances on a new calendar

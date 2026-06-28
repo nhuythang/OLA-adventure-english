@@ -152,8 +152,14 @@ Legend: ☐ not started · ◐ in progress · ☑ done
   the collected sticker book. Pure aggregation in `src/lib/parent/dashboard-data.ts` (`summarize`,
   unit-tested) over RLS-scoped Supabase rows; presentation in `src/components/parent/dashboard.tsx`.
   Reads live data under the parent session (verify after login; e2e covers the unconfigured redirect).
-- ☐ **25 — Wordlist source-of-truth import.** Import the real Cambridge YLE Starters/Movers/Flyers
-  lists (or OLA term lists) as the content source; reconcile Weather + future themes against it.
+- ☑ **25 — Wordlist source-of-truth import.** Source of truth = **official Cambridge YLE** (2025
+  wordlist). `data/wordlist/cambridge-yle.ts` encodes the Animals + Weather topic vocabulary with each
+  word's YLE level (parsed from the official PDF's per-level A–Z lists). `lib/wordlist.ts` `reconcileTheme`
+  flags words not in the list or taught below their YLE level; unit-tested. **Findings & actions:**
+  (1) `pig` isn't a YLE headword → swapped Animals' `pig`→`horse` (Starters); Animals now reconciles
+  clean. (2) **Weather is really a *Movers* topic** — every weather word is Movers+ and `rainy/snowy/
+  stormy` aren't headwords; pinned as documented deviations (theme stays playable). Re-leveling Weather /
+  making **Animals** the Starter intro is a product decision — see open questions.
 - ☑ **26 — PWA.** `src/app/manifest.ts` (`display: standalone`, portrait, theme/bg colors, 192/512/
   maskable icons) + apple-touch icon + `apple-mobile-web-app-capable` so it launches fullscreen from the
   iPad home screen. Locked viewport + safe-area insets were already in place (layout + TabletShell). A

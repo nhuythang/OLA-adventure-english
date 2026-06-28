@@ -363,6 +363,10 @@ Vercel preview/deploy. **Never commit directly to `main`.** Commit author email
 - Confirm level → age mapping against OLA's actual term structure (affects which themes seed first).
 - Confirm sticker-only rewards are enough motivation, or whether a light "avatar dress-up with
   stickers" layer is wanted (Phase 3 candidate).
-- Confirm the **wordlist source of truth**: official Cambridge YLE list file vs OLA term lists
-  (Phase 3, task 25). Until then, Weather content is hand-seeded from the spec.
+- ~~Confirm the **wordlist source of truth**~~ **RESOLVED (task 25): official Cambridge YLE** (2025
+  wordlist), encoded in `src/data/wordlist/cambridge-yle.ts`; themes reconcile via `src/lib/wordlist.ts`.
+- **NEW (from task 25 reconciliation): Weather is a YLE *Movers* topic**, not Starters — its words are
+  all Movers+ and rainy/snowy/stormy aren't YLE headwords. **Animals** is the natural all-Starters intro.
+  Decide whether to make Animals the Starter island and re-level Weather to Movers (currently Weather is
+  the Starter intro with documented deviations pinned in `unit/wordlist.test.ts`).
 - The two children's exact ages and reading level (seeds per-skill placement defaults).
