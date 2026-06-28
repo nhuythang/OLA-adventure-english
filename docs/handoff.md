@@ -4,14 +4,37 @@ Read this first to continue the project in a new session. Source of truth for th
 plan is [`docs/tasks/00-index.md`](tasks/00-index.md); the *why* is
 [`docs/game-design-spec.md`](game-design-spec.md); the rules are [`CLAUDE.md`](../CLAUDE.md).
 
-## Status (2026-06-25)
+## Status (2026-06-28)
 
-**Phase 1 vertical slice is COMPLETE and deployed.** Tasks **01–16 all ☑**.
-**Phase 2 COMPLETE: tasks 17–21 all ☑** (schema+seed, parent auth+PIN, Supabase persistence, Flyer L3,
-second theme + interleaving). Two themes (Weather, Animals), all three levels across all four huts,
-progress in Supabase (per-child, multi-device) under the parent session; child mode requires a parent
-login when configured, falls back to localStorage when not (dev:demo / e2e). **Phase 3 in progress: 22 (placement) ☑, 23 (streaks) ☑, 24 (dashboard) ☑, 25 (wordlist) ☑, 26 (PWA) ☑.**
-Remaining: **27 — deploy / real-iPad pass** (last task).
+**Phases 1–3 are essentially complete and deployed** (tasks 01–26 all ☑). Phase 1 vertical slice;
+Phase 2 (17–21: schema+seed, parent auth+PIN, Supabase persistence, Flyer L3, 2nd theme+interleaving);
+Phase 3 (22 placement, 23 streaks, 24 dashboard, 25 wordlist, 26 PWA). Plus a follow-up that **filled
+all four islands** (Weather, Animals, Food, Colours) — all play across all 4 huts × 3 levels, progress
+in Supabase (per-child, multi-device) under the parent session; localStorage fallback when unconfigured
+(dev:demo / e2e). **114 unit + 15 e2e green.**
+
+### What's NEXT (start here)
+1. **Grammar journey — build the G1 MVP.** Research is done; the plan is
+   [`docs/research/grammar-build-roadmap.md`](research/grammar-build-roadmap.md) (+ `grammar-yle.md`).
+   First task = a **Grammar island** with **Plurals + Present continuous** (both emoji-only, zero new
+   art). The one new engine piece is `buildGrammarQuestions` — choices are *grammatical contrasts of the
+   same referent* (one cat vs many cats), reusing the four huts + levels + scaffold + interleaving +
+   stickers. Prepositions (needs small SVG scenes) follow. See the roadmap's §3 "first task".
+2. **Task 27 — real-iPad pass** (on-device, you): Add to Home Screen → confirm fullscreen + star icon;
+   log in as parent (PIN) → dashboard/placement; play a hut; confirm progress + streak persist; verify
+   emoji teaching pictures render on iPadOS.
+
+### Open product decisions (your call — see CLAUDE.md "Open questions")
+- **Weather is a YLE *Movers* topic**, not Starters (task 25 finding). Consider making **Animals** the
+  Starter intro island and re-leveling Weather to Movers. One-ish-file change; not done.
+- **Islands unlock in sequence** by design (master one → next opens). If you want all islands open from
+  the start, it's a one-line change in `isThemeUnlocked`.
+- **Grammar: island vs woven** — roadmap recommends a dedicated Grammar island first.
+
+### Supabase housekeeping (so the live site fully works)
+You said all migrations are pushed. Confirm **0002–0004 applied** and **`supabase/seed.sql` re-loaded**
+(now 38 items incl. Food/Colours + `animals-horse` replacing `animals-pig`). Child progress/streaks need
+the tables under the parent session.
 
 ### Wordlist source of truth (task 25)
 - Resolved: **official Cambridge YLE** (2025). `src/data/wordlist/cambridge-yle.ts` (Animals + Weather
@@ -188,22 +211,16 @@ Verify all of tsc/lint/unit/build/e2e before pushing. After a PR: watch CI with
   resolves, then corrects (huts rebuild their question set). Fine for now; SSR-loading the level is a
   later polish.
 
-## What's next
-
-Phase 1 is done. Options, in rough priority:
-
-1. **Test on the real iPad** (URL above → Add to Home Screen) before building more. Verify content
-   emoji render on iPadOS.
-2. **Phase 3 PWA early (task 26)** — manifest `display: standalone` + locked viewport so it launches
-   fullscreen like a native app on iPad. Small, high-value for the test.
-3. **Phase 2:** 17 Supabase schema → 18 parent auth + PIN → 19 migrate persistence off localStorage →
-   20 Flyer (L3) sentence mechanics → 21 second theme + interleaving.
-
 V2 candidates (tracked at the bottom of `00-index.md`): original SVG mascot art to replace the emoji
 stickers; a child-facing sticker-set picker.
 
 ## Suggested kickoff for the next session
 
-> Read `docs/handoff.md`. Phase 1 (tasks 01–16) is complete and deployed. Continue with **<task 26
-> PWA / task 17 Supabase>** — branch off `main`, plan briefly, implement, verify (tsc/lint/unit/
-> build/e2e), open a PR, watch CI, and merge (auto-deploys). Keep the per-task PR workflow.
+> Read `docs/handoff.md` (this file). Phases 1–3 (tasks 01–26) are complete and deployed; all four
+> islands are filled. Build the **Grammar journey G1 MVP** per
+> [`docs/research/grammar-build-roadmap.md`](research/grammar-build-roadmap.md) §3: a **Grammar island**
+> with **Plurals + Present continuous** (emoji-only, no new art), via a new `buildGrammarQuestions`
+> (choices are grammatical contrasts of the same referent) reusing the four huts + levels + scaffold +
+> interleaving + stickers. Branch off `main`, plan briefly, implement, verify (tsc/lint/unit/build/e2e),
+> open a PR, watch CI, merge (auto-deploys). Keep the per-task PR workflow. (Or do task 27, the real-iPad
+> pass, on-device.)
