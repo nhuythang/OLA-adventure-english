@@ -12,12 +12,11 @@ describe("yleLevel", () => {
   });
 });
 
-describe("reconcileTheme — Animals", () => {
-  // After swapping pig→horse, every Animals word is a YLE headword taught at or
-  // above its YLE level. This guards future Animals edits: a word that isn't in
-  // the list (or is taught too early) will fail here.
-  it("reconciles cleanly against the Cambridge YLE wordlist", () => {
-    const r = reconcileTheme("animals");
+describe("reconcileTheme — clean themes", () => {
+  // These themes are built from YLE headwords taught at or above their YLE level.
+  // Adding a non-headword (or teaching one too early) will fail here.
+  it.each(["animals", "food", "colors"])("%s reconciles cleanly against YLE", (themeId) => {
+    const r = reconcileTheme(themeId);
     expect(r.notListed).toEqual([]);
     expect(r.belowLevel).toEqual([]);
   });
