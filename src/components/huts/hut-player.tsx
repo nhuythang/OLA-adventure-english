@@ -6,6 +6,7 @@ import { ScreenHeader } from "@/components/game/screen-header";
 import { ProgressDots } from "@/components/ui/progress-dots";
 import { AudioButton } from "@/components/ui/audio-button";
 import { ChoiceCard } from "@/components/ui/choice-card";
+import { resolveChoiceVisual } from "@/components/huts/grammar-scene";
 import { HutResult } from "@/components/huts/hut-result";
 import { useHutEngine } from "@/lib/engine/use-hut-engine";
 import { type EngineQuestion } from "@/lib/engine/hut-machine";
@@ -92,7 +93,7 @@ export function HutPlayer({
               key={opt.id}
               id={opt.id}
               label={opt.label}
-              visual={opt.emoji}
+              visual={resolveChoiceVisual(opt.emoji)}
               showLabel={showLabels}
               correct={opt.id === engine.correctId}
               state={engine.choiceState[opt.id] ?? "idle"}

@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 
 import { PLURALS } from "@/data/grammar/plurals";
 import { PRESENT_CONTINUOUS } from "@/data/grammar/present-continuous";
+import { PREPOSITIONS } from "@/data/grammar/prepositions";
 import { grammarRoundItems } from "@/data/grammar";
+import { relationForKey } from "@/data/grammar/scenes";
 import { buildGrammarQuestions, toEngineQuestion } from "@/lib/engine/grammar-questions";
 
 describe("grammar content shape", () => {
@@ -28,16 +30,32 @@ describe("grammar content shape", () => {
       expect(item.sentenceWords.join(" ") + ".").toBe(item.prompt);
     }
   });
+
+  it("prepositions contrast the SAME referent in different positions (the preposition is the only difference)", () => {
+    for (const item of PREPOSITIONS.items) {
+      const options = [item.correct, ...item.distractors];
+      // Every option is a drawn scene of the ball + box (no emoji here).
+      for (const opt of options) expect(relationForKey(opt.emoji)).toBeDefined();
+      // Distinct positions, correct not duplicated among distractors.
+      const relations = options.map((o) => relationForKey(o.emoji));
+      expect(new Set(relations).size).toBe(options.length);
+      expect(item.distractors.some((d) => d.id === item.correct.id)).toBe(false);
+      // Prompt names the place; the write target rebuilds that very sentence.
+      expect(item.prompt).toMatch(/^The ball is .+ the box\.$/);
+      expect(item.sentenceWords.join(" ") + ".").toBe(item.prompt);
+    }
+  });
 });
 
 describe("grammarRoundItems", () => {
   it("interleaves the two structures and respects the round cap", () => {
     const items = grammarRoundItems(4);
     expect(items).toHaveLength(4);
-    // Round-robin → alternates plurals / present-continuous.
+    // Round-robin across the three structures, then wraps.
     expect(items[0]!.id.startsWith("plurals-")).toBe(true);
     expect(items[1]!.id.startsWith("present-continuous-")).toBe(true);
-    expect(items[2]!.id.startsWith("plurals-")).toBe(true);
+    expect(items[2]!.id.startsWith("prepositions-")).toBe(true);
+    expect(items[3]!.id.startsWith("plurals-")).toBe(true);
   });
 
   it("is deterministic (SSR-safe — same result every call)", () => {
@@ -46,7 +64,7 @@ describe("grammarRoundItems", () => {
 
   it("never exceeds the available item pool", () => {
     const all = grammarRoundItems(999);
-    expect(all.length).toBe(PLURALS.items.length + PRESENT_CONTINUOUS.items.length);
+    expect(all.length).toBe(PLURALS.items.length + PRESENT_CONTINUOUS.items.length + PREPOSITIONS.items.length);
   });
 });
 
