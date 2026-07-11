@@ -5,11 +5,16 @@
 // first appears in. Source PDF:
 //   https://www.cambridgeenglish.org/Images/739104-starters-movers-flyers-word-list-2025.pdf
 //
-// Scope: the Animals and Weather topic vocabulary (the themes we ship + their
-// near neighbours). Extend per topic as new themes land. NOTE: this is a
-// word-level list — homographs aren't disambiguated (e.g. "fly"/"bat" are listed
-// at the level their commonest sense appears), which is fine for reconciling the
-// concrete nouns/adjectives our themes teach.
+// Scope: Animals, Weather, Food & drink, and Colours topic vocabulary (the
+// themes we ship + their near neighbours). Extend per topic as new themes
+// land. NOTE: this is a word-level list — homographs aren't disambiguated
+// (e.g. "fly"/"bat" are listed at the level their commonest sense appears),
+// which is fine for reconciling the concrete nouns/adjectives our themes
+// teach. The official Food & drink table pairs dialectal synonyms (chips/
+// fries, candy/sweet(s)) — we only encode the variant we actually teach.
+// Multi-word headwords (e.g. "ice cream") are deliberately left out: our
+// vocab items are single tokens (the Write hut traces/spells them letter by
+// letter), so a space mid-word would need engine changes to handle.
 import type { Level } from "@/lib/types";
 
 export type YleLevel = "starters" | "movers" | "flyers";
@@ -104,7 +109,22 @@ export const YLE_WORDLIST: Record<string, YleLevel> = {
   rice: "starters",
   juice: "starters",
   water: "starters",
+  burger: "starters",
+  carrot: "starters",
+  chocolate: "starters",
+  fries: "starters",
+  grape: "starters",
+  lemon: "starters",
+  onion: "starters",
+  pineapple: "starters",
+  potato: "starters",
+  tomato: "starters",
+  watermelon: "starters",
   soup: "movers",
+  cheese: "movers",
+  pasta: "movers",
+  salad: "movers",
+  sandwich: "movers",
 
   // ---- Colours ----
   red: "starters",
