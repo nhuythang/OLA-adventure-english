@@ -50,7 +50,13 @@ export function GrammarWriteHut({ childId, themeId }: { childId: string; themeId
     playCorrect();
     setAttempts((prev) => [
       ...prev,
-      { skill: "write", themeId, firstTryCorrect: misses === 0, hintsUsed: Math.min(misses, 2) },
+      {
+        skill: "write",
+        themeId,
+        firstTryCorrect: misses === 0,
+        hintsUsed: Math.min(misses, 2),
+        itemId: item.id,
+      },
     ]);
     setTimeout(() => {
       if (index + 1 >= items.length) setDone(true);

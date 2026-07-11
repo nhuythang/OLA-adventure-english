@@ -76,6 +76,14 @@ export interface Attempt {
   firstTryCorrect: boolean;
   /** Hints/scaffolds shown before the correct answer (0, 1, or 2). */
   hintsUsed: number;
+  /**
+   * The round's target item, local to its source (a vocab word like "sunny" or
+   * a grammar item id like "plurals-cat") — not yet namespaced by theme. The
+   * persistence layer combines it with `themeId` to match `english_items.id`'s
+   * `${themeId}-${word}` convention. Optional: not every historical call site
+   * sets it.
+   */
+  itemId?: string;
 }
 
 // Per-child progress within one theme island.
