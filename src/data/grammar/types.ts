@@ -21,8 +21,18 @@ export interface GrammarItem {
   speakTarget: string;
 }
 
+export interface ObserveFrame {
+  /** Spoken narration for this frame — a plain example, never a stated rule. */
+  narration: string;
+  /** Emoji or scene-key visual (same union as Choice.emoji). */
+  visual: string;
+}
+
 export interface GrammarStructure {
   /** Stable id of the grammar point, e.g. "plurals" | "present-continuous". */
   id: string;
   items: GrammarItem[];
+  /** The "Observe" beat (G3): 2–3 narrated example frames shown once before the
+   *  hut's rounds, priming the pattern with no rules stated. */
+  observe: ObserveFrame[];
 }

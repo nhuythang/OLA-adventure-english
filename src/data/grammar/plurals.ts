@@ -27,6 +27,12 @@ const repeat = (emoji: string, n: number): string => emoji.repeat(n);
 
 export const PLURALS: GrammarStructure = {
   id: "plurals",
+  // No rules — just the pattern, said aloud: one, two, then the bare plural.
+  observe: [
+    { narration: "One cat.", visual: "🐱" },
+    { narration: "Two cats.", visual: "🐱🐱" },
+    { narration: "Cats!", visual: "🐱🐱🐱" },
+  ],
   items: NOUNS.map((n) => ({
     id: `plurals-${n.singular}`,
     // The bare plural word — "cats" means more than one cat. The only contrast is

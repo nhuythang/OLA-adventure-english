@@ -23,6 +23,11 @@ const ACTIONS: Action[] = [
 
 export const PRESENT_CONTINUOUS: GrammarStructure = {
   id: "present-continuous",
+  // No rules — just two examples of the -ing pattern in action.
+  observe: [
+    { narration: "She is running.", visual: "🏃" },
+    { narration: "He is swimming.", visual: "🏊" },
+  ],
   items: ACTIONS.map((a) => {
     const sentence = `${a.subject} is ${a.ing}.`;
     return {

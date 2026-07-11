@@ -27,6 +27,12 @@ function choice(p: Place): Choice {
 
 export const PREPOSITIONS: GrammarStructure = {
   id: "prepositions",
+  // No rules — three of the four scenes, said aloud.
+  observe: [
+    { narration: "The ball is in the box.", visual: sceneKey("ball-in-box") },
+    { narration: "The ball is on the box.", visual: sceneKey("ball-on-box") },
+    { narration: "The ball is under the box.", visual: sceneKey("ball-under-box") },
+  ],
   items: PLACES.map((p) => ({
     id: `prepositions-${p.prep.replace(/\s+/g, "-")}`,
     prompt: `The ball is ${p.prep} the box.`,
