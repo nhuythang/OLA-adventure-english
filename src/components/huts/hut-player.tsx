@@ -69,6 +69,7 @@ export function HutPlayer({
         {promptMode === "word" ? (
           <>
             <span
+              data-testid="hut-prompt"
               className={
                 sentencePrompt
                   ? "max-w-[20ch] text-center font-display text-3xl font-semibold text-ink"

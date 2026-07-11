@@ -35,4 +35,21 @@ describe("buildPictureRounds", () => {
     // A weather review question's distractors are weather words, not animals.
     expect(review?.distractors.every((d) => !["cat", "dog", "bird"].includes(d.id))).toBe(true);
   });
+
+  it("without an rng, keeps the pool's first-N order (deterministic, SSR-safe)", () => {
+    const rounds = buildPictureRounds("animals", [], "mover", 5);
+    expect(rounds.map((q) => q.id)).toEqual(["cat", "dog", "bird", "fish", "frog"]);
+  });
+
+  it("with an rng, rotates which words are targeted instead of always the first N (G4 deepen-pool follow-up)", () => {
+    // Animals' Mover/Flyer pool has many more than 5 rounds — a fixed rng seed
+    // that doesn't happen to reproduce the first-5 order proves rotation is
+    // live, not just reshuffling within an unchanged target set.
+    const seed = [0.9, 0.1, 0.8, 0.2, 0.7, 0.05];
+    let call = 0;
+    const rng = () => seed[call++ % seed.length]!;
+    const rounds = buildPictureRounds("animals", [], "mover", 5, rng);
+    expect(rounds).toHaveLength(5);
+    expect(rounds.map((q) => q.id)).not.toEqual(["cat", "dog", "bird", "fish", "frog"]);
+  });
 });
