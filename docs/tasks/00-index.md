@@ -208,11 +208,15 @@ Legend: ☐ not started · ◐ in progress · ☑ done
   (advances immediately) when speech is unavailable/not yet gesture-activated. Shown once per hut entry
   (state lives in each Grammar*Hut wrapper, above `HutPlayer`). *(Done — PR pending; 129 unit,
   tsc/lint/build/e2e green; verified in-browser with a simulated speech delay.)*
-- ☐ **G4 — Per-item attempt logging (foundation).** Today `learning_attempts` logs at the hut level
-  (no `item_id`). Thread the round item id through `Attempt` → `recordHutResult` →
-  `learning_attempts.item_id` for both vocab and grammar (grammar needs lightweight item keys or a
-  null-tolerant scheme). Mostly mechanical, unit-tested. **Enables G5 + G6.** Needs a Supabase
-  migration + seed re-load (owner).
+- ☑ **G4 — Per-item attempt logging (foundation).** `Attempt` gained an optional `itemId` (local
+  source id — vocab word or grammar item id), set at every attempt-creation site (`hut-machine.ts`'s
+  `select` reducer for Listen/Read across vocab + grammar; `write-hut`/`speak-hut`/`grammar-write-hut`/
+  `grammar-speak-hut` for Write/Speak). `remote.ts` combines it at the persistence boundary
+  (`item_id: ${themeId}-${itemId}`, matching `english_items.id`'s convention for vocab). Grammar items
+  aren't rows in `english_items`, so `migrations/0005_attempt_item_id.sql` **drops the item_id FK** —
+  it's now a plain identifying tag, not a referentially-enforced link. No seed re-load needed (schema-
+  only). *(Done — PR #36; tsc/lint/130 unit/build/17 e2e green.)* **Enables G5 + G6.** Needs
+  `supabase db push` of 0005 to the hosted DB.
 - ☐ **G5 — Forgetting-aware spaced review + Vietnamese-L1 weighting.** Replace random 30% interleaving
   with a **1/3/7/14-day** schedule (due + weak items first) plus over-weighting the VN pain points
   (plural -s, 3rd-person -s, copula *be*, articles, tense). New pure

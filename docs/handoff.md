@@ -11,25 +11,27 @@ Phase 2 (17–21: schema+seed, parent auth+PIN, Supabase persistence, Flyer L3, 
 Phase 3 (22 placement, 23 streaks, 24 dashboard, 25 wordlist, 26 PWA). Plus a follow-up that **filled
 all four islands** (Weather, Animals, Food, Colours) — all play across all 4 huts × 3 levels, progress
 in Supabase (per-child, multi-device) under the parent session; localStorage fallback when unconfigured
-(dev:demo / e2e). **114 unit + 15 e2e green.**
+(dev:demo / e2e). **130 unit + 17 e2e green.**
 
 ### What's NEXT (start here)
-1. **Grammar journey — G1, G2 + G3 are DONE.** G1 (PR #33): Grammar island, Plurals + Present
+1. **Grammar journey — G1 through G4 are DONE.** G1 (PR #33): Grammar island, Plurals + Present
    continuous, all four huts, always unlocked; `buildGrammarQuestions` = choices are grammatical
    contrasts of the same referent. G2 (PR #34): Prepositions of place (in/on/under/next to) + the first
    inline-SVG teaching art (`src/data/grammar/scenes.ts` + `grammar-scene.tsx`'s `PrepositionScene`/
-   `resolveChoiceVisual`/`PromptVisual`) — `HutPlayer`/`SentenceTiles` resolve a scene registry so emoji
-   strings still pass through unchanged. G3 (branch `feat/grammar-observe-intro`): the "Observe" intro
-   beat — `ObserveFrame`/`GrammarStructure.observe` per structure, `GRAMMAR_OBSERVE_FRAMES` registry,
-   `ObserveIntro` component shown once before each grammar hut's rounds, paced by the speech engine's
-   `onEnd` (no fixed timer), skippable, reduced-motion aware. Migrations confirmed pushed;
-   `supabase/seed.sql` reloaded.
+   `resolveChoiceVisual`/`PromptVisual`). G3 (PR #35): the "Observe" intro beat — `ObserveFrame`/
+   `GrammarStructure.observe` per structure, `GRAMMAR_OBSERVE_FRAMES` registry, `ObserveIntro` component
+   shown once before each grammar hut's rounds, paced by the speech engine's `onEnd`, skippable,
+   reduced-motion aware. G4 (PR #36): per-item attempt logging — `Attempt.itemId` set at every
+   attempt-creation site, combined with `themeId` at the persistence boundary in `remote.ts`
+   (`item_id: ${themeId}-${itemId}`); `migrations/0005_attempt_item_id.sql` drops the `item_id` FK
+   since grammar items aren't rows in `english_items`. Migrations confirmed pushed through 0004;
+   **0005 still needs `supabase db push`**.
    The rest is planned as a **G-series in [`docs/tasks/00-index.md`](tasks/00-index.md)** (rationale:
    [`docs/research/grammar-build-roadmap.md`](research/grammar-build-roadmap.md)).
-   **Next task = G4 — Per-item attempt logging** (thread the round item id through `Attempt` →
-   `recordHutResult` → `learning_attempts.item_id`; unblocks G5/G6 — needs a Supabase migration + seed
-   reload). Then G5 (spaced review + VN-L1 weighting), G6 (grammar dashboard), G7 (Movers/Flyers
-   structures).
+   **Next task = G5 — Spaced review + Vietnamese-L1 weighting** (replace random 30% interleaving with a
+   1/3/7/14-day due/weak-item schedule built on the `learning_attempts.item_id` G4 just added; over-
+   weight VN pain points — plural -s, 3rd-person -s, copula *be*, articles, tense). Then G6 (grammar
+   dashboard), G7 (Movers/Flyers structures).
 2. **Task 27 — real-iPad pass** (on-device, you): Add to Home Screen → confirm fullscreen + star icon;
    log in as parent (PIN) → dashboard/placement; play a hut; confirm progress + streak persist; verify
    emoji teaching pictures render on iPadOS.
