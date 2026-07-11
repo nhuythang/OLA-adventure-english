@@ -42,7 +42,13 @@ export function WriteHut({ childId, themeId }: { childId: string; themeId: strin
     playCorrect();
     setAttempts((prev) => [
       ...prev,
-      { skill: "write", themeId, firstTryCorrect: misses === 0, hintsUsed: Math.min(misses, 2) },
+      {
+        skill: "write",
+        themeId,
+        firstTryCorrect: misses === 0,
+        hintsUsed: Math.min(misses, 2),
+        itemId: word.word,
+      },
     ]);
     setTimeout(() => {
       if (index + 1 >= words.length) setDone(true);

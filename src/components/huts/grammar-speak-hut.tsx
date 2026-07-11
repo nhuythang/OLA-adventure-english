@@ -83,7 +83,7 @@ export function GrammarSpeakHut({ childId, themeId }: { childId: string; themeId
     playCorrect();
     setAttempts((prev) => [
       ...prev,
-      { skill: "speak", themeId, firstTryCorrect: firstTry, hintsUsed: firstTry ? 0 : 1 },
+      { skill: "speak", themeId, firstTryCorrect: firstTry, hintsUsed: firstTry ? 0 : 1, itemId: item.id },
     ]);
     setMissed(false);
     setTimeout(() => {

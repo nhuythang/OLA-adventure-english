@@ -138,6 +138,7 @@ export function hutReducer(state: HutState, action: HutAction): HutState {
           themeId: state.themeId,
           firstTryCorrect: firstTry,
           hintsUsed: Math.min(state.misses, 2),
+          itemId: q.id,
         };
         return {
           ...state,

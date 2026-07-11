@@ -123,6 +123,7 @@ export async function persistHutResultRemote(
         attempts.map((a) => ({
           child_id: childId,
           hut_id: `${themeId}-${skill}`,
+          item_id: a.itemId ? `${a.themeId}-${a.itemId}` : null,
           first_try_correct: a.firstTryCorrect,
           hints_used: a.hintsUsed,
         })),

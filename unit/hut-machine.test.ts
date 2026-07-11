@@ -49,6 +49,12 @@ describe("hut machine", () => {
     expect(s.attempts[0]!.firstTryCorrect).toBe(true);
   });
 
+  it("records the question id as the attempt's itemId (G4)", () => {
+    let s = start([q("sunny", "rainy", "cloudy")]);
+    s = hutReducer(s, { type: "select", choiceId: "sunny" });
+    expect(s.attempts[0]!.itemId).toBe("sunny");
+  });
+
   it("1st miss dims the tapped choice without revealing", () => {
     let s = start([q("sunny", "rainy", "cloudy")]);
     s = hutReducer(s, { type: "select", choiceId: "rainy" });
