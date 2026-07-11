@@ -6,7 +6,7 @@
 import { PLURALS } from "./plurals";
 import { PRESENT_CONTINUOUS } from "./present-continuous";
 import { PREPOSITIONS } from "./prepositions";
-import type { GrammarItem } from "./types";
+import type { GrammarItem, ObserveFrame } from "./types";
 
 export const GRAMMAR_THEME_ID = "grammar";
 
@@ -15,6 +15,10 @@ export function isGrammarTheme(themeId: string): boolean {
 }
 
 const STRUCTURES = [PLURALS, PRESENT_CONTINUOUS, PREPOSITIONS];
+
+// The "Observe" beat (G3): each structure's example frames, back to back, shown
+// once before a grammar hut's rounds (see ObserveIntro). No rules stated.
+export const GRAMMAR_OBSERVE_FRAMES: ObserveFrame[] = STRUCTURES.flatMap((s) => s.observe);
 
 // Round-robin merge of the structures' items (deterministic — SSR-safe, no RNG;
 // choice positions are randomized later, client-side, by the engine). Sliced to

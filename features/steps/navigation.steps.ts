@@ -9,6 +9,20 @@ Then("I should see the audio button", async ({ page }) => {
   await expect(page.getByRole("button", { name: /hear/i }).first()).toBeVisible();
 });
 
+// Dismisses the grammar huts' "Observe" intro (G3) so the round flow can start.
+// Optional: when speech is gesture-gated (no real tap before page.goto in e2e),
+// onEnd fires immediately and the intro auto-cascades through its frames before
+// (or mid-way through) this step — graceful degrade, not a bug. A short timeout
+// keeps the miss cheap instead of retrying against a button that will never
+// reappear until the suite's full per-test timeout.
+When("I skip the intro", async ({ page }) => {
+  try {
+    await page.getByRole("button", { name: /skip/i }).click({ timeout: 2_000 });
+  } catch {
+    // Already auto-dismissed.
+  }
+});
+
 Then("I should see the trace pad", async ({ page }) => {
   await expect(page.getByTestId("trace-pad")).toBeVisible();
 });

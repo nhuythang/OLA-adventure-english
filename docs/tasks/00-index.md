@@ -189,18 +189,25 @@ Legend: ☐ not started · ◐ in progress · ☑ done
   `SentenceTiles`, Speak via self-rate/ASR; per-skill levels drive choice count (2→3→4). Island is
   always unlocked. Seed regenerated (theme + huts rows for the `learning_attempts` FK; no items).
   *(Done — PR #33; tsc/lint/build green, 121 unit, 17 e2e, all huts played in-browser.)*
-- ☐ **G2 — Prepositions of place (in/on/under) + SVG scene support.** The deferred third Starter
-  structure and the one real new-art need — emoji can't show "under," so introduce tiny inline-SVG
-  scenes (ball + box in three spatial relations) where the choices are the **same referent** in
-  different positions ("The ball is under the box." → tap the scene). `Choice.emoji` is a `string`, so
-  add a **scene registry** (`scene-key → SVG component`) rendered by a grammar-aware visual in
-  `HutPlayer` — keeps the engine string-serializable and unit-testable rather than widening `Choice` to
-  carry a node. `src/data/grammar/prepositions.ts`; register into the island pool; tests + e2e.
-- ☐ **G3 — "Observe" intro beat (the OLA cycle).** A short (~20–30s) Observe screen before a grammar
-  hut: spoken audio + 2–3 patterned picture frames, **no rules** ("one cat… two cats… cats!"). Maps the
-  cycle to what we have — Observe = new intro, Learn = existing scaffold-and-reveal, Apply = the rounds.
-  New `ObserveIntro` component (skippable, auto-advances into the hut, shown once per hut entry,
-  reduced-motion aware) + per-structure observe sequences in the grammar data. Tests + e2e.
+- ☑ **G2 — Prepositions of place (in/on/under) + SVG scene support.** The third Starter structure and
+  the one real new-art need — emoji can't show "under," so this introduces inline-SVG scenes (a ball +
+  box in four spatial relations: in/on/under/next to) where the choices are the **same referent** in
+  different positions. `src/data/grammar/scenes.ts` (pure scene-key vocabulary, no JSX) +
+  `src/components/huts/grammar-scene.tsx` (`PrepositionScene` SVG, `resolveChoiceVisual` cached per key
+  so `ChoiceCard`'s memo stays jank-free, `PromptVisual`). `HutPlayer` resolves choice visuals through
+  the scene registry (emoji strings pass through unchanged); `SentenceTiles` gained an optional
+  `visual` override. `src/data/grammar/prepositions.ts` registered into the island pool alongside
+  plurals + present continuous. *(Done — PR #34; 126 unit, tsc/lint/build/e2e green.)*
+- ☑ **G3 — "Observe" intro beat (the OLA cycle).** A short Observe screen before each grammar hut's
+  rounds: 2–3 narrated example frames per structure, **no rules stated** ("One cat." → "Two cats." →
+  "Cats!"). Maps the cycle to what we have — Observe = the new intro, Learn = existing
+  scaffold-and-reveal, Apply = the rounds. `ObserveFrame` + `GrammarStructure.observe` (`types.ts`);
+  each of plurals/present-continuous/prepositions carries its own frames; `GRAMMAR_OBSERVE_FRAMES` in
+  `data/grammar/index.ts` concatenates them in structure order. `ObserveIntro` (skippable, reduced-motion
+  aware) paces frames via the speech engine's `onEnd` — no fixed timer — and degrades gracefully
+  (advances immediately) when speech is unavailable/not yet gesture-activated. Shown once per hut entry
+  (state lives in each Grammar*Hut wrapper, above `HutPlayer`). *(Done — PR pending; 129 unit,
+  tsc/lint/build/e2e green; verified in-browser with a simulated speech delay.)*
 - ☐ **G4 — Per-item attempt logging (foundation).** Today `learning_attempts` logs at the hut level
   (no `item_id`). Thread the round item id through `Attempt` → `recordHutResult` →
   `learning_attempts.item_id` for both vocab and grammar (grammar needs lightweight item keys or a

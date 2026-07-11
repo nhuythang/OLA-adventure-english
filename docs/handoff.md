@@ -4,7 +4,7 @@ Read this first to continue the project in a new session. Source of truth for th
 plan is [`docs/tasks/00-index.md`](tasks/00-index.md); the *why* is
 [`docs/game-design-spec.md`](game-design-spec.md); the rules are [`CLAUDE.md`](../CLAUDE.md).
 
-## Status (2026-06-28)
+## Status (2026-07-11)
 
 **Phases 1–3 are essentially complete and deployed** (tasks 01–26 all ☑). Phase 1 vertical slice;
 Phase 2 (17–21: schema+seed, parent auth+PIN, Supabase persistence, Flyer L3, 2nd theme+interleaving);
@@ -14,16 +14,22 @@ in Supabase (per-child, multi-device) under the parent session; localStorage fal
 (dev:demo / e2e). **114 unit + 15 e2e green.**
 
 ### What's NEXT (start here)
-1. **Grammar journey — G1 MVP is DONE** (PR #33: Grammar island, Plurals + Present continuous, all four
-   huts, always unlocked; `buildGrammarQuestions` = choices are grammatical contrasts of the same
-   referent). The rest is planned as a **G-series in [`docs/tasks/00-index.md`](tasks/00-index.md)**
-   (rationale: [`docs/research/grammar-build-roadmap.md`](research/grammar-build-roadmap.md)).
-   **Next task = G2 — Prepositions of place (in/on/under) + SVG scene support** (the one real new-art
-   need; adds a `scene-key → SVG component` registry rendered in `HutPlayer`). Then G3 (Observe intro),
-   G4 (per-item attempt logging — unblocks G5/G6), G5 (spaced review + VN-L1 weighting), G6 (grammar
-   dashboard), G7 (Movers/Flyers structures).
-   - **After merging #33: re-load `supabase/seed.sql`** (adds the `grammar` theme + its 4 `huts` rows;
-     the `learning_attempts` FK needs them) so island progress persists on the live site.
+1. **Grammar journey — G1, G2 + G3 are DONE.** G1 (PR #33): Grammar island, Plurals + Present
+   continuous, all four huts, always unlocked; `buildGrammarQuestions` = choices are grammatical
+   contrasts of the same referent. G2 (PR #34): Prepositions of place (in/on/under/next to) + the first
+   inline-SVG teaching art (`src/data/grammar/scenes.ts` + `grammar-scene.tsx`'s `PrepositionScene`/
+   `resolveChoiceVisual`/`PromptVisual`) — `HutPlayer`/`SentenceTiles` resolve a scene registry so emoji
+   strings still pass through unchanged. G3 (branch `feat/grammar-observe-intro`): the "Observe" intro
+   beat — `ObserveFrame`/`GrammarStructure.observe` per structure, `GRAMMAR_OBSERVE_FRAMES` registry,
+   `ObserveIntro` component shown once before each grammar hut's rounds, paced by the speech engine's
+   `onEnd` (no fixed timer), skippable, reduced-motion aware. Migrations confirmed pushed;
+   `supabase/seed.sql` reloaded.
+   The rest is planned as a **G-series in [`docs/tasks/00-index.md`](tasks/00-index.md)** (rationale:
+   [`docs/research/grammar-build-roadmap.md`](research/grammar-build-roadmap.md)).
+   **Next task = G4 — Per-item attempt logging** (thread the round item id through `Attempt` →
+   `recordHutResult` → `learning_attempts.item_id`; unblocks G5/G6 — needs a Supabase migration + seed
+   reload). Then G5 (spaced review + VN-L1 weighting), G6 (grammar dashboard), G7 (Movers/Flyers
+   structures).
 2. **Task 27 — real-iPad pass** (on-device, you): Add to Home Screen → confirm fullscreen + star icon;
    log in as parent (PIN) → dashboard/placement; play a hut; confirm progress + streak persist; verify
    emoji teaching pictures render on iPadOS.
@@ -221,10 +227,11 @@ stickers; a child-facing sticker-set picker.
 ## Suggested kickoff for the next session
 
 > Read `docs/handoff.md` (this file). Phases 1–3 (tasks 01–26) are complete and deployed; all four
-> islands are filled. Build the **Grammar journey G1 MVP** per
-> [`docs/research/grammar-build-roadmap.md`](research/grammar-build-roadmap.md) §3: a **Grammar island**
-> with **Plurals + Present continuous** (emoji-only, no new art), via a new `buildGrammarQuestions`
-> (choices are grammatical contrasts of the same referent) reusing the four huts + levels + scaffold +
-> interleaving + stickers. Branch off `main`, plan briefly, implement, verify (tsc/lint/unit/build/e2e),
-> open a PR, watch CI, merge (auto-deploys). Keep the per-task PR workflow. (Or do task 27, the real-iPad
-> pass, on-device.)
+> islands are filled. Grammar G1 (Plurals + Present continuous), G2 (Prepositions + SVG scenes), and G3
+> (the Observe intro beat) are done. Build **G4 — per-item attempt logging** per
+> [`docs/tasks/00-index.md`](tasks/00-index.md): thread a round's item id through `Attempt` →
+> `recordHutResult` → `learning_attempts.item_id` for both vocab and grammar (grammar needs lightweight
+> item keys or a null-tolerant scheme). Mostly mechanical, unit-tested — but it needs a Supabase
+> migration + seed reload, and it unblocks G5 (spaced review) and G6 (grammar dashboard). Branch off
+> `main`, plan briefly, implement, verify (tsc/lint/unit/build/e2e), open a PR, watch CI, merge
+> (auto-deploys). Keep the per-task PR workflow. (Or do task 27, the real-iPad pass, on-device.)
