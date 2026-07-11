@@ -3,7 +3,7 @@ Feature: Read hut
 
   Scenario: Complete the Read hut
     Given I open "/child/sunny/island/weather/read"
-    Then I should see "sunny"
+    Then I should see a printed word prompt
     When I complete the hut
     Then I should see "You earned"
     When I tap "Keep going"

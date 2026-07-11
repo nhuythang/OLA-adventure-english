@@ -3,6 +3,7 @@
 // identical for both — only the prompt presentation differs (audio vs printed
 // word), which the hut decides.
 import type { EngineQuestion } from "./hut-machine";
+import { shuffle, type Rng } from "./choices";
 
 export interface PictureWord {
   word: string;
@@ -17,12 +18,20 @@ export interface QuestionText {
   reveal?: (w: PictureWord) => string;
 }
 
+// `rng`, when given, samples the round's targets from anywhere in the pool
+// instead of always its first N — so a pool bigger than `rounds` (task: deepen
+// the vocab islands) actually gets taught over time, not just used as
+// distractor filler. Omitted (SSR / tests that don't care) keeps the old
+// deterministic first-N order. Never call with an rng during a server render
+// (see choices.ts's SSR note) — callers gate this behind useClientReady.
 export function buildPictureQuestions(
   words: readonly PictureWord[],
   rounds: number,
   text?: QuestionText,
+  rng?: Rng,
 ): EngineQuestion[] {
-  return words.slice(0, rounds).map((target) => ({
+  const pool = rng ? shuffle(words, rng) : words;
+  return pool.slice(0, rounds).map((target) => ({
     id: target.word,
     prompt: text?.prompt ? text.prompt(target) : target.word,
     reveal: text?.reveal ? text.reveal(target) : `This one is ${target.word}.`,

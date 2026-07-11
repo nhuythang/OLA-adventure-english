@@ -4,16 +4,17 @@
 // themselves to drop-in review without per-round content threading).
 import { buildPictureQuestions, type QuestionText } from "@/lib/engine/picture-questions";
 import type { EngineQuestion } from "@/lib/engine/hut-machine";
+import type { Rng } from "@/lib/engine/choices";
 import { interleave } from "@/lib/engine/interleave";
 import { themeContent, type ThemeContent } from "@/data/themes/content";
 import type { Level } from "@/lib/types";
 
-function questionsFor(content: ThemeContent, level: Level, count: number): EngineQuestion[] {
+function questionsFor(content: ThemeContent, level: Level, count: number, rng?: Rng): EngineQuestion[] {
   const text: QuestionText | undefined =
     level === "flyer"
       ? { prompt: (w) => content.sentence(w.word), reveal: (w) => content.reveal(w.word) }
       : undefined;
-  return buildPictureQuestions(content.wordsForLevel(level), count, text);
+  return buildPictureQuestions(content.wordsForLevel(level), count, text, rng);
 }
 
 // Mastered themes (that have content), excluding the one being played.
@@ -29,12 +30,13 @@ export function buildPictureRounds(
   masteredThemeIds: readonly string[],
   level: Level,
   rounds: number,
+  rng?: Rng,
 ): EngineQuestion[] {
   const content = themeContent(themeId);
   if (!content) return [];
-  const current = questionsFor(content, level, rounds);
+  const current = questionsFor(content, level, rounds, rng);
   const review = reviewThemeIds(themeId, masteredThemeIds).flatMap((id) =>
-    questionsFor(themeContent(id)!, level, rounds),
+    questionsFor(themeContent(id)!, level, rounds, rng),
   );
   return interleave(current, review, rounds);
 }

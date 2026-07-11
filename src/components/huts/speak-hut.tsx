@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Mic, Star } from "lucide-react";
 import { TabletShell } from "@/components/game/tablet-shell";
@@ -9,10 +9,13 @@ import { ProgressDots } from "@/components/ui/progress-dots";
 import { AudioButton } from "@/components/ui/audio-button";
 import { Button } from "@/components/ui/button";
 import { HutResult } from "@/components/huts/hut-result";
+import { HutLoading } from "@/components/huts/hut-loading";
 import { childById } from "@/data/children";
 import { themeContent } from "@/data/themes/content";
 import { playCorrect } from "@/lib/sounds";
 import { meetsMastery } from "@/lib/engine/scoring";
+import { shuffle } from "@/lib/engine/choices";
+import { useClientReady } from "@/lib/engine/use-client-ready";
 import { isAsrAvailable, listenOnce, looseMatch } from "@/lib/asr";
 import { useChildProgress } from "@/lib/use-child-progress";
 import { effectiveLevel } from "@/lib/storage";
@@ -53,17 +56,22 @@ export function SpeakHut({ childId, themeId }: { childId: string; themeId: strin
   const router = useRouter();
   const child = childById(childId);
   const progress = useChildProgress(childId);
+  const ready = useClientReady();
   const [index, setIndex] = useState(0);
   const [attempts, setAttempts] = useState<Attempt[]>([]);
   const [done, setDone] = useState(false);
   const [listening, setListening] = useState(false);
   const [missed, setMissed] = useState(false);
   const content = themeContent(themeId);
+  const level = child ? effectiveLevel(child, progress, "speak") : "starter";
+  const words = useMemo(
+    () => (ready && content ? shuffle(content.wordsForLevel(level), Math.random).slice(0, ROUNDS) : []),
+    [ready, content, level],
+  );
   if (!child || !content) return null;
 
-  const level = effectiveLevel(child, progress, "speak");
   const isFlyer = level === "flyer";
-  const words = content.wordsForLevel(level).slice(0, ROUNDS);
+  if (!ready) return <HutLoading childId={childId} themeId={themeId} />;
   const word = words[index]!;
   // Flyer answers a spoken QUESTION in a phrase ("It is sunny"); L1/L2 repeat the
   // word. ASR loose-matches the target word either way (the phrase contains it).
