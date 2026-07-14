@@ -94,6 +94,8 @@ export const vi = {
         plurals: "Số nhiều (-s)",
         "present-continuous": "Thì hiện tại tiếp diễn",
         prepositions: "Giới từ chỉ vị trí",
+        can: "Động từ khiếm khuyết \"can\"",
+        "there-is-are": "Cấu trúc \"there is/are\"",
       } as Record<string, string>,
       mostMissedHeading: "Cần luyện thêm",
       missesSuffix: "lần sai", // "3 lần sai"

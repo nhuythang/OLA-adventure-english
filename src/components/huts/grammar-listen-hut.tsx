@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { HutPlayer } from "@/components/huts/hut-player";
 import { ObserveIntro } from "@/components/huts/observe-intro";
 import { childById } from "@/data/children";
-import { GRAMMAR_OBSERVE_FRAMES, grammarRoundItems } from "@/data/grammar";
+import { grammarObserveFrames, grammarRoundItems } from "@/data/grammar";
 import { buildGrammarQuestions } from "@/lib/engine/grammar-questions";
 import { useChildProgress } from "@/lib/use-child-progress";
 import { effectiveLevel } from "@/lib/storage";
@@ -22,13 +22,13 @@ export function GrammarListenHut({ childId, themeId }: { childId: string; themeI
   const progress = useChildProgress(childId);
   const [showObserve, setShowObserve] = useState(true);
   const level = child ? effectiveLevel(child, progress, "listen") : "starter";
-  const questions = useMemo(() => buildGrammarQuestions(grammarRoundItems(ROUNDS)), []);
+  const questions = useMemo(() => buildGrammarQuestions(grammarRoundItems(ROUNDS, level)), [level]);
   if (!child) return null;
 
   if (showObserve) {
     return (
       <ObserveIntro
-        frames={GRAMMAR_OBSERVE_FRAMES}
+        frames={grammarObserveFrames(level)}
         onBack={() => router.push(`/child/${childId}/island/${themeId}`)}
         onDone={() => setShowObserve(false)}
       />

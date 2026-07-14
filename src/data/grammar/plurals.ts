@@ -27,6 +27,7 @@ const repeat = (emoji: string, n: number): string => emoji.repeat(n);
 
 export const PLURALS: GrammarStructure = {
   id: "plurals",
+  level: "starter",
   // Vietnamese doesn't mark plurals at all (no -s equivalent) — a high-yield
   // L1-interference target (G5), so this gets a bigger round-share.
   vnFocus: true,

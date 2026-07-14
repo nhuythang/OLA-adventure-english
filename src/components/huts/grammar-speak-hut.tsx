@@ -12,7 +12,7 @@ import { HutResult } from "@/components/huts/hut-result";
 import { PromptVisual } from "@/components/huts/grammar-scene";
 import { ObserveIntro } from "@/components/huts/observe-intro";
 import { childById } from "@/data/children";
-import { GRAMMAR_OBSERVE_FRAMES, grammarRoundItems } from "@/data/grammar";
+import { grammarObserveFrames, grammarRoundItems } from "@/data/grammar";
 import { playCorrect } from "@/lib/sounds";
 import { meetsMastery } from "@/lib/engine/scoring";
 import { isAsrAvailable, listenOnce, looseMatch } from "@/lib/asr";
@@ -62,20 +62,20 @@ export function GrammarSpeakHut({ childId, themeId }: { childId: string; themeId
   const [missed, setMissed] = useState(false);
   if (!child) return null;
 
+  const level = effectiveLevel(child, progress, "speak");
   const toIsland = () => router.push(`/child/${childId}/island/${themeId}`);
 
   if (showObserve) {
     return (
       <ObserveIntro
-        frames={GRAMMAR_OBSERVE_FRAMES}
+        frames={grammarObserveFrames(level)}
         onBack={toIsland}
         onDone={() => setShowObserve(false)}
       />
     );
   }
 
-  const level = effectiveLevel(child, progress, "speak");
-  const items = grammarRoundItems(ROUNDS);
+  const items = grammarRoundItems(ROUNDS, level);
   const item = items[index]!;
   const useAsr = level !== "starter" && isAsrAvailable();
 
