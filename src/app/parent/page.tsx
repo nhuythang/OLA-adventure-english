@@ -10,6 +10,7 @@ import { PIN_OK_COOKIE } from "@/lib/auth/constants";
 import { createClient } from "@/lib/supabase/server";
 import { contentThemeIds } from "@/data/themes/content";
 import { THEMES } from "@/data/themes";
+import { GRAMMAR_STRUCTURE_IDS } from "@/data/grammar";
 import {
   summarize,
   type AttemptRow,
@@ -48,10 +49,11 @@ export default async function ParentHomePage() {
     supabase.from("hut_progress").select("child_id, theme_id, skill, completed, mastered"),
     supabase.from("theme_mastery").select("child_id, theme_id"),
     supabase.from("earned_stickers").select("child_id, sticker_id, seq").order("seq"),
-    supabase.from("learning_attempts").select("child_id, hut_id, first_try_correct"),
+    supabase.from("learning_attempts").select("child_id, hut_id, item_id, first_try_correct"),
   ]);
 
   const themeIds = new Set(contentThemeIds());
+  const grammarLabels = t.dashboard.grammarStructures;
   const data = summarize({
     children: (children.data ?? []) as ChildRow[],
     skillLevels: (skillLevels.data ?? []) as SkillLevelRow[],
@@ -60,6 +62,7 @@ export default async function ParentHomePage() {
     earnedStickers: (earnedStickers.data ?? []) as EarnedStickerRow[],
     attempts: (attempts.data ?? []) as AttemptRow[],
     themes: THEMES.filter((th) => themeIds.has(th.id)).map((th) => ({ id: th.id, title: th.title })),
+    grammarStructures: GRAMMAR_STRUCTURE_IDS.map((id) => ({ id, title: grammarLabels[id] ?? id })),
   });
 
   return (

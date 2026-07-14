@@ -16,6 +16,14 @@ export function isGrammarTheme(themeId: string): boolean {
 
 const STRUCTURES = [PLURALS, PRESENT_CONTINUOUS, PREPOSITIONS];
 
+// Stable structure ids (matches each GrammarStructure.id) — the parent
+// dashboard (G6) uses this to build its per-structure grammar section without
+// hardcoding the list twice.
+export type GrammarStructureId = "plurals" | "present-continuous" | "prepositions";
+export const GRAMMAR_STRUCTURE_IDS: readonly GrammarStructureId[] = STRUCTURES.map(
+  (s) => s.id,
+) as GrammarStructureId[];
+
 // The "Observe" beat (G3): each structure's example frames, back to back, shown
 // once before a grammar hut's rounds (see ObserveIntro). No rules stated.
 export const GRAMMAR_OBSERVE_FRAMES: ObserveFrame[] = STRUCTURES.flatMap((s) => s.observe);

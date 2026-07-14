@@ -88,6 +88,16 @@ export const vi = {
       hutsSuffix: "chòi hoàn thành", // "2/4 chòi hoàn thành"
       themeMastered: "Đã chinh phục",
       stickersHeading: "Nhãn dán đã sưu tầm",
+      // Grammar section (G6)
+      grammarHeading: "Ngữ pháp",
+      grammarStructures: {
+        plurals: "Số nhiều (-s)",
+        "present-continuous": "Thì hiện tại tiếp diễn",
+        prepositions: "Giới từ chỉ vị trí",
+      } as Record<string, string>,
+      mostMissedHeading: "Cần luyện thêm",
+      missesSuffix: "lần sai", // "3 lần sai"
+      noMisses: "Chưa có lỗi nào được ghi nhận.",
     },
   },
 } as const;
