@@ -82,6 +82,38 @@ function ChildCard({ child }: { child: ChildDashboard }) {
         ))}
       </ul>
 
+      {/* Grammar (G6): per-structure accuracy + most-missed items */}
+      <h3 className="mt-5 mb-2 text-sm font-semibold uppercase tracking-wide text-ink-muted">{d.grammarHeading}</h3>
+      <ul className="flex flex-col gap-1.5">
+        {child.grammar.structures.map((s) => (
+          <li key={s.id} className="flex items-center justify-between rounded-2xl bg-cream px-3 py-2">
+            <span className="font-semibold text-ink">{s.title}</span>
+            <span className="text-sm text-ink-muted">
+              {s.firstTryPct === null ? d.noPlay : `${s.firstTryPct}% ${d.accuracyLabel}`}
+            </span>
+          </li>
+        ))}
+      </ul>
+      <div className="mt-2">
+        <p className="text-sm font-semibold text-ink-muted">{d.mostMissedHeading}</p>
+        {child.grammar.mostMissed.length > 0 ? (
+          <ul className="mt-1 flex flex-col gap-1">
+            {child.grammar.mostMissed.map((m) => (
+              <li key={`${m.structureId}-${m.itemSlug}`} className="flex items-center justify-between text-sm">
+                <span className="text-ink-muted">
+                  {m.structureTitle}: <span className="font-semibold text-ink">{m.itemSlug}</span>
+                </span>
+                <span className="text-ink-muted">
+                  {m.misses} {d.missesSuffix}
+                </span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="mt-1 text-sm text-ink-muted">{d.noMisses}</p>
+        )}
+      </div>
+
       {/* Sticker book */}
       <h3 className="mt-5 mb-2 text-sm font-semibold uppercase tracking-wide text-ink-muted">
         {d.stickersHeading} ({earned.length})
