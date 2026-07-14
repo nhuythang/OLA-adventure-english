@@ -5,6 +5,7 @@ import { isSupabaseConfigured, SUPABASE_ANON_KEY, SUPABASE_URL } from "@/lib/sup
 import type { Attempt, Skill } from "@/lib/types";
 import { emptyProgress, type ChildProgress } from "./types";
 import type { HutOutcome } from "./apply";
+import { applyEvents, type ReviewEvent } from "./review-schedule";
 
 // Supabase backend for child progress. Used only in the browser, under the
 // signed-in parent's session — RLS scopes every row to the parent who owns the
@@ -39,18 +40,30 @@ interface StreakRow {
   current_streak: number;
   awarded_milestones: number[] | null;
 }
+interface AttemptStatRow {
+  item_id: string | null;
+  first_try_correct: boolean;
+  created_at: string;
+}
 
 // Assemble ChildProgress from the four per-child tables.
 export async function loadRemote(childId: string): Promise<ChildProgress> {
   const supabase = client();
   if (!supabase) return emptyProgress();
 
-  const [stickers, huts, themes, levels, streak] = await Promise.all([
+  const [stickers, huts, themes, levels, streak, attemptStats] = await Promise.all([
     supabase.from("earned_stickers").select("sticker_id").eq("child_id", childId).order("seq"),
     supabase.from("hut_progress").select("theme_id, skill, completed, mastered").eq("child_id", childId),
     supabase.from("theme_mastery").select("theme_id").eq("child_id", childId),
     supabase.from("child_skill_levels").select("skill, level").eq("child_id", childId),
     supabase.from("child_streaks").select("last_active_date, current_streak, awarded_milestones").eq("child_id", childId).maybeSingle(),
+    // G5: replayed (in order) into itemStats below — the log is the source of
+    // truth, so this can never drift from what was actually attempted.
+    supabase
+      .from("learning_attempts")
+      .select("item_id, first_try_correct, created_at")
+      .eq("child_id", childId)
+      .order("created_at"),
   ]);
 
   const progress = emptyProgress();
@@ -72,6 +85,13 @@ export async function loadRemote(childId: string): Promise<ChildProgress> {
     progress.streak = s.current_streak;
     progress.awardedStreakMilestones = s.awarded_milestones ?? [];
   }
+
+  const events: ReviewEvent[] = [];
+  for (const row of (attemptStats.data ?? []) as AttemptStatRow[]) {
+    if (row.item_id) events.push({ key: row.item_id, firstTryCorrect: row.first_try_correct, date: row.created_at.slice(0, 10) });
+  }
+  progress.itemStats = applyEvents(progress.itemStats, events);
+
   return progress;
 }
 

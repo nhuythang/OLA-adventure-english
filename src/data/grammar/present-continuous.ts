@@ -23,6 +23,10 @@ const ACTIONS: Action[] = [
 
 export const PRESENT_CONTINUOUS: GrammarStructure = {
   id: "present-continuous",
+  // "is" here is the copula "be" — a high-yield L1-interference target (G5;
+  // Vietnamese has no copula in this construction) alongside the -ing verb
+  // inflection, so this gets a bigger round-share.
+  vnFocus: true,
   // No rules — just two examples of the -ing pattern in action.
   observe: [
     { narration: "She is running.", visual: "🏃" },

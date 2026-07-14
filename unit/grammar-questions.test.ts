@@ -66,6 +66,27 @@ describe("grammarRoundItems", () => {
     const all = grammarRoundItems(999);
     expect(all.length).toBe(PLURALS.items.length + PRESENT_CONTINUOUS.items.length + PREPOSITIONS.items.length);
   });
+
+  it("gives vnFocus structures (plurals, present-continuous) a bigger round-share than prepositions (G5)", () => {
+    const items = grammarRoundItems(10);
+    const count = (prefix: string) => items.filter((i) => i.id.startsWith(prefix)).length;
+    const plurals = count("plurals-");
+    const present = count("present-continuous-");
+    const prepositions = count("prepositions-");
+    expect(plurals).toBeGreaterThan(prepositions);
+    expect(present).toBeGreaterThan(prepositions);
+  });
+
+  it("weighted structures still alternate rather than clumping (interleaving rule 6)", () => {
+    // A naive "repeat the structure" weighting would put two plurals rounds
+    // back to back. The weighted round-robin schedule shouldn't.
+    const structureOf = (id: string) =>
+      (["plurals", "present-continuous", "prepositions"] as const).find((s) => id.startsWith(`${s}-`));
+    const items = grammarRoundItems(6);
+    for (let i = 1; i < items.length; i++) {
+      expect(structureOf(items[i]!.id)).not.toBe(structureOf(items[i - 1]!.id));
+    }
+  });
 });
 
 describe("buildGrammarQuestions", () => {

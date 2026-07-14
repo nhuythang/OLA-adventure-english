@@ -9,6 +9,7 @@ import { buildPictureRounds } from "@/lib/review";
 import { useChildProgress } from "@/lib/use-child-progress";
 import { useClientReady } from "@/lib/engine/use-client-ready";
 import { effectiveLevel } from "@/lib/storage";
+import { todayISO } from "@/lib/progress/streak";
 
 const ROUNDS = 5;
 
@@ -17,7 +18,8 @@ const ROUNDS = 5;
 // - Mover  (L2): read a word independently, NO audio, 3 choices.
 // - Flyer  (L3): read a SENTENCE, tap the scene, NO audio, 4 choices.
 // Labels on the picture choices stay hidden so the prompt must actually be read.
-// Rounds interleave ~30% review items from mastered themes (active recall).
+// Rounds interleave ~30% review items from mastered themes, due-and-weak-first
+// (G5 spaced review).
 // Round targets are picked randomly from the pool (see listen-hut.tsx).
 export function ReadHut({ childId, themeId }: { childId: string; themeId: string }) {
   const child = childById(childId);
@@ -27,8 +29,11 @@ export function ReadHut({ childId, themeId }: { childId: string; themeId: string
   const isFlyer = level === "flyer";
   const ready = useClientReady();
   const questions = useMemo(
-    () => (ready ? buildPictureRounds(themeId, progress.masteredThemes, level, ROUNDS, Math.random) : []),
-    [ready, themeId, progress.masteredThemes, level],
+    () =>
+      ready
+        ? buildPictureRounds(themeId, progress.masteredThemes, level, ROUNDS, progress.itemStats, todayISO(), Math.random)
+        : [],
+    [ready, themeId, progress.masteredThemes, level, progress.itemStats],
   );
   if (!child || !content) return null;
   if (!ready) return <HutLoading childId={childId} themeId={themeId} />;

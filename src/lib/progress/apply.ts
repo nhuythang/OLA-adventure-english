@@ -32,6 +32,7 @@ export function applyHutResult(
     lastActiveDate: current.lastActiveDate,
     streak: current.streak,
     awardedStreakMilestones: [...current.awardedStreakMilestones],
+    itemStats: current.itemStats,
   };
 
   let newSticker: CharacterSticker | null = null;
