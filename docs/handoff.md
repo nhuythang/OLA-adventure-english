@@ -4,17 +4,18 @@ Read this first to continue the project in a new session. Source of truth for th
 plan is [`docs/tasks/00-index.md`](tasks/00-index.md); the *why* is
 [`docs/game-design-spec.md`](game-design-spec.md); the rules are [`CLAUDE.md`](../CLAUDE.md).
 
-## Status (2026-07-11)
+## Status (2026-07-14)
 
 **Phases 1–3 are essentially complete and deployed** (tasks 01–26 all ☑). Phase 1 vertical slice;
 Phase 2 (17–21: schema+seed, parent auth+PIN, Supabase persistence, Flyer L3, 2nd theme+interleaving);
-Phase 3 (22 placement, 23 streaks, 24 dashboard, 25 wordlist, 26 PWA). Plus a follow-up that **filled
-all four islands** (Weather, Animals, Food, Colours) — all play across all 4 huts × 3 levels, progress
-in Supabase (per-child, multi-device) under the parent session; localStorage fallback when unconfigured
-(dev:demo / e2e). **130 unit + 17 e2e green.**
+Phase 3 (22 placement, 23 streaks, 24 dashboard, 25 wordlist, 26 PWA). Plus follow-ups that **filled
+all four islands** (Weather, Animals, Food, Colours) and then **deepened** Animals/Food to 24 words
+each (PRs #38, #39) — all play across all 4 huts × 3 levels, progress in Supabase (per-child,
+multi-device) under the parent session; localStorage fallback when unconfigured (dev:demo / e2e).
+**152 unit + 17 e2e green.**
 
 ### What's NEXT (start here)
-1. **Grammar journey — G1 through G4 are DONE.** G1 (PR #33): Grammar island, Plurals + Present
+1. **Grammar journey — G1 through G5 are DONE.** G1 (PR #33): Grammar island, Plurals + Present
    continuous, all four huts, always unlocked; `buildGrammarQuestions` = choices are grammatical
    contrasts of the same referent. G2 (PR #34): Prepositions of place (in/on/under/next to) + the first
    inline-SVG teaching art (`src/data/grammar/scenes.ts` + `grammar-scene.tsx`'s `PrepositionScene`/
@@ -24,14 +25,18 @@ in Supabase (per-child, multi-device) under the parent session; localStorage fal
    reduced-motion aware. G4 (PR #36): per-item attempt logging — `Attempt.itemId` set at every
    attempt-creation site, combined with `themeId` at the persistence boundary in `remote.ts`
    (`item_id: ${themeId}-${itemId}`); `migrations/0005_attempt_item_id.sql` drops the `item_id` FK
-   since grammar items aren't rows in `english_items`. Migrations confirmed pushed through 0004;
-   **0005 still needs `supabase db push`**.
+   since grammar items aren't rows in `english_items`. G5 (PR #40): spaced review + VN-L1 weighting —
+   `src/lib/progress/review-schedule.ts` (Leitner-style 0/1/3/7/14-day due schedule, `ChildProgress.
+   itemStats` derived from `learning_attempts` in Supabase mode / maintained in the blob in localStorage
+   mode); `review.ts`'s ~30% review pool now ranks due-and-weak items first; `grammarRoundItems` is a
+   weighted round-robin favoring `vnFocus` structures (plurals, present-continuous) over prepositions,
+   without clumping. Migrations confirmed pushed through 0004; **0005 still needs `supabase db push`**
+   (no new migration needed for G5 itself — it reuses 0005's `item_id` column read-only).
    The rest is planned as a **G-series in [`docs/tasks/00-index.md`](tasks/00-index.md)** (rationale:
    [`docs/research/grammar-build-roadmap.md`](research/grammar-build-roadmap.md)).
-   **Next task = G5 — Spaced review + Vietnamese-L1 weighting** (replace random 30% interleaving with a
-   1/3/7/14-day due/weak-item schedule built on the `learning_attempts.item_id` G4 just added; over-
-   weight VN pain points — plural -s, 3rd-person -s, copula *be*, articles, tense). Then G6 (grammar
-   dashboard), G7 (Movers/Flyers structures).
+   **Next task = G6 — Parent dashboard: grammar mastery + common errors** (extend `dashboard-data.ts`
+   `summarize` + the Vietnamese dashboard view with a grammar section, now that G4/G5 give it real
+   per-item data to draw on). Then G7 (Movers/Flyers structures).
 2. **Task 27 — real-iPad pass** (on-device, you): Add to Home Screen → confirm fullscreen + star icon;
    log in as parent (PIN) → dashboard/placement; play a hut; confirm progress + streak persist; verify
    emoji teaching pictures render on iPadOS.
@@ -229,11 +234,12 @@ stickers; a child-facing sticker-set picker.
 ## Suggested kickoff for the next session
 
 > Read `docs/handoff.md` (this file). Phases 1–3 (tasks 01–26) are complete and deployed; all four
-> islands are filled. Grammar G1 (Plurals + Present continuous), G2 (Prepositions + SVG scenes), and G3
-> (the Observe intro beat) are done. Build **G4 — per-item attempt logging** per
-> [`docs/tasks/00-index.md`](tasks/00-index.md): thread a round's item id through `Attempt` →
-> `recordHutResult` → `learning_attempts.item_id` for both vocab and grammar (grammar needs lightweight
-> item keys or a null-tolerant scheme). Mostly mechanical, unit-tested — but it needs a Supabase
-> migration + seed reload, and it unblocks G5 (spaced review) and G6 (grammar dashboard). Branch off
-> `main`, plan briefly, implement, verify (tsc/lint/unit/build/e2e), open a PR, watch CI, merge
-> (auto-deploys). Keep the per-task PR workflow. (Or do task 27, the real-iPad pass, on-device.)
+> islands are filled and Animals/Food are deepened to 24 words each. Grammar G1–G5 are done (island MVP,
+> prepositions + SVG scenes, the Observe intro beat, per-item attempt logging, spaced review + VN-L1
+> weighting). Build **G6 — parent dashboard: grammar mastery + common errors** per
+> [`docs/tasks/00-index.md`](tasks/00-index.md): extend `src/lib/parent/dashboard-data.ts`'s `summarize`
+> with a per-structure mastery view (now that G4/G5 give it real per-item `learning_attempts` data —
+> `item_id` composite keys like `grammar-plurals-cat`), and add the corresponding section to the
+> Vietnamese dashboard. Branch off `main`, plan briefly, implement, verify (tsc/lint/unit/build/e2e),
+> open a PR, watch CI, merge (auto-deploys). Keep the per-task PR workflow. (Or do task 27, the
+> real-iPad pass, on-device.)

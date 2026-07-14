@@ -217,11 +217,17 @@ Legend: ☐ not started · ◐ in progress · ☑ done
   it's now a plain identifying tag, not a referentially-enforced link. No seed re-load needed (schema-
   only). *(Done — PR #36; tsc/lint/130 unit/build/17 e2e green.)* **Enables G5 + G6.** Needs
   `supabase db push` of 0005 to the hosted DB.
-- ☐ **G5 — Forgetting-aware spaced review + Vietnamese-L1 weighting.** Replace random 30% interleaving
-  with a **1/3/7/14-day** schedule (due + weak items first) plus over-weighting the VN pain points
-  (plural -s, 3rd-person -s, copula *be*, articles, tense). New pure
-  `src/lib/progress/review-schedule.ts` (last-seen + accuracy heuristic, no AI), unit-tested; wired into
-  `buildPictureRounds`/`interleave`. **Depends on G4.**
+- ☑ **G5 — Forgetting-aware spaced review + Vietnamese-L1 weighting.** Two pieces. (1) Vocab: pure
+  `src/lib/progress/review-schedule.ts` — Leitner-style **0/1/3/7/14-day** due schedule keyed by
+  consecutive-correct streak; `ChildProgress.itemStats` (derived from `learning_attempts` in Supabase
+  mode via G4's `item_id`, maintained directly in the blob in localStorage mode); `review.ts`'s ~30%
+  review pool now ranks candidates due-and-weak-first instead of whatever rotated in. (2) Grammar:
+  `GrammarStructure.vnFocus` (true on plurals + present-continuous — VN has no plural marking or a
+  copula "be" — false on prepositions); `grammarRoundItems` is now a **weighted round-robin**
+  (deterministic, no RNG) that spreads a vnFocus structure's extra turns across passes instead of
+  clumping them, preserving interleaving. *(Done — PR #40; 20 new unit tests, tsc/lint/152 unit/build/
+  17 e2e green; verified live in-browser — itemStats persists correctly, a 5-round grammar session
+  produced the designed 2/2/1 split.)* **Enables G6.**
 - ☐ **G6 — Parent dashboard: grammar mastery + common errors.** Extend the Vietnamese dashboard with a
   grammar section — per-structure mastery + most-missed items. Extend `dashboard-data.ts` `summarize`;
   add the view. **Depends on G4.**
