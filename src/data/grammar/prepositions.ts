@@ -27,6 +27,7 @@ function choice(p: Place): Choice {
 
 export const PREPOSITIONS: GrammarStructure = {
   id: "prepositions",
+  level: "starter",
   // No rules — three of the four scenes, said aloud.
   observe: [
     { narration: "The ball is in the box.", visual: sceneKey("ball-in-box") },

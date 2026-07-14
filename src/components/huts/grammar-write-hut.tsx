@@ -11,9 +11,11 @@ import { PromptVisual } from "@/components/huts/grammar-scene";
 import { ObserveIntro } from "@/components/huts/observe-intro";
 import { HutResult } from "@/components/huts/hut-result";
 import { childById } from "@/data/children";
-import { GRAMMAR_OBSERVE_FRAMES, grammarRoundItems } from "@/data/grammar";
+import { grammarObserveFrames, grammarRoundItems } from "@/data/grammar";
 import { playCorrect } from "@/lib/sounds";
 import { meetsMastery } from "@/lib/engine/scoring";
+import { useChildProgress } from "@/lib/use-child-progress";
+import { effectiveLevel } from "@/lib/storage";
 import type { Attempt } from "@/lib/types";
 
 const ROUNDS = 3; // building a sentence is effortful — fewer rounds than the tap huts
@@ -25,25 +27,27 @@ const ROUNDS = 3; // building a sentence is effortful — fewer rounds than the 
 export function GrammarWriteHut({ childId, themeId }: { childId: string; themeId: string }) {
   const router = useRouter();
   const child = childById(childId);
+  const progress = useChildProgress(childId);
   const [showObserve, setShowObserve] = useState(true);
   const [index, setIndex] = useState(0);
   const [attempts, setAttempts] = useState<Attempt[]>([]);
   const [done, setDone] = useState(false);
   if (!child) return null;
 
+  const level = effectiveLevel(child, progress, "write");
   const toIsland = () => router.push(`/child/${childId}/island/${themeId}`);
 
   if (showObserve) {
     return (
       <ObserveIntro
-        frames={GRAMMAR_OBSERVE_FRAMES}
+        frames={grammarObserveFrames(level)}
         onBack={toIsland}
         onDone={() => setShowObserve(false)}
       />
     );
   }
 
-  const items = grammarRoundItems(ROUNDS);
+  const items = grammarRoundItems(ROUNDS, level);
   const item = items[index]!;
 
   function finishRound(misses: number) {

@@ -4,6 +4,7 @@
 // IS the teaching, so each item carries its own correct + distractor choices
 // rather than drawing them from a shared word pool.
 import type { Choice } from "@/lib/engine/hut-machine";
+import type { Level } from "@/lib/types";
 
 export interface GrammarItem {
   id: string;
@@ -31,6 +32,12 @@ export interface ObserveFrame {
 export interface GrammarStructure {
   /** Stable id of the grammar point, e.g. "plurals" | "present-continuous". */
   id: string;
+  /**
+   * The YLE level this structure is introduced at (G7) — gates which
+   * structures a child's round pool draws from, cascading like vocab levels:
+   * Starter sees only starter-tier structures, Mover sees starter+mover, etc.
+   */
+  level: Level;
   items: GrammarItem[];
   /** The "Observe" beat (G3): 2–3 narrated example frames shown once before the
    *  hut's rounds, priming the pattern with no rules stated. */

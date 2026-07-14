@@ -3,9 +3,14 @@ import { describe, expect, it } from "vitest";
 import { PLURALS } from "@/data/grammar/plurals";
 import { PRESENT_CONTINUOUS } from "@/data/grammar/present-continuous";
 import { PREPOSITIONS } from "@/data/grammar/prepositions";
+import { CAN } from "@/data/grammar/can";
+import { THERE_IS_ARE } from "@/data/grammar/there-is-are";
 import { grammarRoundItems } from "@/data/grammar";
 import { relationForKey } from "@/data/grammar/scenes";
 import { buildGrammarQuestions, toEngineQuestion } from "@/lib/engine/grammar-questions";
+
+const STRUCTURE_IDS = ["plurals", "present-continuous", "prepositions", "can", "there-is-are"] as const;
+const structureOf = (id: string) => STRUCTURE_IDS.find((s) => id.startsWith(`${s}-`));
 
 describe("grammar content shape", () => {
   it("plurals are a BINARY singular/plural contrast of one referent (the -s is the only difference)", () => {
@@ -45,53 +50,84 @@ describe("grammar content shape", () => {
       expect(item.sentenceWords.join(" ") + ".").toBe(item.prompt);
     }
   });
+
+  it("can-for-ability distractors are different animal+ability pairs under the same frame (G7a)", () => {
+    for (const item of CAN.items) {
+      const ids = [item.correct, ...item.distractors].map((c) => c.id);
+      expect(new Set(ids).size).toBe(ids.length); // no duplicate option
+      expect(item.prompt).toMatch(/^It can \w+\.$/);
+      expect(item.sentenceWords.join(" ") + ".").toBe(item.prompt);
+    }
+  });
+
+  it("there-is-are is a BINARY singular/plural contrast, alternating which direction is the target (G7a)", () => {
+    for (const item of THERE_IS_ARE.items) {
+      expect(item.distractors).toHaveLength(1);
+      const glyphs = new Set([item.correct, ...item.distractors].map((c) => c.emoji[0]));
+      expect(glyphs.size).toBe(1); // same referent, different count
+      expect(item.prompt).toMatch(/^There (is a|are) \w+\.$/);
+    }
+    const isTargets = THERE_IS_ARE.items.filter((i) => i.prompt.startsWith("There is"));
+    const areTargets = THERE_IS_ARE.items.filter((i) => i.prompt.startsWith("There are"));
+    expect(isTargets.length).toBeGreaterThan(0);
+    expect(areTargets.length).toBeGreaterThan(0);
+    expect(isTargets.length).toBe(areTargets.length); // one of each per noun
+  });
 });
 
 describe("grammarRoundItems", () => {
-  it("interleaves the two structures and respects the round cap", () => {
-    const items = grammarRoundItems(4);
+  it("respects the round cap", () => {
+    const items = grammarRoundItems(4, "starter");
     expect(items).toHaveLength(4);
-    // Round-robin across the three structures, then wraps.
-    expect(items[0]!.id.startsWith("plurals-")).toBe(true);
-    expect(items[1]!.id.startsWith("present-continuous-")).toBe(true);
-    expect(items[2]!.id.startsWith("prepositions-")).toBe(true);
-    expect(items[3]!.id.startsWith("plurals-")).toBe(true);
+  });
+
+  it("the first pass touches every level-eligible structure once before any repeats", () => {
+    const items = grammarRoundItems(5, "starter");
+    expect(new Set(items.map((i) => structureOf(i.id)))).toEqual(new Set(STRUCTURE_IDS));
   });
 
   it("is deterministic (SSR-safe — same result every call)", () => {
-    expect(grammarRoundItems(5)).toEqual(grammarRoundItems(5));
+    expect(grammarRoundItems(5, "starter")).toEqual(grammarRoundItems(5, "starter"));
   });
 
-  it("never exceeds the available item pool", () => {
-    const all = grammarRoundItems(999);
-    expect(all.length).toBe(PLURALS.items.length + PRESENT_CONTINUOUS.items.length + PREPOSITIONS.items.length);
+  it("never exceeds the available item pool for a level", () => {
+    const all = grammarRoundItems(999, "starter");
+    const total =
+      PLURALS.items.length +
+      PRESENT_CONTINUOUS.items.length +
+      PREPOSITIONS.items.length +
+      CAN.items.length +
+      THERE_IS_ARE.items.length;
+    expect(all.length).toBe(total);
   });
 
-  it("gives vnFocus structures (plurals, present-continuous) a bigger round-share than prepositions (G5)", () => {
-    const items = grammarRoundItems(10);
-    const count = (prefix: string) => items.filter((i) => i.id.startsWith(prefix)).length;
-    const plurals = count("plurals-");
-    const present = count("present-continuous-");
-    const prepositions = count("prepositions-");
-    expect(plurals).toBeGreaterThan(prepositions);
-    expect(present).toBeGreaterThan(prepositions);
+  it("gives vnFocus structures (plurals, present-continuous, there-is-are) a bigger round-share than non-focus ones (G5)", () => {
+    const items = grammarRoundItems(16, "starter");
+    const count = (id: (typeof STRUCTURE_IDS)[number]) => items.filter((i) => structureOf(i.id) === id).length;
+    expect(count("plurals")).toBeGreaterThan(count("prepositions"));
+    expect(count("present-continuous")).toBeGreaterThan(count("prepositions"));
+    expect(count("there-is-are")).toBeGreaterThan(count("prepositions"));
+    expect(count("can")).toBe(count("prepositions")); // both unmarked, same weight
   });
 
   it("weighted structures still alternate rather than clumping (interleaving rule 6)", () => {
     // A naive "repeat the structure" weighting would put two plurals rounds
     // back to back. The weighted round-robin schedule shouldn't.
-    const structureOf = (id: string) =>
-      (["plurals", "present-continuous", "prepositions"] as const).find((s) => id.startsWith(`${s}-`));
-    const items = grammarRoundItems(6);
+    const items = grammarRoundItems(10, "starter");
     for (let i = 1; i < items.length; i++) {
       expect(structureOf(items[i]!.id)).not.toBe(structureOf(items[i - 1]!.id));
     }
+  });
+
+  it("G7a's new structures are Starters-tier, so mover/flyer see the exact same pool for now", () => {
+    expect(grammarRoundItems(20, "mover")).toEqual(grammarRoundItems(20, "starter"));
+    expect(grammarRoundItems(20, "flyer")).toEqual(grammarRoundItems(20, "starter"));
   });
 });
 
 describe("buildGrammarQuestions", () => {
   it("maps each item to an EngineQuestion carrying its own contrast set", () => {
-    const items = grammarRoundItems(3);
+    const items = grammarRoundItems(3, "starter");
     const questions = buildGrammarQuestions(items);
     expect(questions).toHaveLength(3);
     questions.forEach((q, i) => {

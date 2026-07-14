@@ -1,12 +1,16 @@
-// Grammar island registry. The island bundles the grammar structures — Plurals +
-// Present continuous (emoji-only) and Prepositions (inline-SVG scenes, G2). A
-// single hut interleaves items from each structure so a round mixes the grammar
-// points (active recall, CLAUDE.md rule 6). The island reuses the whole island→
-// hut→sticker loop; the only genuinely new engine piece is buildGrammarQuestions.
+// Grammar island registry. The island bundles the grammar structures — Plurals,
+// Present continuous, Prepositions (SVG scenes, G2), Can-for-ability, and
+// There is/are (G7a) — all Starters-tier so far. A single hut interleaves
+// items from each structure so a round mixes the grammar points (active
+// recall, CLAUDE.md rule 6). The island reuses the whole island→hut→sticker
+// loop; the only genuinely new engine piece is buildGrammarQuestions.
 import { PLURALS } from "./plurals";
 import { PRESENT_CONTINUOUS } from "./present-continuous";
 import { PREPOSITIONS } from "./prepositions";
+import { CAN } from "./can";
+import { THERE_IS_ARE } from "./there-is-are";
 import type { GrammarItem, GrammarStructure, ObserveFrame } from "./types";
+import type { Level } from "@/lib/types";
 
 export const GRAMMAR_THEME_ID = "grammar";
 
@@ -14,19 +18,32 @@ export function isGrammarTheme(themeId: string): boolean {
   return themeId === GRAMMAR_THEME_ID;
 }
 
-const STRUCTURES = [PLURALS, PRESENT_CONTINUOUS, PREPOSITIONS];
+const STRUCTURES = [PLURALS, PRESENT_CONTINUOUS, PREPOSITIONS, CAN, THERE_IS_ARE];
 
 // Stable structure ids (matches each GrammarStructure.id) — the parent
 // dashboard (G6) uses this to build its per-structure grammar section without
 // hardcoding the list twice.
-export type GrammarStructureId = "plurals" | "present-continuous" | "prepositions";
+export type GrammarStructureId = "plurals" | "present-continuous" | "prepositions" | "can" | "there-is-are";
 export const GRAMMAR_STRUCTURE_IDS: readonly GrammarStructureId[] = STRUCTURES.map(
   (s) => s.id,
 ) as GrammarStructureId[];
 
-// The "Observe" beat (G3): each structure's example frames, back to back, shown
-// once before a grammar hut's rounds (see ObserveIntro). No rules stated.
-export const GRAMMAR_OBSERVE_FRAMES: ObserveFrame[] = STRUCTURES.flatMap((s) => s.observe);
+// Level gating (G7): a child's round pool draws only from structures at or
+// below their level, cascading like vocab pools (Starter sees starter-tier,
+// Mover sees starter+mover, Flyer sees everything) — otherwise a Movers/
+// Flyers-only structure would get taught to a Starter-level 4-year-old.
+const RANK: Record<Level, number> = { starter: 0, mover: 1, flyer: 2 };
+
+function structuresForLevel(level: Level): GrammarStructure[] {
+  return STRUCTURES.filter((s) => RANK[s.level] <= RANK[level]);
+}
+
+// The "Observe" beat (G3): the level-eligible structures' example frames,
+// back to back, shown once before a grammar hut's rounds (see ObserveIntro).
+// No rules stated.
+export function grammarObserveFrames(level: Level): ObserveFrame[] {
+  return structuresForLevel(level).flatMap((s) => s.observe);
+}
 
 // Weighted round-robin merge of the structures' items (deterministic —
 // SSR-safe, no RNG; choice positions are randomized later, client-side, by
@@ -52,9 +69,10 @@ function weightedPattern(structures: readonly GrammarStructure[]): GrammarStruct
   return pattern;
 }
 
-// Sliced to `rounds`, so an island hut cycles through the grammar points.
-export function grammarRoundItems(rounds: number): GrammarItem[] {
-  const pattern = weightedPattern(STRUCTURES);
+// Sliced to `rounds`, so an island hut cycles through the grammar points the
+// child's level unlocks.
+export function grammarRoundItems(rounds: number, level: Level): GrammarItem[] {
+  const pattern = weightedPattern(structuresForLevel(level));
   const cursors = new Map<GrammarStructure, number>();
   const out: GrammarItem[] = [];
   let p = 0;
