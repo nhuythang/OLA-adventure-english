@@ -12,10 +12,10 @@ Phase 3 (22 placement, 23 streaks, 24 dashboard, 25 wordlist, 26 PWA). Plus foll
 all four islands** (Weather, Animals, Food, Colours) and then **deepened** Animals/Food to 24 words
 each (PRs #38, #39) — all play across all 4 huts × 3 levels, progress in Supabase (per-child,
 multi-device) under the parent session; localStorage fallback when unconfigured (dev:demo / e2e).
-**152 unit + 17 e2e green.**
+**158 unit + 17 e2e green.**
 
 ### What's NEXT (start here)
-1. **Grammar journey — G1 through G5 are DONE.** G1 (PR #33): Grammar island, Plurals + Present
+1. **Grammar journey — G1 through G6 are DONE.** G1 (PR #33): Grammar island, Plurals + Present
    continuous, all four huts, always unlocked; `buildGrammarQuestions` = choices are grammatical
    contrasts of the same referent. G2 (PR #34): Prepositions of place (in/on/under/next to) + the first
    inline-SVG teaching art (`src/data/grammar/scenes.ts` + `grammar-scene.tsx`'s `PrepositionScene`/
@@ -30,13 +30,17 @@ multi-device) under the parent session; localStorage fallback when unconfigured 
    itemStats` derived from `learning_attempts` in Supabase mode / maintained in the blob in localStorage
    mode); `review.ts`'s ~30% review pool now ranks due-and-weak items first; `grammarRoundItems` is a
    weighted round-robin favoring `vnFocus` structures (plurals, present-continuous) over prepositions,
-   without clumping. Migrations confirmed pushed through 0004; **0005 still needs `supabase db push`**
-   (no new migration needed for G5 itself — it reuses 0005's `item_id` column read-only).
+   without clumping. G6 (PR #42): parent dashboard grammar section — per-structure first-try accuracy +
+   most-missed items, per child, in `src/components/parent/dashboard.tsx`; `dashboard-data.ts` parses
+   the composite `item_id` against a *known* structure list (`GRAMMAR_STRUCTURE_IDS`, now exported from
+   `data/grammar/index.ts`) rather than a naive string split. **Not yet visually verified live** — needs
+   a real parent login (same as task 24 originally). Migrations confirmed pushed through 0004; **0005
+   still needs `supabase db push`** (G5/G6 only read `item_id`, no new migration needed for either).
    The rest is planned as a **G-series in [`docs/tasks/00-index.md`](tasks/00-index.md)** (rationale:
    [`docs/research/grammar-build-roadmap.md`](research/grammar-build-roadmap.md)).
-   **Next task = G6 — Parent dashboard: grammar mastery + common errors** (extend `dashboard-data.ts`
-   `summarize` + the Vietnamese dashboard view with a grammar section, now that G4/G5 give it real
-   per-item data to draw on). Then G7 (Movers/Flyers structures).
+   **Next task = G7 — Scale up: Movers/Flyers grammar** (past simple, comparatives, "going to" via
+   sentence-build + scenes; plus this/that, can-for-ability, there is/are — likely split into G7a/G7b to
+   stay session-sized).
 2. **Task 27 — real-iPad pass** (on-device, you): Add to Home Screen → confirm fullscreen + star icon;
    log in as parent (PIN) → dashboard/placement; play a hut; confirm progress + streak persist; verify
    emoji teaching pictures render on iPadOS.
@@ -234,12 +238,13 @@ stickers; a child-facing sticker-set picker.
 ## Suggested kickoff for the next session
 
 > Read `docs/handoff.md` (this file). Phases 1–3 (tasks 01–26) are complete and deployed; all four
-> islands are filled and Animals/Food are deepened to 24 words each. Grammar G1–G5 are done (island MVP,
+> islands are filled and Animals/Food are deepened to 24 words each. Grammar G1–G6 are done (island MVP,
 > prepositions + SVG scenes, the Observe intro beat, per-item attempt logging, spaced review + VN-L1
-> weighting). Build **G6 — parent dashboard: grammar mastery + common errors** per
-> [`docs/tasks/00-index.md`](tasks/00-index.md): extend `src/lib/parent/dashboard-data.ts`'s `summarize`
-> with a per-structure mastery view (now that G4/G5 give it real per-item `learning_attempts` data —
-> `item_id` composite keys like `grammar-plurals-cat`), and add the corresponding section to the
-> Vietnamese dashboard. Branch off `main`, plan briefly, implement, verify (tsc/lint/unit/build/e2e),
-> open a PR, watch CI, merge (auto-deploys). Keep the per-task PR workflow. (Or do task 27, the
-> real-iPad pass, on-device.)
+> weighting, parent dashboard grammar section). Build **G7 — scale up: Movers/Flyers grammar** per
+> [`docs/tasks/00-index.md`](tasks/00-index.md): past simple, comparatives, "going to" (sentence-build +
+> scenes, reusing G2's scene support for the spatial ones); plus this/that, can-for-ability, there
+> is/are. Same mechanics as G1-G2, more choices/sentence prompts by level — likely session-sized as
+> G7a/G7b rather than one PR. Branch off `main`, plan briefly, implement, verify
+> (tsc/lint/unit/build/e2e), open a PR, watch CI, merge (auto-deploys). Keep the per-task PR workflow.
+> (Or do task 27, the real-iPad pass, on-device — including a visual check of the new G6 dashboard
+> section, which hasn't been verified live yet.)
