@@ -1,4 +1,5 @@
 import type { Level, Skill } from "@/lib/types";
+import type { ItemStats } from "./review-schedule";
 
 // A child's full persisted progress. Same shape whether it lives in localStorage
 // (dev / unconfigured) or Supabase (production) — the backend is swapped beneath
@@ -20,6 +21,13 @@ export interface ChildProgress {
   streak: number;
   /** Streak milestones already rewarded (so a bonus is granted once each). */
   awardedStreakMilestones: number[];
+  /**
+   * Per-item last-seen + accuracy (G5 spaced review), keyed by the same
+   * composite id as learning_attempts.item_id (`${themeId}-${itemId}`). In
+   * Supabase mode this is derived fresh from the attempt log on each load
+   * (see remote.ts); in localStorage mode it's maintained directly here.
+   */
+  itemStats: ItemStats;
 }
 
 export function emptyProgress(): ChildProgress {
@@ -32,5 +40,6 @@ export function emptyProgress(): ChildProgress {
     lastActiveDate: null,
     streak: 0,
     awardedStreakMilestones: [],
+    itemStats: {},
   };
 }

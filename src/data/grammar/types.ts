@@ -35,4 +35,11 @@ export interface GrammarStructure {
   /** The "Observe" beat (G3): 2–3 narrated example frames shown once before the
    *  hut's rounds, priming the pattern with no rules stated. */
   observe: ObserveFrame[];
+  /**
+   * A high-yield Vietnamese-L1 interference point (plural -s, 3rd-person -s,
+   * copula "be", articles, tense — see docs/research/grammar-build-roadmap.md)
+   * — gets a bigger round-share in grammarRoundItems (G5). Defaults to false
+   * (equal share) when omitted.
+   */
+  vnFocus?: boolean;
 }

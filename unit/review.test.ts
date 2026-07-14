@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { buildPictureRounds, reviewThemeIds } from "@/lib/review";
+import type { ItemStats } from "@/lib/progress/review-schedule";
 
 describe("reviewThemeIds", () => {
   it("excludes the current theme and themes without content", () => {
@@ -48,8 +49,31 @@ describe("buildPictureRounds", () => {
     const seed = [0.9, 0.1, 0.8, 0.2, 0.7, 0.05];
     let call = 0;
     const rng = () => seed[call++ % seed.length]!;
-    const rounds = buildPictureRounds("animals", [], "mover", 5, rng);
+    const rounds = buildPictureRounds("animals", [], "mover", 5, {}, "", rng);
     expect(rounds).toHaveLength(5);
     expect(rounds.map((q) => q.id)).not.toEqual(["cat", "dog", "bird", "fish", "frog"]);
+  });
+
+  it("review picks the due-and-weak item over fresh-and-strong ones (G5 spaced review)", () => {
+    const today = "2026-07-12";
+    // Every Weather Starter word gets a stat so none win by the "never seen"
+    // sentinel — only "rainy" is actually overdue and weak; the rest were
+    // just reviewed and are well-known (not due for a while yet).
+    const itemStats: ItemStats = {
+      "weather-sunny": { lastSeen: today, correctStreak: 3 },
+      "weather-rainy": { lastSeen: "2026-06-01", correctStreak: 0 },
+      "weather-cloudy": { lastSeen: today, correctStreak: 3 },
+      "weather-windy": { lastSeen: today, correctStreak: 3 },
+      "weather-hot": { lastSeen: today, correctStreak: 3 },
+      "weather-cold": { lastSeen: today, correctStreak: 3 },
+    };
+    const rounds = buildPictureRounds("animals", ["weather"], "starter", 5, itemStats, today);
+    const reviewIds = rounds.map((q) => q.id).filter((id) => !["cat", "dog", "bird", "fish", "frog", "duck"].includes(id));
+    expect(reviewIds).toContain("rainy");
+  });
+
+  it("with no itemStats (default), review falls back to the pool's built order — no crash", () => {
+    const rounds = buildPictureRounds("animals", ["weather"], "starter", 5);
+    expect(rounds).toHaveLength(5);
   });
 });

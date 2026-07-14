@@ -11,6 +11,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { applyHutResult, type HutOutcome } from "@/lib/progress/apply";
 import { emptyProgress, type ChildProgress } from "@/lib/progress/types";
 import { todayISO, updateStreak } from "@/lib/progress/streak";
+import { applyAttempts } from "@/lib/progress/review-schedule";
 import {
   clearRemote,
   loadRemote,
@@ -50,6 +51,7 @@ function readLocal(childId: string): ChildProgress {
       lastActiveDate: parsed.lastActiveDate ?? null,
       streak: parsed.streak ?? 0,
       awardedStreakMilestones: parsed.awardedStreakMilestones ?? [],
+      itemStats: parsed.itemStats ?? {},
     };
   } catch {
     return emptyProgress();
@@ -178,6 +180,11 @@ export function recordHutResult(
       progress.awardedStreakMilestones = [...progress.awardedStreakMilestones, reachedMilestone];
     }
   }
+
+  // G5: fold this round's attempts into per-item spaced-review stats. In
+  // Supabase mode this is an optimistic update — the next fresh load derives
+  // the same thing from learning_attempts (the source of truth there).
+  progress.itemStats = applyAttempts(progress.itemStats, attempts, todayISO());
 
   setCache(childId, progress);
   if (isSupabaseConfigured) {

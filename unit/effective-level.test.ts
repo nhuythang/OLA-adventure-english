@@ -20,6 +20,7 @@ function progress(skillLevels: ChildProgress["skillLevels"]): ChildProgress {
     lastActiveDate: null,
     streak: 0,
     awardedStreakMilestones: [],
+    itemStats: {},
   };
 }
 
