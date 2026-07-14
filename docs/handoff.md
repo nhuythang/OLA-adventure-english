@@ -12,10 +12,10 @@ Phase 3 (22 placement, 23 streaks, 24 dashboard, 25 wordlist, 26 PWA). Plus foll
 all four islands** (Weather, Animals, Food, Colours) and then **deepened** Animals/Food to 24 words
 each (PRs #38, #39) — all play across all 4 huts × 3 levels, progress in Supabase (per-child,
 multi-device) under the parent session; localStorage fallback when unconfigured (dev:demo / e2e).
-**158 unit + 17 e2e green.**
+**163 unit + 17 e2e green.**
 
 ### What's NEXT (start here)
-1. **Grammar journey — G1 through G6 are DONE.** G1 (PR #33): Grammar island, Plurals + Present
+1. **Grammar journey — G1 through G7a are DONE.** G1 (PR #33): Grammar island, Plurals + Present
    continuous, all four huts, always unlocked; `buildGrammarQuestions` = choices are grammatical
    contrasts of the same referent. G2 (PR #34): Prepositions of place (in/on/under/next to) + the first
    inline-SVG teaching art (`src/data/grammar/scenes.ts` + `grammar-scene.tsx`'s `PrepositionScene`/
@@ -34,13 +34,20 @@ multi-device) under the parent session; localStorage fallback when unconfigured 
    most-missed items, per child, in `src/components/parent/dashboard.tsx`; `dashboard-data.ts` parses
    the composite `item_id` against a *known* structure list (`GRAMMAR_STRUCTURE_IDS`, now exported from
    `data/grammar/index.ts`) rather than a naive string split. **Not yet visually verified live** — needs
-   a real parent login (same as task 24 originally). Migrations confirmed pushed through 0004; **0005
-   still needs `supabase db push`** (G5/G6 only read `item_id`, no new migration needed for either).
+   a real parent login (same as task 24 originally). G7a (PR #44): G7's original bullet mixed real YLE
+   levels — cross-checked against `docs/research/grammar-yle.md` and split into G7a/G7b. G7a added
+   level-gating the engine was missing entirely (`GrammarStructure.level`, `grammarRoundItems(rounds,
+   level)`/`grammarObserveFrames(level)` cascade-filtering, mirroring vocab pools) plus two new
+   Starters-tier structures — `can.ts` and `there-is-are.ts` (both emoji-only, no new art).
+   Migrations confirmed pushed through 0004; **0005 still needs `supabase db push`** (G5/G6/G7a only
+   read `item_id`, no new migration needed for any of them).
    The rest is planned as a **G-series in [`docs/tasks/00-index.md`](tasks/00-index.md)** (rationale:
    [`docs/research/grammar-build-roadmap.md`](research/grammar-build-roadmap.md)).
-   **Next task = G7 — Scale up: Movers/Flyers grammar** (past simple, comparatives, "going to" via
-   sentence-build + scenes; plus this/that, can-for-ability, there is/are — likely split into G7a/G7b to
-   stay session-sized).
+   **Next task = G7b — the real Movers-tier grammar structures**: past simple and "going to" (same
+   verb-contrast mechanic as present-continuous, different tense, emoji-only) plus comparatives (needs
+   a size-contrast visual — reuse G2's scene-registry pattern). Needs G7a's level-gating to actually
+   restrict these to Mover+ children. (`this/that` was deferred further — needs a near/far visual and
+   wasn't scoped into G7a or G7b.)
 2. **Task 27 — real-iPad pass** (on-device, you): Add to Home Screen → confirm fullscreen + star icon;
    log in as parent (PIN) → dashboard/placement; play a hut; confirm progress + streak persist; verify
    emoji teaching pictures render on iPadOS.
@@ -238,13 +245,14 @@ stickers; a child-facing sticker-set picker.
 ## Suggested kickoff for the next session
 
 > Read `docs/handoff.md` (this file). Phases 1–3 (tasks 01–26) are complete and deployed; all four
-> islands are filled and Animals/Food are deepened to 24 words each. Grammar G1–G6 are done (island MVP,
-> prepositions + SVG scenes, the Observe intro beat, per-item attempt logging, spaced review + VN-L1
-> weighting, parent dashboard grammar section). Build **G7 — scale up: Movers/Flyers grammar** per
-> [`docs/tasks/00-index.md`](tasks/00-index.md): past simple, comparatives, "going to" (sentence-build +
-> scenes, reusing G2's scene support for the spatial ones); plus this/that, can-for-ability, there
-> is/are. Same mechanics as G1-G2, more choices/sentence prompts by level — likely session-sized as
-> G7a/G7b rather than one PR. Branch off `main`, plan briefly, implement, verify
-> (tsc/lint/unit/build/e2e), open a PR, watch CI, merge (auto-deploys). Keep the per-task PR workflow.
-> (Or do task 27, the real-iPad pass, on-device — including a visual check of the new G6 dashboard
-> section, which hasn't been verified live yet.)
+> islands are filled and Animals/Food are deepened to 24 words each. Grammar G1–G7a are done (island
+> MVP, prepositions + SVG scenes, the Observe intro beat, per-item attempt logging, spaced review +
+> VN-L1 weighting, parent dashboard grammar section, level-gating + can/there-is-are). Build **G7b —
+> the Movers-tier grammar structures** per [`docs/tasks/00-index.md`](tasks/00-index.md): past simple
+> and "going to" (same verb-contrast mechanic as present-continuous, different tense, emoji-only) plus
+> comparatives (needs a size-contrast visual — reuse G2's scene-registry pattern rather than inventing a
+> new one). Tag each with `level: "mover"` (the `GrammarStructure.level` field + cascade-filtering G7a
+> added) so they correctly restrict to Mover+ children rather than showing to Starters. Branch off
+> `main`, plan briefly, implement, verify (tsc/lint/unit/build/e2e), open a PR, watch CI, merge
+> (auto-deploys). Keep the per-task PR workflow. (Or do task 27, the real-iPad pass, on-device —
+> including a visual check of the new G6 dashboard section, which hasn't been verified live yet.)

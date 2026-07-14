@@ -238,10 +238,29 @@ Legend: ☐ not started · ◐ in progress · ☑ done
   hyphens). Most-missed items show the item's own slug, not its full prompt, keeping real grammar
   content out of the pure aggregator. *(Done — PR #42; 6 new unit tests, tsc/lint/158 unit/build/17 e2e
   green. Live visual check still needs a real parent login — same as task 24 originally.)*
-- ☐ **G7 — Scale up: Movers/Flyers grammar.** Past simple, comparatives, *going to* (sentence-build +
-  scenes); plus *this/that*, *can* for ability, *there is/are*. Same mechanics, more choices / sentence
-  prompts by level. The spatial/visual ones reuse G2's scene support. **Likely split into G7a/G7b** to
-  stay session-sized.
+- **G7 — Scale up: Movers/Flyers grammar.** Split into G7a/G7b — the original bullet mixed structures
+  from different real YLE levels (cross-checked against `docs/research/grammar-yle.md`, verified
+  against the official Cambridge wordlist): *this/that*, *can* for ability, and *there is/are* are
+  actually **Starters-tier** (same as our existing plurals/present-continuous/prepositions), not
+  Movers. Past simple, comparatives, and *going to* are the real Movers-tier content.
+  - ☑ **G7a — Level-gating + the Starters structures.** Found the grammar engine had **no level-gating
+    at all** — `grammarRoundItems()` took no level parameter, so every structure showed to every child
+    regardless of level (harmless while all 3 structures were Starters-tier, but would silently teach
+    Movers content to Starter-level 4-year-olds once G7b lands). `GrammarStructure` gains a required
+    `level: Level`; `grammarRoundItems(rounds, level)` and the new `grammarObserveFrames(level)`
+    (replacing the flat `GRAMMAR_OBSERVE_FRAMES` export) both cascade-filter to structures at-or-below
+    the child's level, mirroring vocab pools. Two new emoji-only Starters structures: `can.ts` ("It can
+    fly." — same fixed-frame mechanic as present-continuous) and `there-is-are.ts` ("There is a
+    flower." / "There are flowers." — another VN-focus item like plurals, but alternates both
+    directions per noun rather than only ever targeting the plural). *(Done — PR #44; 18 grammar/observe
+    unit tests updated/added, tsc/lint/163 unit/build/17 e2e green; verified live — both structures
+    appear in round pools and record to itemStats, Write hut's pattern order confirmed, no console
+    errors.)*
+  - ☐ **G7b — Movers-tier structures.** Past simple and *going to* (same verb-contrast mechanic as
+    present-continuous, different tense, emoji-only) plus comparatives (needs a size-contrast visual —
+    reuse G2's scene-registry pattern rather than inventing a new one). Needs the level-gating from
+    G7a to actually restrict these to Mover+ (this/that deferred further — needs a near/far visual and
+    wasn't scoped in G7a).
 - ☐ **G8 — (optional) streak-freeze + richer SVG scenes.** Loss-aversion mitigation (streak-freeze) and
   drawn SVG teaching pictures where they beat emoji. Lower priority.
 
