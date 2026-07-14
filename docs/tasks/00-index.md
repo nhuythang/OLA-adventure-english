@@ -228,9 +228,16 @@ Legend: ☐ not started · ◐ in progress · ☑ done
   clumping them, preserving interleaving. *(Done — PR #40; 20 new unit tests, tsc/lint/152 unit/build/
   17 e2e green; verified live in-browser — itemStats persists correctly, a 5-round grammar session
   produced the designed 2/2/1 split.)* **Enables G6.**
-- ☐ **G6 — Parent dashboard: grammar mastery + common errors.** Extend the Vietnamese dashboard with a
-  grammar section — per-structure mastery + most-missed items. Extend `dashboard-data.ts` `summarize`;
-  add the view. **Depends on G4.**
+- ☑ **G6 — Parent dashboard: grammar mastery + common errors.** Extended the Vietnamese dashboard with a
+  grammar section — per-structure first-try accuracy + a most-missed-items list, per child.
+  `data/grammar/index.ts` exports `GRAMMAR_STRUCTURE_IDS` so the dashboard doesn't hardcode the
+  structure list a second time. `dashboard-data.ts` stays IO-free/testable-without-a-database (its
+  existing design) — `grammarStructures` arrives as generic `{id, title}` input like `themes` already
+  do; a composite `item_id` (e.g. `grammar-present-continuous-run`) is parsed against the *known*
+  structure list (never a naive split on `-`, since structure ids and item slugs can both contain
+  hyphens). Most-missed items show the item's own slug, not its full prompt, keeping real grammar
+  content out of the pure aggregator. *(Done — PR #42; 6 new unit tests, tsc/lint/158 unit/build/17 e2e
+  green. Live visual check still needs a real parent login — same as task 24 originally.)*
 - ☐ **G7 — Scale up: Movers/Flyers grammar.** Past simple, comparatives, *going to* (sentence-build +
   scenes); plus *this/that*, *can* for ability, *there is/are*. Same mechanics, more choices / sentence
   prompts by level. The spatial/visual ones reuse G2's scene support. **Likely split into G7a/G7b** to
